@@ -1,0 +1,253 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --------------------------------------
+// Enums
+// --------------------------------------
+
+enum Role {
+  MEMBER
+  TEAM_LEAD
+  ADVISER
+}
+
+enum PhaseType {
+  WATERFALL // Planning & Design
+  SCRUM     // Development
+  FALL      // Testing & Deployment
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED // Requires a comment explanation
+  DONE
+}
+
+enum DeliverableStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+}
+
+// --------------------------------------
+// Core Models
+// --------------------------------------
+
+// 1. Singleton Project Config
+model Project {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?   @db.Text
+  repositoryUrl String?
+  startDate     DateTime
+  endDate       DateTime?
+  
+  phases        Phase[]
+  sprints       Sprint[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model User {
+  id            String @id @default(uuid())
+  email         String @unique
+  passwordHash  String
+  name          String
+  role          Role   @default(MEMBER)
+
+  // Relations
+  assignedTasks    Task[]          @relation("AssignedTasks")
+  uploadedEvidence Evidence[]
+  uploadedMeetings MeetingLog[]    @relation("MeetingUploader") // Who uploaded the minutes?
+  comments         Comment[]
+  activityLogs     ActivityLog[]
+  notifications    Notification[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// 2. WSF Phases
+model Phase {
+  id          String    @id @default(uuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  
+  type        PhaseType
+  name        String    // e.g., "Planning Phase"
+  description String?   @db.Text
+  startDate   DateTime?
+  endDate     DateTime?
+  
+  deliverables Deliverable[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 3. Deliverables
+model Deliverable {
+  id          String            @id @default(uuid())
+  phaseId     String
+  phase       Phase             @relation(fields: [phaseId], references: [id])
+  
+  title       String
+  description String?           @db.Text
+  status      DeliverableStatus @default(NOT_STARTED)
+  dueDate     DateTime?
+
+  evidence    Evidence[]
+  comments    Comment[] // For feedback/rejection notes
+
+  // Soft Delete
+  deletedAt   DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 4. Sprints
+model Sprint {
+  id          String    @id @default(uuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id])
+  
+  number      Int       // Sprint 1, 2, 3...
+  goal        String?
+  startDate   DateTime
+  endDate     DateTime
+  
+  tasks       Task[]
+  meetingLogs MeetingLog[]
+
+  // Soft Delete
+  deletedAt   DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 5. Tasks
+model Task {
+  id          String     @id @default(uuid())
+  sprintId    String
+  sprint      Sprint     @relation(fields: [sprintId], references: [id])
+  
+  assigneeId  String?
+  assignee    User?      @relation("AssignedTasks", fields: [assigneeId], references: [id])
+
+  title       String
+  description String?    @db.Text
+  status      TaskStatus @default(TODO)
+  
+  comments    Comment[] 
+
+  // Soft Delete
+  deletedAt   DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// --------------------------------------
+// Supporting Models
+// --------------------------------------
+
+// For Deliverable Evidence
+model Evidence {
+  id            String   @id @default(uuid())
+  deliverableId String
+  deliverable   Deliverable @relation(fields: [deliverableId], references: [id])
+  
+  uploaderId    String
+  uploader      User     @relation(fields: [uploaderId], references: [id])
+
+  fileName      String
+  fileUrl       String   
+  fileType      String   // e.g. "application/pdf"
+
+  // Soft Delete
+  deletedAt     DateTime?
+
+  createdAt     DateTime @default(now())
+}
+
+// For Meeting Minutes (PDF)
+model MeetingLog {
+  id          String   @id @default(uuid())
+  sprintId    String
+  sprint      Sprint   @relation(fields: [sprintId], references: [id])
+
+  title       String   // e.g., "Sprint 1 Standup"
+  date        DateTime // When the meeting happened
+  
+  fileUrl     String   // The PDF path
+  
+  uploaderId  String
+  uploader    User     @relation("MeetingUploader", fields: [uploaderId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Comment {
+  id            String   @id @default(uuid())
+  content       String   @db.Text
+  
+  authorId      String
+  author        User     @relation(fields: [authorId], references: [id])
+
+  // Polymorphic-style relations
+  taskId        String?
+  task          Task?    @relation(fields: [taskId], references: [id])
+  
+  deliverableId String?
+  deliverable   Deliverable? @relation(fields: [deliverableId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// --------------------------------------
+// Audit & System Models
+// --------------------------------------
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  action      String   // e.g., "INVITED_USER", "UPLOADED_MOM"
+  entityType  String   
+  entityId    String   
+  details     String?  // JSON context
+
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  message   String
+  link      String?  
+  isRead    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+}
