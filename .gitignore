@@ -1,0 +1,67 @@
+
+**/node_modules
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+**/.pnpm-store
+
+# Ignore all .env files in any directory
+**/.env
+**/.env*.local
+**/.env.development
+**/.env.test
+**/.env.production
+
+
+client/.next/
+client/out/
+client/build/
+client/dist/
+
+# Next.js telemetry & cache
+.vercel
+**/*.tsbuildinfo
+next-env.d.ts
+
+server/dist/
+server/build/
+server/coverage/
+server/.nyc_output/
+
+# ------------------------------------------------
+# Keep the schema, but ignore local SQLite files (if used for testing)
+*.sqlite
+*.sqlite-journal
+*.db
+*.db-journal
+
+
+# Don't commit uploaded evidence or meeting minutes if stored locally
+server/uploads/
+**/public/uploads/
+**/storage/
+**/*.pdf
+**/*.png
+**/*.jpg
+**/*.jpeg
+
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# IntelliJ / WebStorm
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+**/coverage/
+**/cypress/videos
+**/cypress/screenshots
