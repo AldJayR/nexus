@@ -26,7 +26,7 @@ export async function createSprintHandler(
   request: FastifyRequest<{ Body: CreateSprintInput }>,
   reply: FastifyReply
 ) {
-  const sprint = await createSprint(request.body);
+  const sprint = await createSprint(request.body, request.user!.id);
   return reply.code(201).send(sprint);
 }
 
@@ -34,7 +34,7 @@ export async function updateSprintHandler(
   request: FastifyRequest<{ Params: { id: string }; Body: UpdateSprintInput }>,
   reply: FastifyReply
 ) {
-  const sprint = await updateSprint(request.params.id, request.body);
+  const sprint = await updateSprint(request.params.id, request.body, request.user!.id);
   return reply.code(200).send(sprint);
 }
 
@@ -42,7 +42,7 @@ export async function deleteSprintHandler(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
-  await deleteSprint(request.params.id);
+  await deleteSprint(request.params.id, request.user!.id);
   return reply.code(204).send();
 }
 

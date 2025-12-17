@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { loginHandler, inviteUserHandler, logoutHandler, meHandler, changePasswordHandler } from './auth.controller.js';
-import { loginSchema, loginResponseSchema, inviteUserSchema, inviteUserResponseSchema, changePasswordSchema } from './auth.schema.js';
+import { loginSchema, loginResponseSchema, inviteUserSchema, inviteUserResponseSchema, changePasswordSchema, InviteUserInput } from './auth.schema.js';
 import { requireRole } from '../../utils/rbac.js';
 import { Role } from '../../generated/client.js';
 
@@ -35,7 +35,7 @@ export async function authRoutes(app: FastifyInstance) {
     }, changePasswordHandler);
     
     // Team Lead Only Routes
-    protectedServer.post('/invite', { 
+    protectedServer.post<{ Body: InviteUserInput }>('/invite', { 
       schema: {
         body: inviteUserSchema,
         response: {

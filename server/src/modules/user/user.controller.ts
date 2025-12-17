@@ -33,7 +33,7 @@ export async function updateUserHandler(
     return reply.status(403).send({ message: "Forbidden: Only Team Leads can update roles" });
   }
 
-  const user = await updateUser(id, request.body);
+  const user = await updateUser(id, request.body, currentUser.id);
   return reply.code(200).send(user);
 }
 
@@ -41,7 +41,7 @@ export async function deleteUserHandler(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
-  await deleteUser(request.params.id);
+  await deleteUser(request.params.id, request.user!.id);
   return reply.code(204).send();
 }
 

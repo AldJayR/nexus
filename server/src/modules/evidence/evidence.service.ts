@@ -1,6 +1,7 @@
 import { getPrismaClient, NotFoundError } from "../../utils/database.js";
 import { fileService } from "../../services/file.service.js";
 import { MultipartFile } from "@fastify/multipart";
+import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
 
@@ -26,7 +27,7 @@ export async function createEvidence(input: CreateEvidenceInput) {
   const uploadResult = await fileService.saveFile(file);
 
   // 3. Create Evidence record
-  return prisma.evidence.create({
+  const evidence = await prisma.evidence.create({
     data: {
       deliverableId,
       uploaderId,
@@ -35,6 +36,16 @@ export async function createEvidence(input: CreateEvidenceInput) {
       fileType: uploadResult.mimetype,
     },
   });
+
+  await createActivityLog({
+    userId: uploaderId,
+    action: "EVIDENCE_UPLOADED",
+    entityType: "Deliverable",
+    entityId: deliverable.id,
+    details: `Evidence "${file.filename}" uploaded for deliverable "${deliverable.title}"`,
+  });
+
+  return evidence;
 }
 
 export async function getEvidenceByDeliverable(deliverableId: string) {
@@ -56,6 +67,7 @@ export async function getEvidenceByDeliverable(deliverableId: string) {
 export async function deleteEvidence(id: string, userId: string) {
   const evidence = await prisma.evidence.findUnique({
     where: { id },
+    include: { deliverable: true },
   });
 
   if (!evidence) {
@@ -81,7 +93,15 @@ export async function deleteEvidence(id: string, userId: string) {
   await fileService.deleteFile(publicId);
 
   // 2. Delete from DB
-  return prisma.evidence.delete({
+  await prisma.evidence.delete({
     where: { id },
+  });
+
+  await createActivityLog({
+    userId,
+    action: "EVIDENCE_DELETED",
+    entityType: "Deliverable",
+    entityId: evidence.deliverableId,
+    details: `Evidence "${evidence.fileName}" deleted from deliverable "${evidence.deliverable.title}"`,
   });
 }

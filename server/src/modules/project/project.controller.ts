@@ -11,7 +11,7 @@ export async function createProjectHandler(
   request: FastifyRequest<{ Body: CreateProjectInput }>,
   reply: FastifyReply
 ) {
-  const project = await createProject(request.body);
+  const project = await createProject(request.body, request.user!.id);
   return reply.code(201).send(project);
 }
 
@@ -19,6 +19,6 @@ export async function updateProjectHandler(
   request: FastifyRequest<{ Body: UpdateProjectInput }>,
   reply: FastifyReply
 ) {
-  const project = await updateProject(request.body);
+  const project = await updateProject(request.body, request.user!.id);
   return reply.code(200).send(project);
 }

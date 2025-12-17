@@ -29,7 +29,7 @@ export async function createDeliverableHandler(
   request: FastifyRequest<{ Body: CreateDeliverableInput }>,
   reply: FastifyReply
 ) {
-  const deliverable = await createDeliverable(request.body);
+  const deliverable = await createDeliverable(request.body, request.user!.id);
   return reply.code(201).send(deliverable);
 }
 
@@ -37,7 +37,7 @@ export async function updateDeliverableHandler(
   request: FastifyRequest<{ Params: { id: string }; Body: UpdateDeliverableInput }>,
   reply: FastifyReply
 ) {
-  const deliverable = await updateDeliverable(request.params.id, request.body);
+  const deliverable = await updateDeliverable(request.params.id, request.body, request.user!.id);
   return reply.code(200).send(deliverable);
 }
 
@@ -45,7 +45,7 @@ export async function deleteDeliverableHandler(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
-  await deleteDeliverable(request.params.id);
+  await deleteDeliverable(request.params.id, request.user!.id);
   return reply.code(204).send();
 }
 
@@ -53,6 +53,6 @@ export async function restoreDeliverableHandler(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
-  const deliverable = await restoreDeliverable(request.params.id);
+  const deliverable = await restoreDeliverable(request.params.id, request.user!.id);
   return reply.code(200).send(deliverable);
 }

@@ -30,7 +30,7 @@ export async function createTaskHandler(
   request: FastifyRequest<{ Body: CreateTaskInput }>,
   reply: FastifyReply
 ) {
-  const task = await createTask(request.body);
+  const task = await createTask(request.body, request.user!.id);
   return reply.code(201).send(task);
 }
 
@@ -38,7 +38,7 @@ export async function updateTaskHandler(
   request: FastifyRequest<{ Params: { id: string }; Body: UpdateTaskInput }>,
   reply: FastifyReply
 ) {
-  const task = await updateTask(request.params.id, request.body);
+  const task = await updateTask(request.params.id, request.body, request.user!.id);
   return reply.code(200).send(task);
 }
 
@@ -54,7 +54,7 @@ export async function deleteTaskHandler(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
-  await deleteTask(request.params.id);
+  await deleteTask(request.params.id, request.user!.id);
   return reply.code(204).send();
 }
 
@@ -62,6 +62,6 @@ export async function restoreTaskHandler(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
-  const task = await restoreTask(request.params.id);
+  const task = await restoreTask(request.params.id, request.user!.id);
   return reply.code(200).send(task);
 }

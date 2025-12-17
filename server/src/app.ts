@@ -15,6 +15,10 @@ import { taskRoutes } from './modules/task/task.routes.js';
 import { commentRoutes } from './modules/comment/comment.routes.js';
 import { evidenceRoutes } from './modules/evidence/evidence.routes.js';
 import { meetingLogRoutes } from './modules/meeting-log/meeting-log.routes.js';
+import { analyticsRoutes } from './modules/analytics/analytics.routes.js';
+import { notificationRoutes } from './modules/notification/notification.routes.js';
+import { activityLogRoutes } from './modules/activity-log/activity-log.routes.js';
+import { backupRoutes } from './modules/backup/backup.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = fastify({
@@ -117,6 +121,18 @@ export async function buildApp(): Promise<FastifyInstance> {
 
     // Meeting Log Routes
     api.register(meetingLogRoutes, { prefix: '/meeting-logs' });
+
+    // Analytics Routes
+    api.register(analyticsRoutes, { prefix: '/' }); // Routes already have /dashboard or /timeline prefix
+
+    // Notification Routes
+    api.register(notificationRoutes, { prefix: '/notifications' });
+
+    // Activity Log Routes
+    api.register(activityLogRoutes, { prefix: '/activity-logs' });
+
+    // Backup Routes
+    api.register(backupRoutes, { prefix: '/backup' });
   }, { prefix: '/api/v1' });
 
   return app;

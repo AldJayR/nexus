@@ -19,7 +19,7 @@ export async function createPhaseHandler(
   request: FastifyRequest<{ Body: CreatePhaseInput }>,
   reply: FastifyReply
 ) {
-  const phase = await createPhase(request.body);
+  const phase = await createPhase(request.body, request.user!.id);
   return reply.code(201).send(phase);
 }
 
@@ -27,7 +27,7 @@ export async function updatePhaseHandler(
   request: FastifyRequest<{ Params: { id: string }; Body: UpdatePhaseInput }>,
   reply: FastifyReply
 ) {
-  const phase = await updatePhase(request.params.id, request.body);
+  const phase = await updatePhase(request.params.id, request.body, request.user!.id);
   return reply.code(200).send(phase);
 }
 
@@ -35,6 +35,6 @@ export async function deletePhaseHandler(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
-  await deletePhase(request.params.id);
+  await deletePhase(request.params.id, request.user!.id);
   return reply.code(204).send();
 }

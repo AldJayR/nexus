@@ -41,6 +41,6 @@ export async function getMeetingLogsBySprintHandler(request: FastifyRequest<{ Pa
 
 export async function deleteMeetingLogHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
   const { id } = request.params;
-  await deleteMeetingLog(id);
+  await deleteMeetingLog(id, request.user!.id);
   return reply.code(204).send();
 }

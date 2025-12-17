@@ -1,5 +1,6 @@
 import { getPrismaClient, NotFoundError, ValidationError } from "../../utils/database.js";
 import { CreatePhaseInput, UpdatePhaseInput } from "./phase.schema.js";
+import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
 
@@ -26,7 +27,7 @@ export async function getPhaseById(id: string) {
   return phase;
 }
 
-export async function createPhase(input: CreatePhaseInput) {
+export async function createPhase(input: CreatePhaseInput, userId: string) {
   let { projectId } = input;
 
   if (!projectId) {
@@ -37,15 +38,25 @@ export async function createPhase(input: CreatePhaseInput) {
     projectId = project.id;
   }
 
-  return prisma.phase.create({
+  const phase = await prisma.phase.create({
     data: {
       ...input,
       projectId,
     },
   });
+
+  await createActivityLog({
+    userId,
+    action: "PHASE_CREATED",
+    entityType: "Phase",
+    entityId: phase.id,
+    details: `Phase "${phase.name}" created`,
+  });
+
+  return phase;
 }
 
-export async function updatePhase(id: string, input: UpdatePhaseInput) {
+export async function updatePhase(id: string, input: UpdatePhaseInput, userId: string) {
   const phase = await prisma.phase.findUnique({
     where: { id },
   });
@@ -54,13 +65,23 @@ export async function updatePhase(id: string, input: UpdatePhaseInput) {
     throw new NotFoundError("Phase", id);
   }
 
-  return prisma.phase.update({
+  const updatedPhase = await prisma.phase.update({
     where: { id },
     data: input,
   });
+
+  await createActivityLog({
+    userId,
+    action: "PHASE_UPDATED",
+    entityType: "Phase",
+    entityId: phase.id,
+    details: `Phase "${phase.name}" updated`,
+  });
+
+  return updatedPhase;
 }
 
-export async function deletePhase(id: string) {
+export async function deletePhase(id: string, userId: string) {
   const phase = await prisma.phase.findUnique({
     where: { id },
   });
@@ -73,7 +94,15 @@ export async function deletePhase(id: string) {
   // Or cascade delete? Prisma usually handles cascade if configured, or throws error.
   // Let's just try to delete.
 
-  return prisma.phase.delete({
+  await prisma.phase.delete({
     where: { id },
+  });
+
+  await createActivityLog({
+    userId,
+    action: "PHASE_DELETED",
+    entityType: "Phase",
+    entityId: phase.id,
+    details: `Phase "${phase.name}" deleted`,
   });
 }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PhaseType, DeliverableStatus } from "../../generated/client";
+import { PhaseType, DeliverableStatus } from "../../generated/client.js";
 
 export const createPhaseSchema = z.object({
   projectId: z.string().optional(), // Optional, will default to singleton project if missing

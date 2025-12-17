@@ -1,6 +1,7 @@
 import { getPrismaClient, NotFoundError } from "../../utils/database.js";
 import { fileService } from "../../services/file.service.js";
 import { MultipartFile } from "@fastify/multipart";
+import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
 
@@ -28,7 +29,7 @@ export async function createMeetingLog(input: CreateMeetingLogInput) {
   const uploadResult = await fileService.saveFile(file);
 
   // 3. Create MeetingLog record
-  return prisma.meetingLog.create({
+  const meetingLog = await prisma.meetingLog.create({
     data: {
       sprintId,
       uploaderId,
@@ -37,6 +38,16 @@ export async function createMeetingLog(input: CreateMeetingLogInput) {
       fileUrl: uploadResult.path,
     },
   });
+
+  await createActivityLog({
+    userId: uploaderId,
+    action: "MEETING_LOG_UPLOADED",
+    entityType: "Sprint",
+    entityId: sprint.id,
+    details: `Meeting Log "${title}" uploaded for Sprint ${sprint.number}`,
+  });
+
+  return meetingLog;
 }
 
 export async function getMeetingLogsBySprint(sprintId: string) {
@@ -55,9 +66,10 @@ export async function getMeetingLogsBySprint(sprintId: string) {
   });
 }
 
-export async function deleteMeetingLog(id: string) {
+export async function deleteMeetingLog(id: string, userId: string) {
   const meetingLog = await prisma.meetingLog.findUnique({
     where: { id },
+    include: { sprint: true },
   });
 
   if (!meetingLog) {
@@ -72,7 +84,15 @@ export async function deleteMeetingLog(id: string) {
   await fileService.deleteFile(publicId);
 
   // 2. Delete from DB
-  return prisma.meetingLog.delete({
+  await prisma.meetingLog.delete({
     where: { id },
+  });
+
+  await createActivityLog({
+    userId,
+    action: "MEETING_LOG_DELETED",
+    entityType: "Sprint",
+    entityId: meetingLog.sprintId,
+    details: `Meeting Log "${meetingLog.title}" deleted from Sprint ${meetingLog.sprint.number}`,
   });
 }

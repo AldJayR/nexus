@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { FastifyInstance } from 'fastify';
-import { getPrismaClient, NotFoundError, ValidationError } from '../../utils/database.js';
+import { getPrismaClient, NotFoundError, ValidationError, AuthenticationError } from '../../utils/database.js';
 import { LoginInput, InviteUserInput, ChangePasswordInput } from './auth.schema.js';
 import { Role } from '../../generated/client.js';
 import { emailService } from '../../services/email.service.js';
@@ -16,13 +16,13 @@ export async function login(input: LoginInput, app: FastifyInstance) {
   });
 
   if (!user) {
-    throw new ValidationError('Invalid email or password');
+    throw new AuthenticationError('Invalid email or password');
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
   if (!isPasswordValid) {
-    throw new ValidationError('Invalid email or password');
+    throw new AuthenticationError('Invalid email or password');
   }
 
   const token = app.jwt.sign({

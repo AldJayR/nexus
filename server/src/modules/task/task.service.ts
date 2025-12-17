@@ -1,5 +1,7 @@
 import { getPrismaClient, NotFoundError } from "../../utils/database.js";
 import { CreateTaskInput, UpdateTaskInput, UpdateTaskStatusInput, TaskQuery } from "./task.schema.js";
+import { createNotification } from "../notification/notification.service.js";
+import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
 
@@ -61,7 +63,7 @@ export async function getTaskById(id: string) {
   return task;
 }
 
-export async function createTask(input: CreateTaskInput) {
+export async function createTask(input: CreateTaskInput, creatorId: string) {
   // Verify sprint exists
   const sprint = await prisma.sprint.findUnique({
     where: { id: input.sprintId },
@@ -71,12 +73,32 @@ export async function createTask(input: CreateTaskInput) {
     throw new NotFoundError("Sprint", input.sprintId);
   }
 
-  return prisma.task.create({
+  const task = await prisma.task.create({
     data: input,
   });
+
+  // Activity Log
+  await createActivityLog({
+    userId: creatorId,
+    action: "TASK_CREATED",
+    entityType: "Task",
+    entityId: task.id,
+    details: `Task "${task.title}" created`,
+  });
+
+  // Notification
+  if (input.assigneeId && input.assigneeId !== creatorId) {
+    await createNotification({
+      userId: input.assigneeId,
+      message: `You have been assigned to task: ${task.title}`,
+      link: `/tasks/${task.id}`,
+    });
+  }
+
+  return task;
 }
 
-export async function updateTask(id: string, input: UpdateTaskInput) {
+export async function updateTask(id: string, input: UpdateTaskInput, userId: string) {
   const task = await prisma.task.findUnique({
     where: { id },
   });
@@ -85,10 +107,30 @@ export async function updateTask(id: string, input: UpdateTaskInput) {
     throw new NotFoundError("Task", id);
   }
 
-  return prisma.task.update({
+  const updatedTask = await prisma.task.update({
     where: { id },
     data: input,
   });
+
+  // Activity Log
+  await createActivityLog({
+    userId,
+    action: "TASK_UPDATED",
+    entityType: "Task",
+    entityId: task.id,
+    details: `Task "${task.title}" updated`,
+  });
+
+  // Notification if assignee changed
+  if (input.assigneeId && input.assigneeId !== task.assigneeId && input.assigneeId !== userId) {
+    await createNotification({
+      userId: input.assigneeId,
+      message: `You have been assigned to task: ${updatedTask.title}`,
+      link: `/tasks/${updatedTask.id}`,
+    });
+  }
+
+  return updatedTask;
 }
 
 export async function updateTaskStatus(id: string, userId: string, input: UpdateTaskStatusInput) {
@@ -100,7 +142,7 @@ export async function updateTaskStatus(id: string, userId: string, input: Update
     throw new NotFoundError("Task", id);
   }
 
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const updatedTask = await tx.task.update({
       where: { id },
       data: {
@@ -120,9 +162,29 @@ export async function updateTaskStatus(id: string, userId: string, input: Update
 
     return updatedTask;
   });
+
+  // Activity Log
+  await createActivityLog({
+    userId,
+    action: "TASK_STATUS_CHANGED",
+    entityType: "Task",
+    entityId: task.id,
+    details: `Task "${task.title}" status changed to ${input.status}`,
+  });
+
+  // Notification to assignee if someone else changed status
+  if (task.assigneeId && task.assigneeId !== userId) {
+    await createNotification({
+      userId: task.assigneeId,
+      message: `Task "${task.title}" status updated to ${input.status}`,
+      link: `/tasks/${task.id}`,
+    });
+  }
+
+  return result;
 }
 
-export async function deleteTask(id: string) {
+export async function deleteTask(id: string, userId: string) {
   const task = await prisma.task.findUnique({
     where: { id },
   });
@@ -131,15 +193,23 @@ export async function deleteTask(id: string) {
     throw new NotFoundError("Task", id);
   }
 
-  return prisma.task.update({
+  await prisma.task.update({
     where: { id },
     data: {
       deletedAt: new Date(),
     },
   });
+
+  await createActivityLog({
+    userId,
+    action: "TASK_DELETED",
+    entityType: "Task",
+    entityId: task.id,
+    details: `Task "${task.title}" deleted`,
+  });
 }
 
-export async function restoreTask(id: string) {
+export async function restoreTask(id: string, userId: string) {
   const task = await prisma.task.findUnique({
     where: { id },
   });
@@ -152,10 +222,20 @@ export async function restoreTask(id: string) {
     return task;
   }
 
-  return prisma.task.update({
+  const restoredTask = await prisma.task.update({
     where: { id },
     data: {
       deletedAt: null,
     },
   });
+
+  await createActivityLog({
+    userId,
+    action: "TASK_RESTORED",
+    entityType: "Task",
+    entityId: task.id,
+    details: `Task "${task.title}" restored`,
+  });
+
+  return restoredTask;
 }

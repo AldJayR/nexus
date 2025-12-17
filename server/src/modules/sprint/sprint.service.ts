@@ -1,6 +1,7 @@
 import { getPrismaClient, NotFoundError, ValidationError } from "../../utils/database.js";
 import { CreateSprintInput, UpdateSprintInput } from "./sprint.schema.js";
 import { TaskStatus } from "../../generated/client.js";
+import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
 
@@ -30,7 +31,7 @@ export async function getSprintById(id: string) {
   return sprint;
 }
 
-export async function createSprint(input: CreateSprintInput) {
+export async function createSprint(input: CreateSprintInput, userId: string) {
   let { projectId } = input;
 
   if (!projectId) {
@@ -48,16 +49,26 @@ export async function createSprint(input: CreateSprintInput) {
 
   const nextNumber = (lastSprint?.number ?? 0) + 1;
 
-  return prisma.sprint.create({
+  const sprint = await prisma.sprint.create({
     data: {
       ...input,
       projectId,
       number: nextNumber,
     },
   });
+
+  await createActivityLog({
+    userId,
+    action: "SPRINT_CREATED",
+    entityType: "Sprint",
+    entityId: sprint.id,
+    details: `Sprint ${sprint.number} created`,
+  });
+
+  return sprint;
 }
 
-export async function updateSprint(id: string, input: UpdateSprintInput) {
+export async function updateSprint(id: string, input: UpdateSprintInput, userId: string) {
   const sprint = await prisma.sprint.findUnique({
     where: { id },
   });
@@ -66,13 +77,23 @@ export async function updateSprint(id: string, input: UpdateSprintInput) {
     throw new NotFoundError("Sprint", id);
   }
 
-  return prisma.sprint.update({
+  const updatedSprint = await prisma.sprint.update({
     where: { id },
     data: input,
   });
+
+  await createActivityLog({
+    userId,
+    action: "SPRINT_UPDATED",
+    entityType: "Sprint",
+    entityId: sprint.id,
+    details: `Sprint ${sprint.number} updated`,
+  });
+
+  return updatedSprint;
 }
 
-export async function deleteSprint(id: string) {
+export async function deleteSprint(id: string, userId: string) {
   const sprint = await prisma.sprint.findUnique({
     where: { id },
   });
@@ -81,11 +102,19 @@ export async function deleteSprint(id: string) {
     throw new NotFoundError("Sprint", id);
   }
 
-  return prisma.sprint.update({
+  await prisma.sprint.update({
     where: { id },
     data: {
       deletedAt: new Date(),
     },
+  });
+
+  await createActivityLog({
+    userId,
+    action: "SPRINT_DELETED",
+    entityType: "Sprint",
+    entityId: sprint.id,
+    details: `Sprint ${sprint.number} deleted`,
   });
 }
 

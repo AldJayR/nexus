@@ -1,6 +1,7 @@
 import { getPrismaClient, NotFoundError } from "../../utils/database.js";
 import { UpdateUserInput } from "./user.schema.js";
 import { TaskStatus } from "../../generated/client.js";
+import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
 
@@ -27,7 +28,7 @@ export async function getUserById(id: string) {
   return user;
 }
 
-export async function updateUser(id: string, input: UpdateUserInput) {
+export async function updateUser(id: string, input: UpdateUserInput, actorId: string) {
   const user = await prisma.user.findUnique({
     where: { id },
   });
@@ -36,13 +37,23 @@ export async function updateUser(id: string, input: UpdateUserInput) {
     throw new NotFoundError("User", id);
   }
 
-  return prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: { id },
     data: input,
   });
+
+  await createActivityLog({
+    userId: actorId,
+    action: "USER_UPDATED",
+    entityType: "User",
+    entityId: user.id,
+    details: `User "${user.name}" updated`,
+  });
+
+  return updatedUser;
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUser(id: string, actorId: string) {
   const user = await prisma.user.findUnique({
     where: { id },
   });
@@ -51,11 +62,19 @@ export async function deleteUser(id: string) {
     throw new NotFoundError("User", id);
   }
 
-  return prisma.user.update({
+  await prisma.user.update({
     where: { id },
     data: {
       deletedAt: new Date(),
     },
+  });
+
+  await createActivityLog({
+    userId: actorId,
+    action: "USER_DELETED",
+    entityType: "User",
+    entityId: user.id,
+    details: `User "${user.name}" deleted`,
   });
 }
 

@@ -83,23 +83,40 @@ export async function checkDatabaseHealth(): Promise<boolean> {
  * Custom error classes for database operations
  */
 export class DatabaseError extends Error {
-  constructor(message: string, public originalError?: unknown) {
+  public statusCode: number;
+  
+  constructor(message: string, public originalError?: unknown, statusCode = 500) {
     super(message);
     this.name = 'DatabaseError';
+    this.statusCode = statusCode;
   }
 }
 
 export class NotFoundError extends DatabaseError {
   constructor(entity: string, id: string) {
-    super(`${entity} with ID ${id} not found`);
+    super(`${entity} with ID ${id} not found`, undefined, 404);
     this.name = 'NotFoundError';
   }
 }
 
 export class ValidationError extends DatabaseError {
   constructor(message: string) {
-    super(message);
+    super(message, undefined, 400);
     this.name = 'ValidationError';
+  }
+}
+
+export class AuthenticationError extends DatabaseError {
+  constructor(message: string = 'Authentication failed') {
+    super(message, undefined, 401);
+    this.name = 'AuthenticationError';
+  }
+}
+
+export class AuthorizationError extends DatabaseError {
+  constructor(message: string = 'Access denied') {
+    super(message, undefined, 403);
+    this.name = 'AuthorizationError';
   }
 }
 
