@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nexus Project Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13a4ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-200">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- SideNavBar -->
+<div class="hidden md:flex flex-col w-72 bg-white dark:bg-[#15232d] border-r border-slate-200 dark:border-slate-800 h-full">
+<div class="flex flex-col h-full p-4 justify-between">
+<div class="flex flex-col gap-8">
+<div class="flex gap-3 items-center px-2">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10" data-alt="Abstract blue geometric logo for Nexus" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDcbO_rfP_K_GteZO7X-dMAE267s7LTfLpfFTKLOeY43w4h32qQPVabSkANNnQ3Wsc5IE14J-81PsOnYC5EhTVqoi1KIOZ1WWSJySctEqFDMJ72Qy5wROlPIaHDbKAX4svTVARw1IEYVQCuvrOXK6m8yiASQiG4X_tAMMJC-TTl4DkLG1qUTLnQYdaotFxJ2ayvevxHoR0rj9d8UoimE8hV9Mv84TZzc0fCKhHbWUGMSjlRq1zrdmpHn73QP84XmygoLIRsTnEMaw");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Nexus</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Student Capstone</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary/10 text-primary" href="#">
+<span class="material-symbols-outlined text-primary">dashboard</span>
+<p class="text-primary text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">checklist</span>
+<p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white text-sm font-medium leading-normal">Tasks</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">calendar_month</span>
+<p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white text-sm font-medium leading-normal">Calendar</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">group</span>
+<p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white text-sm font-medium leading-normal">Team Settings</p>
+</a>
+</div>
+</div>
+<div class="px-3 py-2">
+<div class="p-4 rounded-xl bg-linear-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-transparent border border-primary/10">
+<p class="text-xs font-bold text-primary mb-1">NEXT DEADLINE</p>
+<p class="text-sm font-medium text-slate-800 dark:text-slate-200">Beta Release</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">4 days remaining</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<div class="flex flex-col flex-1 h-full overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-[#15232d] px-6 py-3 shrink-0">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white md:hidden">
+<span class="material-symbols-outlined cursor-pointer">menu</span>
+</div>
+<div class="hidden md:flex items-center gap-2">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight">Project Dashboard</h2>
+</div>
+<div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
+<label class="hidden md:flex flex-col min-w-40 h-10 max-w-64 relative">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-100 dark:bg-slate-800 focus-within:ring-2 focus-within:ring-primary/50 transition-all">
+<div class="text-slate-400 dark:text-slate-500 flex border-none items-center justify-center pl-4 rounded-l-lg">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 bg-transparent h-full placeholder:text-slate-400 dark:placeholder:text-slate-500 px-3 text-sm font-normal leading-normal border-none focus:ring-0" placeholder="Search tasks, sprints..."/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg size-10 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-[#15232d]"></span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-10 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-white dark:border-slate-700 shadow-sm" data-alt="Portrait of a smiling student user" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBzA8-B3IamDEtON_EjkA9pj8KfS9VgQqIrfN4aHMIp6oC64DFlIUNUlGJ1SLcTi6nKdFLRhYVWESHnNJRluvPk-rrQ7xHa45ejTDs5QubB9iuI2T5-f36-LSJ1MthgyxV5OnWT2rtc1jEbFcnUZ_qbwYy6HPxFof6K48aJPAr0ItckeARkU3Jj2syaZ1dEpumXLVTbEaCDSx2KsPTeFQl2RwB1OvTLbw4AYi9BQN90FU6UniQy_--ADFgHXAxuHz4dAmlxvxoiPg");'></div>
+</div>
+</header>
+<!-- Scrollable Page Content -->
+<main class="flex-1 overflow-y-auto p-4 md:p-8 lg:px-12">
+<div class="max-w-300 mx-auto flex flex-col gap-8">
+<!-- Page Heading & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div class="flex flex-col gap-2">
+<h1 class="text-slate-900 dark:text-white text-3xl md:text-4xl font-black tracking-tight">Team Alpha</h1>
+<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-lg">school</span>
+<span class="text-base font-normal">Capstone 2024</span>
+<span class="mx-2 text-slate-300 dark:text-slate-700">•</span>
+<span class="text-primary font-medium">Sprint 4 Active</span>
+</div>
+</div>
+<!-- Button Group -->
+<div class="flex gap-3 flex-wrap">
+<button class="flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-sm shadow-blue-500/20 transition-all">
+<span class="material-symbols-outlined text-lg mr-2">add_task</span>
+<span class="truncate">Create Task</span>
+</button>
+<button class="flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-750 text-sm font-bold transition-all">
+<span class="material-symbols-outlined text-lg mr-2">timer</span>
+<span class="truncate">Log Hours</span>
+</button>
+<button class="flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/30 text-sm font-bold transition-all">
+<span class="material-symbols-outlined text-lg mr-2">report_problem</span>
+<span class="truncate">Blocker</span>
+</button>
+</div>
+</div>
+<!-- Top Metrics: Project Completion -->
+<div class="w-full bg-white dark:bg-[#15232d] rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider mb-1">Total Project Completion</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-4xl font-bold text-slate-900 dark:text-white">65%</h3>
+<span class="text-emerald-500 font-medium text-sm flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                                            +5% this week
+                                        </span>
+</div>
+</div>
+<div class="text-right hidden sm:block">
+<p class="text-slate-900 dark:text-white font-medium">On Track</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Target: 70% by Friday</p>
+</div>
+</div>
+<div class="relative pt-2">
+<div class="flex mb-2 items-center justify-between text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+<span>Start</span>
+<span>Deadline</span>
+</div>
+<div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-slate-100 dark:bg-slate-700">
+<div class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary" style="width: 65%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- WSF Phase Trackers Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Waterfall (Planning) -->
+<div class="bg-white dark:bg-[#15232d] rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col gap-4 shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl text-emerald-500">water_drop</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined">design_services</span>
+</div>
+<div>
+<h3 class="text-slate-900 dark:text-white font-bold text-lg">Waterfall</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Planning &amp; Requirements</p>
+</div>
+</div>
+<div class="mt-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Completed</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">100%</span>
+</div>
+<div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 w-full">
+<div class="h-full rounded-full bg-emerald-500 w-full"></div>
+</div>
+</div>
+<div class="mt-auto pt-2 border-t border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 dark:text-slate-400">All requirements signed off.</p>
+</div>
+</div>
+<!-- Scrum (Development) -->
+<div class="bg-white dark:bg-[#15232d] rounded-xl border border-primary/20 p-5 flex flex-col gap-4 shadow-sm shadow-blue-500/5 relative overflow-hidden ring-1 ring-primary/20">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-8xl text-primary">autorenew</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-primary/10 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">code</span>
+</div>
+<div>
+<h3 class="text-slate-900 dark:text-white font-bold text-lg">Scrum</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Iterative Development</p>
+</div>
+</div>
+<div class="mt-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm font-semibold text-primary">Active Phase</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">70%</span>
+</div>
+<div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 w-full">
+<div class="h-full rounded-full bg-primary w-[70%]"></div>
+</div>
+</div>
+<div class="mt-auto pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+<p class="text-xs text-slate-500 dark:text-slate-400">Sprint 4 in progress</p>
+<span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+</div>
+<!-- Fall (Deployment) -->
+<div class="bg-white dark:bg-[#15232d] rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col gap-4 shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl text-slate-400">flight_takeoff</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-slate-100 dark:bg-slate-800 p-2 rounded-lg text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined">rocket_launch</span>
+</div>
+<div>
+<h3 class="text-slate-900 dark:text-white font-bold text-lg">Fall</h3>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Testing &amp; Deployment</p>
+</div>
+</div>
+<div class="mt-2">
+<div class="flex justify-between items-center mb-1">
+<span class="text-sm font-semibold text-slate-500 dark:text-slate-400">Pending</span>
+<span class="text-sm font-bold text-slate-900 dark:text-white">10%</span>
+</div>
+<div class="h-2 rounded-full bg-slate-100 dark:bg-slate-700 w-full">
+<div class="h-full rounded-full bg-slate-400 dark:bg-slate-500 w-[10%]"></div>
+</div>
+</div>
+<div class="mt-auto pt-2 border-t border-slate-100 dark:border-slate-800">
+<p class="text-xs text-slate-500 dark:text-slate-400">Final report draft started.</p>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Sprint Health & Activity -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-8">
+<!-- Sprint Health Widget -->
+<div class="bg-white dark:bg-[#15232d] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+<div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+<h3 class="text-slate-900 dark:text-white font-bold text-lg">Sprint Health</h3>
+<span class="px-2 py-1 rounded bg-primary/10 text-primary text-xs font-bold uppercase">Sprint 4</span>
+</div>
+<div class="p-6 flex flex-col gap-6">
+<div class="flex justify-around items-center text-center">
+<div class="flex flex-col gap-1">
+<span class="text-3xl font-black text-slate-900 dark:text-white">12</span>
+<span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Tasks Done</span>
+</div>
+<div class="w-px h-12 bg-slate-100 dark:bg-slate-700"></div>
+<div class="flex flex-col gap-1">
+<span class="text-3xl font-black text-slate-400 dark:text-slate-500">8</span>
+<span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Remaining</span>
+</div>
+<div class="w-px h-12 bg-slate-100 dark:bg-slate-700"></div>
+<div class="flex flex-col gap-1">
+<span class="text-3xl font-black text-rose-500">1</span>
+<span class="text-xs text-rose-500 dark:text-rose-400 uppercase tracking-wide">Blocked</span>
+</div>
+</div>
+<!-- Mini Burn-down Visualization (Abstract) -->
+<div class="h-32 w-full mt-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden">
+<div class="absolute inset-0 flex items-end px-4 pb-0 justify-between gap-1">
+<!-- Bars representing daily tasks -->
+<div class="w-full bg-primary/20 rounded-t-sm h-[80%]"></div>
+<div class="w-full bg-primary/30 rounded-t-sm h-[70%]"></div>
+<div class="w-full bg-primary/40 rounded-t-sm h-[65%]"></div>
+<div class="w-full bg-primary/60 rounded-t-sm h-[40%]"></div>
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-t-sm h-[30%]"></div> <!-- Future -->
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-t-sm h-[20%]"></div> <!-- Future -->
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-t-sm h-[10%]"></div> <!-- Future -->
+</div>
+<!-- Trend Line -->
+<svg class="absolute inset-0 h-full w-full" preserveaspectratio="none">
+<path class="opacity-80" d="M0,20 L100,40 L200,50 L300,90 L400,100" fill="none" stroke="#13a4ec" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Activity Feed -->
+<div class="bg-white dark:bg-[#15232d] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+<div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+<h3 class="text-slate-900 dark:text-white font-bold text-lg">Activity Feed</h3>
+<button class="text-sm text-primary font-medium hover:text-primary/80">View All</button>
+</div>
+<div class="flex flex-col">
+<!-- Item 1: Blocker (Urgent) -->
+<div class="flex gap-4 p-4 border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="shrink-0 size-10 rounded-full bg-rose-100 dark:bg-rose-900/20 flex items-center justify-center text-rose-600 dark:text-rose-400">
+<span class="material-symbols-outlined text-xl">block</span>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<p class="text-sm text-slate-900 dark:text-white font-medium leading-tight">Database connection blocked by firewall rules</p>
+<p class="text-xs text-rose-500 font-medium">High Priority • 20 min ago</p>
+</div>
+<button class="text-slate-400 hover:text-primary">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<!-- Item 2: Mention -->
+<div class="flex gap-4 p-4 border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="shrink-0 size-10 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined text-xl">alternate_email</span>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<p class="text-sm text-slate-900 dark:text-white font-medium leading-tight"><span class="font-bold">@Sarah</span> commented on Wireframes</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Discussion • 1h ago</p>
+</div>
+</div>
+<!-- Item 3: Assigned Task -->
+<div class="flex gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<div class="shrink-0 size-10 rounded-full bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+<span class="material-symbols-outlined text-xl">assignment_turned_in</span>
+</div>
+<div class="flex flex-col flex-1 gap-1">
+<p class="text-sm text-slate-900 dark:text-white font-medium leading-tight">Review API Documentation</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Assigned to you • 3h ago</p>
+</div>
+<button class="px-3 py-1 rounded bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/20 transition-colors">
+                                        Start
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>
