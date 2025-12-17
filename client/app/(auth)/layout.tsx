@@ -1,20 +1,38 @@
-export default function AuthLayout({
-  children,
+import { unauthorized } from "next/navigation";
+import type { ReactNode } from "react";
+import { type AppRole, auth } from "@/auth";
+
+type UserRole = AppRole;
+
+export default async function AuthLayout({
+  children: _children,
   member,
-  teamLead,
+  "team-lead": teamLead,
   adviser,
 }: {
-  children: React.ReactNode;
-  member: React.ReactNode;
-  teamLead: React.ReactNode;
-  adviser: React.ReactNode;
+  children: ReactNode;
+  member: ReactNode;
+  "team-lead": ReactNode;
+  adviser: ReactNode;
 }) {
-  return (
-    <>
-      {children}
-      {member}
-      {teamLead}
-      {adviser}
-    </>
-  );
+  const session = await auth();
+
+  if (!session?.user) {
+    unauthorized();
+  }
+
+  const currentRole: UserRole = session.user.role;
+
+  switch (currentRole) {
+    case "member":
+      return <>{member}</>;
+    case "teamLead":
+      return <>{teamLead}</>;
+    case "adviser":
+      return <>{adviser}</>;
+    default: {
+      const _exhaustive: never = currentRole;
+      return _exhaustive;
+    }
+  }
 }

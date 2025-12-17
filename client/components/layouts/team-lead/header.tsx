@@ -31,7 +31,7 @@ export function AppHeader({ title }: { title?: string }) {
       <div className="flex flex-1 items-center justify-end gap-3 px-4 md:gap-6">
         <div className="hidden w-full max-w-xs items-center gap-2 md:flex">
           <div className="relative w-full">
-            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input aria-label="Search" className="pl-9" placeholder="Search" />
           </div>
         </div>
@@ -43,11 +43,11 @@ export function AppHeader({ title }: { title?: string }) {
             size="icon"
             variant="ghost"
           >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive ring-2 ring-background" />
+            <Bell className="size-4" />
+            <span className="absolute top-2 right-2 size-2 rounded-full bg-destructive ring-2 ring-background" />
           </Button>
           <Button aria-label="Settings" size="icon" variant="ghost">
-            <Settings className="h-4 w-4" />
+            <Settings className="size-4" />
           </Button>
         </div>
 
