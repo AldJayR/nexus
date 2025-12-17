@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { loginAction } from "@/app/login/actions";
+import { loginAction } from "@/actions/login";
 import { Button } from "@/components/ui/button";
 import {
   Card,

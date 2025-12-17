@@ -1,8 +1,7 @@
 "use client";
 
-import { Bell, Search, Settings } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -36,24 +35,15 @@ export function AppHeader({ title }: { title?: string }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            aria-label="Notifications"
-            className="relative"
-            size="icon"
-            variant="ghost"
-          >
-            <Bell className="size-4" />
-            <span className="absolute top-2 right-2 size-2 rounded-full bg-destructive ring-2 ring-background" />
-          </Button>
-          <Button aria-label="Settings" size="icon" variant="ghost">
-            <Settings className="size-4" />
-          </Button>
-        </div>
-
-        <Avatar>
-          <AvatarFallback>AU</AvatarFallback>
-        </Avatar>
+        <Button
+          aria-label="Notifications"
+          className="relative"
+          size="icon"
+          variant="ghost"
+        >
+          <Bell className="size-4" />
+          <span className="absolute top-2 right-2 size-2 rounded-full bg-destructive ring-2 ring-background" />
+        </Button>
       </div>
     </header>
   );
