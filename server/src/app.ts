@@ -13,6 +13,8 @@ import { deliverableRoutes } from './modules/deliverable/deliverable.routes.js';
 import { sprintRoutes } from './modules/sprint/sprint.routes.js';
 import { taskRoutes } from './modules/task/task.routes.js';
 import { commentRoutes } from './modules/comment/comment.routes.js';
+import { evidenceRoutes } from './modules/evidence/evidence.routes.js';
+import { meetingLogRoutes } from './modules/meeting-log/meeting-log.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = fastify({
@@ -109,6 +111,12 @@ export async function buildApp(): Promise<FastifyInstance> {
 
     // Comment Routes
     api.register(commentRoutes, { prefix: '/comments' });
+
+    // Evidence Routes
+    api.register(evidenceRoutes, { prefix: '/evidence' });
+
+    // Meeting Log Routes
+    api.register(meetingLogRoutes, { prefix: '/meeting-logs' });
   }, { prefix: '/api/v1' });
 
   return app;
