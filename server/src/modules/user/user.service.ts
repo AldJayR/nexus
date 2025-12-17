@@ -78,6 +78,39 @@ export async function deleteUser(id: string, actorId: string) {
   });
 }
 
+export async function restoreUser(id: string, actorId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!user) {
+    throw new NotFoundError("User", id);
+  }
+  
+  if (user.deletedAt === null) {
+      // User is not soft-deleted, nothing to restore. Could throw an error or just return.
+      // For now, let's just return the user if not deleted.
+      return user;
+  }
+
+  const restoredUser = await prisma.user.update({
+    where: { id },
+    data: {
+      deletedAt: null,
+    },
+  });
+
+  await createActivityLog({
+    userId: actorId,
+    action: "USER_RESTORED",
+    entityType: "User",
+    entityId: user.id,
+    details: `User "${user.name}" restored`,
+  });
+
+  return restoredUser;
+}
+
 export async function getUserContributions(id: string) {
   const user = await prisma.user.findUnique({
     where: { id },

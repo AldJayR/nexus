@@ -113,7 +113,9 @@ export async function updateComment(id: string, userId: string, input: UpdateCom
   }
 
   if (comment.authorId !== userId) {
-    throw new ValidationError("You can only update your own comments");
+    // Use AuthorizationError for forbidden action (403)
+    const { AuthorizationError } = await import("../../utils/database.js");
+    throw new AuthorizationError("You can only update your own comments");
   }
 
   return prisma.comment.update({

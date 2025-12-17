@@ -59,6 +59,8 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // Global Error Handler
   app.setErrorHandler((error: any, request, reply) => {
+    app.log.error({ error, message: error.message, stack: error.stack, code: error.code }, 'Error caught by global error handler');
+
     if (error instanceof ZodError) {
       return reply.status(400).send({
         success: false,
@@ -68,8 +70,16 @@ export async function buildApp(): Promise<FastifyInstance> {
       });
     }
 
-    app.log.error(error);
-
+    // Handle Fastify multipart errors specifically
+    if (error.code === 'FST_FMP_PARTS_LIMIT' || error.code === 'FST_FMP_FILE_SIZE_LIMIT' || error.code === 'FST_FMP_TOO_MANY_BYTES' || error.code === 'FST_REQ_FILE_TOO_LARGE') {
+        return reply.status(413).send({
+            success: false,
+            message: 'File payload too large',
+            statusCode: 413,
+            code: error.code,
+        });
+    }
+    
     const statusCode = error.statusCode || 500;
     const message = error.message || 'Internal Server Error';
 

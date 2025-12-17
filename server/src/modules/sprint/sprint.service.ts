@@ -47,13 +47,15 @@ export async function createSprint(input: CreateSprintInput, userId: string) {
     orderBy: { number: 'desc' },
   });
 
-  const nextNumber = (lastSprint?.number ?? 0) + 1;
+  const nextNumber = input.number ?? (lastSprint?.number ?? 0) + 1;
 
   const sprint = await prisma.sprint.create({
     data: {
-      ...input,
       projectId,
       number: nextNumber,
+      goal: input.goal,
+      startDate: input.startDate,
+      endDate: input.endDate,
     },
   });
 
@@ -116,6 +118,37 @@ export async function deleteSprint(id: string, userId: string) {
     entityId: sprint.id,
     details: `Sprint ${sprint.number} deleted`,
   });
+}
+
+export async function restoreSprint(id: string, userId: string) {
+  const sprint = await prisma.sprint.findUnique({
+    where: { id },
+  });
+
+  if (!sprint) {
+    throw new NotFoundError("Sprint", id);
+  }
+
+  if (sprint.deletedAt === null) {
+    return sprint;
+  }
+
+  const restoredSprint = await prisma.sprint.update({
+    where: { id },
+    data: {
+      deletedAt: null,
+    },
+  });
+
+  await createActivityLog({
+    userId,
+    action: "SPRINT_RESTORED",
+    entityType: "Sprint",
+    entityId: sprint.id,
+    details: `Sprint ${sprint.number} restored`,
+  });
+
+  return restoredSprint;
 }
 
 export async function getSprintProgress(id: string) {

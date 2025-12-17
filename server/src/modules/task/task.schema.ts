@@ -6,14 +6,13 @@ export const createTaskSchema = z.object({
   assigneeId: z.string().uuid().optional(),
   title: z.string().min(1),
   description: z.string().optional(),
-  priority: z.enum(["High", "Medium", "Low"]).optional(),
+  status: z.nativeEnum(TaskStatus).optional(),
 });
 
 export const updateTaskSchema = z.object({
   assigneeId: z.string().uuid().optional().nullable(),
   title: z.string().min(1).optional(),
   description: z.string().optional(),
-  priority: z.enum(["High", "Medium", "Low"]).optional(),
   status: z.nativeEnum(TaskStatus).optional(),
 });
 
@@ -37,7 +36,6 @@ export const taskResponseSchema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   status: z.nativeEnum(TaskStatus),
-  priority: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable().optional(),

@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { getAllUsers, getUserById, updateUser, deleteUser, getUserContributions } from "./user.service.js";
+import { getAllUsers, getUserById, updateUser, deleteUser, getUserContributions, restoreUser } from "./user.service.js";
 import { UpdateUserInput } from "./user.schema.js";
 import { Role } from "../../generated/client.js";
 
@@ -51,4 +51,12 @@ export async function getUserContributionsHandler(
 ) {
   const contributions = await getUserContributions(request.params.id);
   return reply.code(200).send(contributions);
+}
+
+export async function restoreUserHandler(
+  request: FastifyRequest<{ Params: { id: string } }>,
+  reply: FastifyReply
+) {
+  const user = await restoreUser(request.params.id, request.user!.id);
+  return reply.code(200).send(user);
 }

@@ -12,6 +12,18 @@ export class FileService {
   }
 
   async saveFile(file: MultipartFile): Promise<{ filename: string; path: string; mimetype: string; size: number }> {
+    const allowedMimeTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+    ];
+
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new Error(`Unsupported file type: ${file.mimetype}. Only PDF, JPEG, PNG, GIF, and WEBP are allowed.`);
+    }
+
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {

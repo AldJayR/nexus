@@ -6,6 +6,7 @@ import {
   updateUserHandler,
   deleteUserHandler,
   getUserContributionsHandler,
+  restoreUserHandler,
 } from "./user.controller.js";
 import { updateUserSchema, userResponseSchema, userContributionSchema } from "./user.schema.js";
 import { requireRole } from "../../utils/rbac.js";
@@ -70,5 +71,16 @@ export async function userRoutes(app: FastifyInstance) {
         },
       },
     }, getUserContributionsHandler as any);
+
+    // Restore user (Team Lead only)
+    protectedServer.post("/:id/restore", {
+      schema: {
+        params: z.object({ id: z.string() }),
+        response: {
+          200: userResponseSchema,
+        },
+      },
+      preHandler: requireRole([Role.TEAM_LEAD]),
+    }, restoreUserHandler as any);
   });
 }

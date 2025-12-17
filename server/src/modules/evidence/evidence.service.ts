@@ -50,7 +50,10 @@ export async function createEvidence(input: CreateEvidenceInput) {
 
 export async function getEvidenceByDeliverable(deliverableId: string) {
   return prisma.evidence.findMany({
-    where: { deliverableId },
+    where: { 
+      deliverableId,
+      deletedAt: null
+    },
     include: {
       uploader: {
         select: {
@@ -74,27 +77,10 @@ export async function deleteEvidence(id: string, userId: string) {
     throw new NotFoundError("Evidence", id);
   }
 
-  // Optional: Check if user is allowed to delete (e.g., uploader or admin)
-  // For now, we assume the controller handles role checks, but we could add ownership check here.
-
-  // 1. Delete from Cloudinary
-  // We need to extract the public_id from the URL or store it. 
-  // Since we didn't store it explicitly in a separate column, we can try to extract it.
-  // However, for now, we will skip deletion from Cloudinary if we can't easily get the ID, 
-  // or we can assume the fileUrl contains it.
-  // A better approach would be to add a publicId column to the schema, but we are working with existing schema.
-  
-  // Attempt to extract public_id from Cloudinary URL
-  // Example: https://res.cloudinary.com/demo/image/upload/v1570979139/nexus_uploads/sample.jpg
-  const urlParts = evidence.fileUrl.split('/');
-  const filenameWithExt = urlParts[urlParts.length - 1];
-  const publicId = `nexus_uploads/${filenameWithExt.split('.')[0]}`; // Assuming folder is nexus_uploads
-
-  await fileService.deleteFile(publicId);
-
-  // 2. Delete from DB
-  await prisma.evidence.delete({
+  // Soft Delete in DB
+  await prisma.evidence.update({
     where: { id },
+    data: { deletedAt: new Date() },
   });
 
   await createActivityLog({
@@ -104,4 +90,36 @@ export async function deleteEvidence(id: string, userId: string) {
     entityId: evidence.deliverableId,
     details: `Evidence "${evidence.fileName}" deleted from deliverable "${evidence.deliverable.title}"`,
   });
+}
+
+export async function restoreEvidence(id: string, userId: string) {
+  const evidence = await prisma.evidence.findUnique({
+    where: { id },
+    include: { deliverable: true },
+  });
+
+  if (!evidence) {
+    throw new NotFoundError("Evidence", id);
+  }
+
+  if (evidence.deletedAt === null) {
+    return evidence;
+  }
+
+  const restoredEvidence = await prisma.evidence.update({
+    where: { id },
+    data: {
+      deletedAt: null,
+    },
+  });
+
+  await createActivityLog({
+    userId,
+    action: "EVIDENCE_RESTORED",
+    entityType: "Deliverable",
+    entityId: evidence.deliverableId,
+    details: `Evidence "${evidence.fileName}" restored to deliverable "${evidence.deliverable.title}"`,
+  });
+
+  return restoredEvidence;
 }

@@ -8,37 +8,42 @@ import { z } from "zod";
 export async function meetingLogRoutes(app: FastifyInstance) {
   const server = app.withTypeProvider<ZodTypeProvider>();
 
-  server.post(
-    "/",
-    {
-      preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
-    },
-    createMeetingLogHandler as any
-  );
+  app.register(async (protectedRoutes) => {
+    const protectedServer = protectedRoutes.withTypeProvider<ZodTypeProvider>();
+    protectedRoutes.addHook("onRequest", app.authenticate);
 
-  server.get(
-    "/sprint/:sprintId",
-    {
-      preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
-      schema: {
-        params: z.object({
-          sprintId: z.string().uuid(),
-        }),
+    protectedServer.post(
+      "/",
+      {
+        preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
       },
-    },
-    getMeetingLogsBySprintHandler as any
-  );
+      createMeetingLogHandler as any
+    );
 
-  server.delete(
-    "/:id",
-    {
-      preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
-      schema: {
-        params: z.object({
-          id: z.string().uuid(),
-        }),
+    protectedServer.get(
+      "/sprint/:sprintId",
+      {
+        preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
+        schema: {
+          params: z.object({
+            sprintId: z.string().uuid(),
+          }),
+        },
       },
-    },
-    deleteMeetingLogHandler as any
-  );
+      getMeetingLogsBySprintHandler as any
+    );
+
+    protectedServer.delete(
+      "/:id",
+      {
+        preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
+        schema: {
+          params: z.object({
+            id: z.string().uuid(),
+          }),
+        },
+      },
+      deleteMeetingLogHandler as any
+    );
+  });
 }

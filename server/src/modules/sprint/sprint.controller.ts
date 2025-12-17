@@ -5,6 +5,7 @@ import {
   createSprint,
   updateSprint,
   deleteSprint,
+  restoreSprint,
   getSprintProgress,
 } from "./sprint.service.js";
 import { CreateSprintInput, UpdateSprintInput } from "./sprint.schema.js";
@@ -44,6 +45,14 @@ export async function deleteSprintHandler(
 ) {
   await deleteSprint(request.params.id, request.user!.id);
   return reply.code(204).send();
+}
+
+export async function restoreSprintHandler(
+  request: FastifyRequest<{ Params: { id: string } }>,
+  reply: FastifyReply
+) {
+  const sprint = await restoreSprint(request.params.id, request.user!.id);
+  return reply.code(200).send(sprint);
 }
 
 export async function getSprintProgressHandler(

@@ -6,6 +6,7 @@ import {
   createSprintHandler,
   updateSprintHandler,
   deleteSprintHandler,
+  restoreSprintHandler,
   getSprintProgressHandler,
 } from "./sprint.controller.js";
 import {
@@ -77,6 +78,17 @@ export async function sprintRoutes(app: FastifyInstance) {
       },
       preHandler: requireRole([Role.TEAM_LEAD]),
     }, deleteSprintHandler as any);
+
+    // Restore sprint (Team Lead only)
+    protectedServer.post("/:id/restore", {
+      schema: {
+        params: z.object({ id: z.string() }),
+        response: {
+          200: sprintResponseSchema,
+        },
+      },
+      preHandler: requireRole([Role.TEAM_LEAD]),
+    }, restoreSprintHandler as any);
 
     // Get sprint progress
     protectedServer.get("/:id/progress", {

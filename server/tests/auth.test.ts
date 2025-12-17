@@ -66,7 +66,7 @@ describe('Authentication', () => {
         })
         .expect(401);
 
-      expect(response.body).toHaveProperty('message', 'Invalid email or password');
+      expect(response.body).toHaveProperty('error', 'Invalid email or password');
     });
 
     it('should fail with non-existent user', async () => {
@@ -78,7 +78,7 @@ describe('Authentication', () => {
         })
         .expect(401);
 
-      expect(response.body).toHaveProperty('message', 'Invalid email or password');
+      expect(response.body).toHaveProperty('error', 'Invalid email or password');
     });
   });
 });

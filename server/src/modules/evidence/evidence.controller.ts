@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createEvidence, getEvidenceByDeliverable, deleteEvidence } from "./evidence.service.js";
+import { createEvidence, getEvidenceByDeliverable, deleteEvidence, restoreEvidence } from "./evidence.service.js";
 import { createEvidenceSchema } from "./evidence.schema.js";
 
 export async function createEvidenceHandler(request: FastifyRequest, reply: FastifyReply) {
@@ -45,4 +45,10 @@ export async function deleteEvidenceHandler(request: FastifyRequest<{ Params: { 
   const { id } = request.params;
   await deleteEvidence(id, request.user!.id);
   return reply.code(204).send();
+}
+
+export async function restoreEvidenceHandler(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+  const { id } = request.params;
+  const evidence = await restoreEvidence(id, request.user!.id);
+  return reply.code(200).send(evidence);
 }
