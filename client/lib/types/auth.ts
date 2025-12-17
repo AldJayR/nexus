@@ -1,38 +1,44 @@
-export enum UserRole {
-  MEMBER = "MEMBER",
-  TEAM_LEAD = "TEAM_LEAD",
-  ADVISER = "ADVISER",
-}
+import type { User } from "./models";
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: UserRole;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface LoginResponse {
-  user: User;
+export type LoginResponse = {
   token: string;
-}
+  user: User;
+};
 
-export interface LoginInput {
+export type LoginInput = {
   email: string;
   password: string;
-}
+};
 
-export interface AuthState {
+export type InviteUserInput = {
+  email: string;
+  name: string;
+  role?: "MEMBER" | "TEAM_LEAD" | "ADVISER";
+};
+
+export type InviteUserResponse = {
+  message: string;
+  credentials?: {
+    email: string;
+    password: string;
+  };
+};
+
+export type ChangePasswordInput = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+export type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-}
+};
 
-export interface ServerActionResponse<T = any> {
+export type ServerActionResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: string;
   fieldErrors?: Record<string, string[]>;
-}
+};

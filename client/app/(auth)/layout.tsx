@@ -1,21 +1,20 @@
-import type { ReactNode } from "react";
-
-import { AppHeader } from "@/components/layouts/app-header";
-import { AppSidebar } from "@/components/layouts/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
-export default function AuthenticatedLayout({
+export default function AuthLayout({
   children,
+  member,
+  teamLead,
+  adviser,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
+  member: React.ReactNode;
+  teamLead: React.ReactNode;
+  adviser: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <AppHeader title="Nexus" />
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      {children}
+      {member}
+      {teamLead}
+      {adviser}
+    </>
   );
 }
