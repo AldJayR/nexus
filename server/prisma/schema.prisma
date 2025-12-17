@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output = "../src/generated"
 }
 
 datasource db {
@@ -98,6 +98,9 @@ model Phase {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([type])
 }
 
 // 3. Deliverables
@@ -119,6 +122,10 @@ model Deliverable {
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([phaseId])
+  @@index([status])
+  @@index([deletedAt])
 }
 
 // 4. Sprints
@@ -140,6 +147,9 @@ model Sprint {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([deletedAt])
 }
 
 // 5. Tasks
@@ -162,6 +172,11 @@ model Task {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([sprintId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([deletedAt])
 }
 
 // --------------------------------------
@@ -185,6 +200,10 @@ model Evidence {
   deletedAt     DateTime?
 
   createdAt     DateTime @default(now())
+
+  @@index([deliverableId])
+  @@index([uploaderId])
+  @@index([deletedAt])
 }
 
 // For Meeting Minutes (PDF)
@@ -203,6 +222,10 @@ model MeetingLog {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([sprintId])
+  @@index([uploaderId])
+  @@index([date])
 }
 
 model Comment {
@@ -221,6 +244,10 @@ model Comment {
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([taskId])
+  @@index([deliverableId])
 }
 
 // --------------------------------------
@@ -238,6 +265,10 @@ model ActivityLog {
   details     String?  // JSON context
 
   createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }
 
 model Notification {
@@ -250,4 +281,8 @@ model Notification {
   isRead    Boolean  @default(false)
 
   createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
 }
