@@ -32,6 +32,7 @@ export type UserMinAggregateOutputType = {
   role: $Enums.Role | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -42,6 +43,7 @@ export type UserMaxAggregateOutputType = {
   role: $Enums.Role | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -52,6 +54,7 @@ export type UserCountAggregateOutputType = {
   role: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   _all: number
 }
 
@@ -64,6 +67,7 @@ export type UserMinAggregateInputType = {
   role?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -74,6 +78,7 @@ export type UserMaxAggregateInputType = {
   role?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -84,6 +89,7 @@ export type UserCountAggregateInputType = {
   role?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -167,6 +173,7 @@ export type UserGroupByOutputType = {
   role: $Enums.Role
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -198,6 +205,7 @@ export type UserWhereInput = {
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   assignedTasks?: Prisma.TaskListRelationFilter
   uploadedEvidence?: Prisma.EvidenceListRelationFilter
   uploadedMeetings?: Prisma.MeetingLogListRelationFilter
@@ -214,6 +222,7 @@ export type UserOrderByWithRelationInput = {
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedTasks?: Prisma.TaskOrderByRelationAggregateInput
   uploadedEvidence?: Prisma.EvidenceOrderByRelationAggregateInput
   uploadedMeetings?: Prisma.MeetingLogOrderByRelationAggregateInput
@@ -233,6 +242,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   assignedTasks?: Prisma.TaskListRelationFilter
   uploadedEvidence?: Prisma.EvidenceListRelationFilter
   uploadedMeetings?: Prisma.MeetingLogListRelationFilter
@@ -249,6 +259,7 @@ export type UserOrderByWithAggregationInput = {
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -265,6 +276,7 @@ export type UserScalarWhereWithAggregatesInput = {
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
@@ -275,6 +287,7 @@ export type UserCreateInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogCreateNestedManyWithoutUploaderInput
@@ -291,6 +304,7 @@ export type UserUncheckedCreateInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutUploaderInput
@@ -307,6 +321,7 @@ export type UserUpdateInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUpdateManyWithoutUploaderNestedInput
@@ -323,6 +338,7 @@ export type UserUncheckedUpdateInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUncheckedUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedUpdateManyWithoutUploaderNestedInput
@@ -339,6 +355,7 @@ export type UserCreateManyInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -349,6 +366,7 @@ export type UserUpdateManyMutationInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -359,6 +377,7 @@ export type UserUncheckedUpdateManyInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -369,6 +388,7 @@ export type UserCountOrderByAggregateInput = {
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -379,6 +399,7 @@ export type UserMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -389,6 +410,7 @@ export type UserMinOrderByAggregateInput = {
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserNullableScalarRelationFilter = {
@@ -499,6 +521,7 @@ export type UserCreateWithoutAssignedTasksInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   uploadedEvidence?: Prisma.EvidenceCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogCreateNestedManyWithoutUploaderInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
@@ -514,6 +537,7 @@ export type UserUncheckedCreateWithoutAssignedTasksInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   uploadedEvidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutUploaderInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -545,6 +569,7 @@ export type UserUpdateWithoutAssignedTasksInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   uploadedEvidence?: Prisma.EvidenceUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUpdateManyWithoutUploaderNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
@@ -560,6 +585,7 @@ export type UserUncheckedUpdateWithoutAssignedTasksInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   uploadedEvidence?: Prisma.EvidenceUncheckedUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedUpdateManyWithoutUploaderNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -575,6 +601,7 @@ export type UserCreateWithoutUploadedEvidenceInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   uploadedMeetings?: Prisma.MeetingLogCreateNestedManyWithoutUploaderInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
@@ -590,6 +617,7 @@ export type UserUncheckedCreateWithoutUploadedEvidenceInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutUploaderInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -621,6 +649,7 @@ export type UserUpdateWithoutUploadedEvidenceInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   uploadedMeetings?: Prisma.MeetingLogUpdateManyWithoutUploaderNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
@@ -636,6 +665,7 @@ export type UserUncheckedUpdateWithoutUploadedEvidenceInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedUpdateManyWithoutUploaderNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -651,6 +681,7 @@ export type UserCreateWithoutUploadedMeetingsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceCreateNestedManyWithoutUploaderInput
   comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
@@ -666,6 +697,7 @@ export type UserUncheckedCreateWithoutUploadedMeetingsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutUploaderInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
@@ -697,6 +729,7 @@ export type UserUpdateWithoutUploadedMeetingsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUpdateManyWithoutUploaderNestedInput
   comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
@@ -712,6 +745,7 @@ export type UserUncheckedUpdateWithoutUploadedMeetingsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUncheckedUpdateManyWithoutUploaderNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
@@ -727,6 +761,7 @@ export type UserCreateWithoutCommentsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogCreateNestedManyWithoutUploaderInput
@@ -742,6 +777,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutUploaderInput
@@ -773,6 +809,7 @@ export type UserUpdateWithoutCommentsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUpdateManyWithoutUploaderNestedInput
@@ -788,6 +825,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUncheckedUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedUpdateManyWithoutUploaderNestedInput
@@ -803,6 +841,7 @@ export type UserCreateWithoutActivityLogsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogCreateNestedManyWithoutUploaderInput
@@ -818,6 +857,7 @@ export type UserUncheckedCreateWithoutActivityLogsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutUploaderInput
@@ -849,6 +889,7 @@ export type UserUpdateWithoutActivityLogsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUpdateManyWithoutUploaderNestedInput
@@ -864,6 +905,7 @@ export type UserUncheckedUpdateWithoutActivityLogsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUncheckedUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedUpdateManyWithoutUploaderNestedInput
@@ -879,6 +921,7 @@ export type UserCreateWithoutNotificationsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogCreateNestedManyWithoutUploaderInput
@@ -894,6 +937,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAssigneeInput
   uploadedEvidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutUploaderInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutUploaderInput
@@ -925,6 +969,7 @@ export type UserUpdateWithoutNotificationsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUpdateManyWithoutUploaderNestedInput
@@ -940,6 +985,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTasks?: Prisma.TaskUncheckedUpdateManyWithoutAssigneeNestedInput
   uploadedEvidence?: Prisma.EvidenceUncheckedUpdateManyWithoutUploaderNestedInput
   uploadedMeetings?: Prisma.MeetingLogUncheckedUpdateManyWithoutUploaderNestedInput
@@ -1031,6 +1077,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   assignedTasks?: boolean | Prisma.User$assignedTasksArgs<ExtArgs>
   uploadedEvidence?: boolean | Prisma.User$uploadedEvidenceArgs<ExtArgs>
   uploadedMeetings?: boolean | Prisma.User$uploadedMeetingsArgs<ExtArgs>
@@ -1048,6 +1095,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1058,6 +1106,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1068,9 +1117,10 @@ export type UserSelectScalar = {
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "role" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assignedTasks?: boolean | Prisma.User$assignedTasksArgs<ExtArgs>
   uploadedEvidence?: boolean | Prisma.User$uploadedEvidenceArgs<ExtArgs>
@@ -1101,6 +1151,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     role: $Enums.Role
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1537,6 +1588,7 @@ export interface UserFieldRefs {
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 
