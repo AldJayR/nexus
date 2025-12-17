@@ -1,7 +1,9 @@
 import fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
-import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
+import { serializerCompiler, validatorCompiler, jsonSchemaTransform } from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
 import jwtPlugin from './plugins/jwt.js';
 import { env } from './config/env.js';
@@ -52,6 +54,32 @@ export async function buildApp(): Promise<FastifyInstance> {
     limits: {
       fileSize: env.MAX_FILE_SIZE,
     },
+  });
+
+  // Swagger Documentation
+  await app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: 'Nexus API',
+        description: 'Project Management System API',
+        version: '1.0.0',
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+      security: [{ bearerAuth: [] }],
+    },
+    transform: jsonSchemaTransform,
+  });
+
+  await app.register(fastifySwaggerUi, {
+    routePrefix: '/documentation',
   });
 
   // JWT Authentication
