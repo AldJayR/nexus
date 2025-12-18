@@ -3,5 +3,29 @@
  * All form validation schemas organized by feature domain
  */
 
-export * from "./auth";
-export * from "./team-members";
+export { 
+  loginSchema,
+  signupSchema,
+  resetPasswordSchema,
+  changePasswordSchema,
+  type SignupInput,
+  type ResetPasswordInput,
+  type ChangePasswordInput,
+} from "./auth";
+export {
+  methodologyDeliverableSchema,
+  methodologySchema,
+  type MethodologyInput,
+} from "./project-config";
+export {
+  inviteMemberSchema,
+  editMemberSchema,
+  updateMemberRoleSchema,
+  bulkMemberActionsSchema,
+  memberSearchSchema,
+  type InviteMemberInput,
+  type EditMemberInput,
+  type UpdateMemberRoleInput,
+  type BulkMemberActionsInput,
+  type MemberSearchInput,
+} from "./team-members";

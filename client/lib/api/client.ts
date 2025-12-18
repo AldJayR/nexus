@@ -24,6 +24,10 @@ export const createApiClient = async (): Promise<AxiosInstance> => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      // Remove content-type for DELETE requests to avoid empty body issues
+      if (config.method?.toUpperCase() === "DELETE" && !config.data) {
+        config.headers["Content-Type"] = undefined;
+      }
       return config;
     },
     (error) => Promise.reject(error)

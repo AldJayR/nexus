@@ -1,5 +1,7 @@
 import { LucideSettings2, Server, UsersIcon } from "lucide-react";
 import ThemePicker from "@/components/shared/settings/theme-picker";
+import BackupSettings from "@/components/team-lead/settings/backup";
+import ProjectConfig from "@/components/team-lead/settings/project-config";
 import TeamMembers from "@/components/team-lead/settings/team-members";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -23,7 +25,11 @@ export default function Settings() {
               className="relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 hover:bg-accent hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:hover:bg-accent data-[state=active]:after:bg-primary"
               value="project-configurations"
             >
-              <LucideSettings2 aria-hidden="true" className="opacity-60" size={16} />
+              <LucideSettings2
+                aria-hidden="true"
+                className="opacity-60"
+                size={16}
+              />
               Project Configurations
             </TabsTrigger>
             <TabsTrigger
@@ -55,6 +61,7 @@ export default function Settings() {
               </p>
             </div>
             <Separator />
+            <ProjectConfig />
             <ThemePicker />
           </TabsContent>
           <TabsContent className="space-y-8" value="backup">
@@ -63,6 +70,7 @@ export default function Settings() {
               <p className="text-muted-foreground">Manage your backups</p>
             </div>
             <Separator className="mb-4" />
+            <BackupSettings />
           </TabsContent>
         </div>
       </Tabs>

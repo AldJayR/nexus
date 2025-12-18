@@ -21,34 +21,33 @@ type SortableHeaderProps = {
   sorted?: false | "asc" | "desc";
 };
 
-const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => (
-  <div
-    aria-sort={
-      sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none"
-    }
-    className={cn(
-      "flex items-center justify-between gap-2",
-      onClick && "cursor-pointer select-none hover:text-foreground/80"
-    )}
-    onClick={onClick}
-    onKeyDown={(event) => {
-      if (onClick && (event.key === "Enter" || event.key === " ")) {
-        event.preventDefault();
-        onClick(event);
-      }
-    }}
-    role={onClick ? "button" : undefined}
-    tabIndex={onClick ? 0 : undefined}
-  >
-    <span>{children}</span>
+const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => {
+  const getAriaSort = () => {
+    if (sorted === "asc") return "ascending";
+    if (sorted === "desc") return "descending";
+    return "none";
+  };
+
+  return (
+    <button
+      aria-sort={getAriaSort()}
+      className={cn(
+        "flex items-center justify-between gap-2",
+        onClick && "cursor-pointer select-none hover:text-foreground/80"
+      )}
+      onClick={onClick}
+      type="button"
+    >
+      <span>{children}</span>
     {sorted === "asc" && (
       <ChevronUpIcon aria-hidden="true" className="opacity-60" size={14} />
     )}
     {sorted === "desc" && (
       <ChevronDownIcon aria-hidden="true" className="opacity-60" size={14} />
     )}
-  </div>
-);
+    </button>
+  );
+};
 
 export const columns: ColumnDef<User>[] = [
   {

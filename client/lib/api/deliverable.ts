@@ -5,13 +5,15 @@ import { API_ENDPOINTS } from "./endpoints";
 export type CreateDeliverableInput = {
   phaseId: string;
   title: string;
-  description?: string;
+  description?: string | null;
+  dueDate?: string | null;
 };
 
 export type UpdateDeliverableInput = {
   title?: string;
-  description?: string;
+  description?: string | null;
   status?: DeliverableStatus;
+  dueDate?: string | null;
 };
 
 export type DeliverableQuery = {
