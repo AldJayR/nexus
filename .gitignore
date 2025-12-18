@@ -38,13 +38,14 @@ server/.nyc_output/
 
 
 # Don't commit uploaded evidence or meeting minutes if stored locally
-server/uploads/
-**/public/uploads/
-**/storage/
-**/*.pdf
-**/*.png
-**/*.jpg
-**/*.jpeg
+
+# server/uploads/
+# **/public/uploads/
+# **/storage/
+# **/*.pdf
+# **/*.png
+# **/*.jpg
+# **/*.jpeg
 
 
 # VS Code
