@@ -38,4 +38,10 @@ export const evidenceApi = {
     const client = await createApiClient();
     await client.delete(API_ENDPOINTS.EVIDENCE.DELETE(id));
   },
+
+  restoreEvidence: async (id: string): Promise<Evidence> => {
+    const client = await createApiClient();
+    const response = await client.post(API_ENDPOINTS.EVIDENCE.RESTORE(id));
+    return response.data;
+  },
 };

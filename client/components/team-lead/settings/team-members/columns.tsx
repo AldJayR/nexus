@@ -23,8 +23,12 @@ type SortableHeaderProps = {
 
 const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => {
   const getAriaSort = () => {
-    if (sorted === "asc") return "ascending";
-    if (sorted === "desc") return "descending";
+    if (sorted === "asc") {
+      return "ascending";
+    }
+    if (sorted === "desc") {
+      return "descending";
+    }
     return "none";
   };
 
@@ -39,12 +43,12 @@ const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => {
       type="button"
     >
       <span>{children}</span>
-    {sorted === "asc" && (
-      <ChevronUpIcon aria-hidden="true" className="opacity-60" size={14} />
-    )}
-    {sorted === "desc" && (
-      <ChevronDownIcon aria-hidden="true" className="opacity-60" size={14} />
-    )}
+      {sorted === "asc" && (
+        <ChevronUpIcon aria-hidden="true" className="opacity-60" size={14} />
+      )}
+      {sorted === "desc" && (
+        <ChevronDownIcon aria-hidden="true" className="opacity-60" size={14} />
+      )}
     </button>
   );
 };

@@ -101,7 +101,8 @@ export type SprintProgress = {
 // Task
 export type Task = {
   id: string;
-  sprintId: string;
+  sprintId?: string | null;
+  phaseId?: string | null;
   assigneeId?: string | null;
   title: string;
   description?: string | null;
@@ -138,7 +139,8 @@ export type Evidence = {
 // Meeting Log
 export type MeetingLog = {
   id: string;
-  sprintId: string;
+  sprintId?: string | null;
+  phaseId?: string | null;
   title: string;
   date: string;
   fileUrl: string;
@@ -170,10 +172,8 @@ export type Notification = {
 
 // Contribution (from getUserContributions)
 export type UserContribution = {
-  userId: string;
-  totalTasks: number;
-  completedTasks: number;
-  assignedTasks: Task[];
-  comments: Comment[];
-  uploadedEvidence: Evidence[];
+  assignedTasksCount: number;
+  completedTasksCount: number;
+  uploadedEvidenceCount: number;
+  commentsCount: number;
 };

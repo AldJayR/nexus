@@ -32,6 +32,12 @@ export const userApi = {
     await client.delete(API_ENDPOINTS.USERS.DELETE(id));
   },
 
+  restoreUser: async (id: string): Promise<User> => {
+    const client = await createApiClient();
+    const response = await client.post(API_ENDPOINTS.USERS.RESTORE(id));
+    return response.data;
+  },
+
   getUserContributions: async (id: string): Promise<UserContribution> => {
     const client = await createApiClient();
     const response = await client.get(API_ENDPOINTS.USERS.CONTRIBUTIONS(id));

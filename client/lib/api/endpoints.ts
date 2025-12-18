@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
     GET: (id: string) => `/users/${id}`,
     UPDATE: (id: string) => `/users/${id}`,
     DELETE: (id: string) => `/users/${id}`,
+    RESTORE: (id: string) => `/users/${id}/restore`,
     CONTRIBUTIONS: (id: string) => `/users/${id}/contributions`,
   },
 
@@ -57,6 +58,7 @@ export const API_ENDPOINTS = {
     CREATE: "/sprints",
     UPDATE: (id: string) => `/sprints/${id}`,
     DELETE: (id: string) => `/sprints/${id}`,
+    RESTORE: (id: string) => `/sprints/${id}/restore`,
     PROGRESS: (id: string) => `/sprints/${id}/progress`,
   },
 
@@ -86,13 +88,46 @@ export const API_ENDPOINTS = {
     BY_DELIVERABLE: (deliverableId: string) =>
       `/evidence/deliverable/${deliverableId}`,
     DELETE: (id: string) => `/evidence/${id}`,
+    RESTORE: (id: string) => `/evidence/${id}/restore`,
   },
 
   // Meeting Log Endpoints
   MEETING_LOGS: {
     CREATE: "/meeting-logs",
     BY_SPRINT: (sprintId: string) => `/meeting-logs/sprint/${sprintId}`,
+    BY_PHASE: (phaseId: string) => `/meeting-logs/phase/${phaseId}`,
     DELETE: (id: string) => `/meeting-logs/${id}`,
+  },
+
+  // Activity Log Endpoints
+  ACTIVITY_LOGS: {
+    LIST: "/activity-logs",
+    BY_ENTITY: (entityType: string, entityId: string) =>
+      `/activity-logs/entity/${entityType}/${entityId}`,
+  },
+
+  // Notification Endpoints
+  NOTIFICATIONS: {
+    LIST: "/notifications",
+    CREATE: "/notifications",
+    MARK_READ: (id: string) => `/notifications/${id}/read`,
+    MARK_ALL_READ: "/notifications/read-all",
+    DELETE: (id: string) => `/notifications/${id}`,
+  },
+
+  // Analytics Endpoints
+  ANALYTICS: {
+    OVERVIEW: "/analytics/dashboard/overview",
+    PHASES: "/analytics/dashboard/phases",
+    SPRINTS: "/analytics/dashboard/sprints",
+    CONTRIBUTIONS: "/analytics/dashboard/contributions",
+    TIMELINE: "/analytics/timeline",
+  },
+
+  // Backup Endpoints
+  BACKUP: {
+    EXPORT: "/backup/export",
+    FILES: "/backup/files",
   },
 } as const;
 
