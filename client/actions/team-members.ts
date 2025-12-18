@@ -50,6 +50,7 @@ const TEST_USERS: User[] = [
 
 export async function getTeamMembers(): Promise<User[]> {
   try {
+    await Promise.resolve();
     // TODO: Replace with actual API call when available
     // const response = await apiClient.get('/users');
     // return response.data;
@@ -62,6 +63,7 @@ export async function getTeamMembers(): Promise<User[]> {
 
 export async function deleteTeamMembers(userIds: string[]): Promise<void> {
   try {
+    await Promise.resolve();
     // TODO: Replace with actual API call when available
     // await apiClient.delete('/users', { data: { ids: userIds } });
     console.log("Deleting users:", userIds);

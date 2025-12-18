@@ -12,7 +12,7 @@ export default function TeamLeadLayout({
       <AppSidebar />
       <SidebarInset suppressHydrationWarning>
         <AppHeader />
-        <main className="p-4" suppressHydrationWarning>
+        <main className="p-4 sm:p-8 md:p-16" suppressHydrationWarning>
           {children}
         </main>
       </SidebarInset>
