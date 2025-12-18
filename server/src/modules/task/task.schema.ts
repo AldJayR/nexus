@@ -2,11 +2,15 @@ import { z } from "zod";
 import { TaskStatus } from "../../generated/client.js";
 
 export const createTaskSchema = z.object({
-  sprintId: z.string().uuid().describe('ID of the sprint the task belongs to'),
+  sprintId: z.string().uuid().optional().describe('ID of the sprint the task belongs to'),
+  phaseId: z.string().uuid().optional().describe('ID of the phase the task belongs to'),
   assigneeId: z.string().uuid().optional().describe('ID of the user assigned to the task'),
   title: z.string().min(1).describe('Title of the task'),
   description: z.string().optional().describe('Detailed description of the task'),
   status: z.nativeEnum(TaskStatus).optional().default(TaskStatus.TODO).describe('Current status of the task'),
+}).refine(data => data.sprintId || data.phaseId, {
+  message: "Either sprintId or phaseId must be provided",
+  path: ["sprintId", "phaseId"],
 }).describe('Schema for creating a new task');
 
 export const updateTaskSchema = z.object({
@@ -31,7 +35,8 @@ export const updateTaskStatusSchema = z.object({
 
 export const taskResponseSchema = z.object({
   id: z.string().uuid().describe('Unique identifier for the task'),
-  sprintId: z.string().uuid().describe('ID of the associated sprint'),
+  sprintId: z.string().uuid().nullable().optional().describe('ID of the associated sprint'),
+  phaseId: z.string().uuid().nullable().optional().describe('ID of the associated phase'),
   assigneeId: z.string().uuid().nullable().describe('ID of the assigned user'),
   title: z.string().describe('Title of the task'),
   description: z.string().nullable().describe('Description of the task'),
@@ -43,6 +48,7 @@ export const taskResponseSchema = z.object({
 
 export const taskQuerySchema = z.object({
   sprintId: z.string().uuid().optional().describe('Filter tasks by sprint ID'),
+  phaseId: z.string().uuid().optional().describe('Filter tasks by phase ID'),
   assigneeId: z.string().uuid().optional().describe('Filter tasks by assignee ID'),
   status: z.nativeEnum(TaskStatus).optional().describe('Filter tasks by status'),
 }).describe('Query parameters for listing tasks');

@@ -463,11 +463,6 @@ export type SprintSumOrderByAggregateInput = {
   number?: Prisma.SortOrder
 }
 
-export type SprintScalarRelationFilter = {
-  is?: Prisma.SprintWhereInput
-  isNot?: Prisma.SprintWhereInput
-}
-
 export type SprintNullableScalarRelationFilter = {
   is?: Prisma.SprintWhereInput | null
   isNot?: Prisma.SprintWhereInput | null
@@ -529,10 +524,12 @@ export type SprintCreateNestedOneWithoutTasksInput = {
   connect?: Prisma.SprintWhereUniqueInput
 }
 
-export type SprintUpdateOneRequiredWithoutTasksNestedInput = {
+export type SprintUpdateOneWithoutTasksNestedInput = {
   create?: Prisma.XOR<Prisma.SprintCreateWithoutTasksInput, Prisma.SprintUncheckedCreateWithoutTasksInput>
   connectOrCreate?: Prisma.SprintCreateOrConnectWithoutTasksInput
   upsert?: Prisma.SprintUpsertWithoutTasksInput
+  disconnect?: Prisma.SprintWhereInput | boolean
+  delete?: Prisma.SprintWhereInput | boolean
   connect?: Prisma.SprintWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.SprintUpdateToOneWithWhereWithoutTasksInput, Prisma.SprintUpdateWithoutTasksInput>, Prisma.SprintUncheckedUpdateWithoutTasksInput>
 }

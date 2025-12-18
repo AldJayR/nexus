@@ -93,6 +93,7 @@ The application shall implement **file-system based routing** using the Next.js 
 *   **Sprints:** Must allow creation with Tasks, Assigned Members, Start/End Dates, and Status.
 *   **Tasks:** Must support:
     *   Description & Assignment.
+    *   **Linking:** Can be linked to a **Sprint** OR a **Phase** (for tasks outside active sprints).
     *   **Status:** *Todo, In Progress, Blocked, Done*.
     *   **Blockers:** Tasks marked as "Blocked" must require a **Comment** explaining the reason.
 
@@ -159,7 +160,7 @@ The dashboard must display:
 *   **User** (Standard Auth & Profile)
 *   **Phase** (Water, Scrum, Fall)
 *   **Sprint** (Time-boxed iterations)
-*   **Task** (Work items)
+*   **Task** (Work items; linked to Sprint OR Phase)
 *   **Deliverable** (Required Phase outputs)
 *   **Evidence** (Files linked to deliverables)
 *   **Comment** (Polymorphic: linked to Task OR Deliverable)

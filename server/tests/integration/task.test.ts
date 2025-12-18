@@ -15,13 +15,14 @@ describe("Task Integration Tests", () => {
   let memberId: string;
   let projectId: string;
   let sprintId: string;
+  let phaseId: string;
   const prisma = getPrismaClient();
 
   beforeAll(async () => {
     app = await buildApp();
     await app.ready();
     request = supertest(app.server);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await app.close();
@@ -69,7 +70,7 @@ describe("Task Integration Tests", () => {
     });
     memberToken = memberLogin.body.token;
 
-    // Create Project and Sprint
+    // Create Project, Phase and Sprint
     const project = await prisma.project.create({
       data: {
         name: "Test Project",
@@ -77,6 +78,15 @@ describe("Task Integration Tests", () => {
       },
     });
     projectId = project.id;
+
+    const phase = await prisma.phase.create({
+      data: {
+        projectId,
+        type: "WATERFALL",
+        name: "Planning Phase",
+      },
+    });
+    phaseId = phase.id;
 
     const sprint = await prisma.sprint.create({
       data: {
@@ -87,25 +97,59 @@ describe("Task Integration Tests", () => {
       },
     });
     sprintId = sprint.id;
-  });
+  }, 30000);
 
   describe("POST /api/v1/tasks", () => {
-    it("should create a task when authenticated as TEAM_LEAD", async () => {
+    it("should create a sprint task when authenticated as TEAM_LEAD", async () => {
       const res = await request
         .post("/api/v1/tasks")
         .set("Authorization", `Bearer ${teamLeadToken}`)
         .send({
           sprintId,
-          title: "New Task",
+          title: "New Sprint Task",
           description: "Task description",
           status: TaskStatus.TODO,
           assigneeId: memberId,
         });
 
       expect(res.status).toBe(201);
-      expect(res.body.title).toBe("New Task");
+      expect(res.body.title).toBe("New Sprint Task");
+      expect(res.body.sprintId).toBe(sprintId);
       expect(res.body.assigneeId).toBe(memberId);
       expect(res.body.id).toBeDefined();
+    });
+
+    it("should create a phase task when authenticated as TEAM_LEAD", async () => {
+      const res = await request
+        .post("/api/v1/tasks")
+        .set("Authorization", `Bearer ${teamLeadToken}`)
+        .send({
+          phaseId,
+          title: "New Phase Task",
+          description: "Task description",
+          status: TaskStatus.TODO,
+          assigneeId: memberId,
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.title).toBe("New Phase Task");
+      expect(res.body.phaseId).toBe(phaseId);
+      expect(res.body.sprintId).toBeNull();
+      expect(res.body.assigneeId).toBe(memberId);
+      expect(res.body.id).toBeDefined();
+    });
+
+    it("should fail if neither sprintId nor phaseId is provided", async () => {
+      const res = await request
+        .post("/api/v1/tasks")
+        .set("Authorization", `Bearer ${teamLeadToken}`)
+        .send({
+          title: "Orphan Task",
+          status: TaskStatus.TODO,
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toContain("Either sprintId or phaseId must be provided");
     });
 
     it("should fail if user is not TEAM_LEAD", async () => {
@@ -127,7 +171,7 @@ describe("Task Integration Tests", () => {
       await prisma.task.create({
         data: {
           sprintId,
-          title: "Task 1",
+          title: "Sprint Task 1",
           status: TaskStatus.TODO,
         },
       });
@@ -139,7 +183,26 @@ describe("Task Integration Tests", () => {
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
       expect(res.body.length).toBe(1);
-      expect(res.body[0].title).toBe("Task 1");
+      expect(res.body[0].title).toBe("Sprint Task 1");
+    });
+
+    it("should list tasks filtered by phase", async () => {
+      await prisma.task.create({
+        data: {
+          phaseId,
+          title: "Phase Task 1",
+          status: TaskStatus.TODO,
+        },
+      });
+
+      const res = await request
+        .get(`/api/v1/tasks?phaseId=${phaseId}`)
+        .set("Authorization", `Bearer ${memberToken}`);
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].title).toBe("Phase Task 1");
     });
   });
 

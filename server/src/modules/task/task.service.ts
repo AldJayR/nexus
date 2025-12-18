@@ -6,10 +6,11 @@ import { createActivityLog } from "../activity-log/activity-log.service.js";
 const prisma = getPrismaClient();
 
 export async function getTasks(query: TaskQuery) {
-  const { sprintId, assigneeId, status } = query;
+  const { sprintId, phaseId, assigneeId, status } = query;
   return prisma.task.findMany({
     where: {
       sprintId,
+      phaseId,
       assigneeId,
       status,
       deletedAt: null,
@@ -64,13 +65,15 @@ export async function getTaskById(id: string) {
 }
 
 export async function createTask(input: CreateTaskInput, creatorId: string) {
-  // Verify sprint exists
-  const sprint = await prisma.sprint.findUnique({
-    where: { id: input.sprintId },
-  });
-
-  if (!sprint) {
-    throw new NotFoundError("Sprint", input.sprintId);
+  // Validate Sprint OR Phase
+  if (input.sprintId) {
+    const sprint = await prisma.sprint.findUnique({ where: { id: input.sprintId } });
+    if (!sprint) throw new NotFoundError("Sprint", input.sprintId);
+  } else if (input.phaseId) {
+    const phase = await prisma.phase.findUnique({ where: { id: input.phaseId } });
+    if (!phase) throw new NotFoundError("Phase", input.phaseId);
+  } else {
+    throw new Error("Task must be linked to a Sprint or a Phase");
   }
 
   const task = await prisma.task.create({
