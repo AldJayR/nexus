@@ -216,6 +216,7 @@ export type PhaseWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Phase"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   deliverables?: Prisma.DeliverableListRelationFilter
+  meetingLogs?: Prisma.MeetingLogListRelationFilter
 }
 
 export type PhaseOrderByWithRelationInput = {
@@ -230,6 +231,7 @@ export type PhaseOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   deliverables?: Prisma.DeliverableOrderByRelationAggregateInput
+  meetingLogs?: Prisma.MeetingLogOrderByRelationAggregateInput
 }
 
 export type PhaseWhereUniqueInput = Prisma.AtLeast<{
@@ -247,6 +249,7 @@ export type PhaseWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Phase"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   deliverables?: Prisma.DeliverableListRelationFilter
+  meetingLogs?: Prisma.MeetingLogListRelationFilter
 }, "id">
 
 export type PhaseOrderByWithAggregationInput = {
@@ -290,6 +293,7 @@ export type PhaseCreateInput = {
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutPhasesInput
   deliverables?: Prisma.DeliverableCreateNestedManyWithoutPhaseInput
+  meetingLogs?: Prisma.MeetingLogCreateNestedManyWithoutPhaseInput
 }
 
 export type PhaseUncheckedCreateInput = {
@@ -303,6 +307,7 @@ export type PhaseUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deliverables?: Prisma.DeliverableUncheckedCreateNestedManyWithoutPhaseInput
+  meetingLogs?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutPhaseInput
 }
 
 export type PhaseUpdateInput = {
@@ -316,6 +321,7 @@ export type PhaseUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutPhasesNestedInput
   deliverables?: Prisma.DeliverableUpdateManyWithoutPhaseNestedInput
+  meetingLogs?: Prisma.MeetingLogUpdateManyWithoutPhaseNestedInput
 }
 
 export type PhaseUncheckedUpdateInput = {
@@ -329,6 +335,7 @@ export type PhaseUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliverables?: Prisma.DeliverableUncheckedUpdateManyWithoutPhaseNestedInput
+  meetingLogs?: Prisma.MeetingLogUncheckedUpdateManyWithoutPhaseNestedInput
 }
 
 export type PhaseCreateManyInput = {
@@ -417,6 +424,11 @@ export type PhaseScalarRelationFilter = {
   isNot?: Prisma.PhaseWhereInput
 }
 
+export type PhaseNullableScalarRelationFilter = {
+  is?: Prisma.PhaseWhereInput | null
+  isNot?: Prisma.PhaseWhereInput | null
+}
+
 export type PhaseCreateNestedManyWithoutProjectInput = {
   create?: Prisma.XOR<Prisma.PhaseCreateWithoutProjectInput, Prisma.PhaseUncheckedCreateWithoutProjectInput> | Prisma.PhaseCreateWithoutProjectInput[] | Prisma.PhaseUncheckedCreateWithoutProjectInput[]
   connectOrCreate?: Prisma.PhaseCreateOrConnectWithoutProjectInput | Prisma.PhaseCreateOrConnectWithoutProjectInput[]
@@ -477,6 +489,22 @@ export type PhaseUpdateOneRequiredWithoutDeliverablesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PhaseUpdateToOneWithWhereWithoutDeliverablesInput, Prisma.PhaseUpdateWithoutDeliverablesInput>, Prisma.PhaseUncheckedUpdateWithoutDeliverablesInput>
 }
 
+export type PhaseCreateNestedOneWithoutMeetingLogsInput = {
+  create?: Prisma.XOR<Prisma.PhaseCreateWithoutMeetingLogsInput, Prisma.PhaseUncheckedCreateWithoutMeetingLogsInput>
+  connectOrCreate?: Prisma.PhaseCreateOrConnectWithoutMeetingLogsInput
+  connect?: Prisma.PhaseWhereUniqueInput
+}
+
+export type PhaseUpdateOneWithoutMeetingLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.PhaseCreateWithoutMeetingLogsInput, Prisma.PhaseUncheckedCreateWithoutMeetingLogsInput>
+  connectOrCreate?: Prisma.PhaseCreateOrConnectWithoutMeetingLogsInput
+  upsert?: Prisma.PhaseUpsertWithoutMeetingLogsInput
+  disconnect?: Prisma.PhaseWhereInput | boolean
+  delete?: Prisma.PhaseWhereInput | boolean
+  connect?: Prisma.PhaseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PhaseUpdateToOneWithWhereWithoutMeetingLogsInput, Prisma.PhaseUpdateWithoutMeetingLogsInput>, Prisma.PhaseUncheckedUpdateWithoutMeetingLogsInput>
+}
+
 export type PhaseCreateWithoutProjectInput = {
   id?: string
   type: $Enums.PhaseType
@@ -487,6 +515,7 @@ export type PhaseCreateWithoutProjectInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deliverables?: Prisma.DeliverableCreateNestedManyWithoutPhaseInput
+  meetingLogs?: Prisma.MeetingLogCreateNestedManyWithoutPhaseInput
 }
 
 export type PhaseUncheckedCreateWithoutProjectInput = {
@@ -499,6 +528,7 @@ export type PhaseUncheckedCreateWithoutProjectInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deliverables?: Prisma.DeliverableUncheckedCreateNestedManyWithoutPhaseInput
+  meetingLogs?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutPhaseInput
 }
 
 export type PhaseCreateOrConnectWithoutProjectInput = {
@@ -552,6 +582,7 @@ export type PhaseCreateWithoutDeliverablesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutPhasesInput
+  meetingLogs?: Prisma.MeetingLogCreateNestedManyWithoutPhaseInput
 }
 
 export type PhaseUncheckedCreateWithoutDeliverablesInput = {
@@ -564,6 +595,7 @@ export type PhaseUncheckedCreateWithoutDeliverablesInput = {
   endDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  meetingLogs?: Prisma.MeetingLogUncheckedCreateNestedManyWithoutPhaseInput
 }
 
 export type PhaseCreateOrConnectWithoutDeliverablesInput = {
@@ -592,6 +624,7 @@ export type PhaseUpdateWithoutDeliverablesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutPhasesNestedInput
+  meetingLogs?: Prisma.MeetingLogUpdateManyWithoutPhaseNestedInput
 }
 
 export type PhaseUncheckedUpdateWithoutDeliverablesInput = {
@@ -604,6 +637,75 @@ export type PhaseUncheckedUpdateWithoutDeliverablesInput = {
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  meetingLogs?: Prisma.MeetingLogUncheckedUpdateManyWithoutPhaseNestedInput
+}
+
+export type PhaseCreateWithoutMeetingLogsInput = {
+  id?: string
+  type: $Enums.PhaseType
+  name: string
+  description?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  project: Prisma.ProjectCreateNestedOneWithoutPhasesInput
+  deliverables?: Prisma.DeliverableCreateNestedManyWithoutPhaseInput
+}
+
+export type PhaseUncheckedCreateWithoutMeetingLogsInput = {
+  id?: string
+  projectId: string
+  type: $Enums.PhaseType
+  name: string
+  description?: string | null
+  startDate?: Date | string | null
+  endDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deliverables?: Prisma.DeliverableUncheckedCreateNestedManyWithoutPhaseInput
+}
+
+export type PhaseCreateOrConnectWithoutMeetingLogsInput = {
+  where: Prisma.PhaseWhereUniqueInput
+  create: Prisma.XOR<Prisma.PhaseCreateWithoutMeetingLogsInput, Prisma.PhaseUncheckedCreateWithoutMeetingLogsInput>
+}
+
+export type PhaseUpsertWithoutMeetingLogsInput = {
+  update: Prisma.XOR<Prisma.PhaseUpdateWithoutMeetingLogsInput, Prisma.PhaseUncheckedUpdateWithoutMeetingLogsInput>
+  create: Prisma.XOR<Prisma.PhaseCreateWithoutMeetingLogsInput, Prisma.PhaseUncheckedCreateWithoutMeetingLogsInput>
+  where?: Prisma.PhaseWhereInput
+}
+
+export type PhaseUpdateToOneWithWhereWithoutMeetingLogsInput = {
+  where?: Prisma.PhaseWhereInput
+  data: Prisma.XOR<Prisma.PhaseUpdateWithoutMeetingLogsInput, Prisma.PhaseUncheckedUpdateWithoutMeetingLogsInput>
+}
+
+export type PhaseUpdateWithoutMeetingLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPhaseTypeFieldUpdateOperationsInput | $Enums.PhaseType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneRequiredWithoutPhasesNestedInput
+  deliverables?: Prisma.DeliverableUpdateManyWithoutPhaseNestedInput
+}
+
+export type PhaseUncheckedUpdateWithoutMeetingLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPhaseTypeFieldUpdateOperationsInput | $Enums.PhaseType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliverables?: Prisma.DeliverableUncheckedUpdateManyWithoutPhaseNestedInput
 }
 
 export type PhaseCreateManyProjectInput = {
@@ -627,6 +729,7 @@ export type PhaseUpdateWithoutProjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliverables?: Prisma.DeliverableUpdateManyWithoutPhaseNestedInput
+  meetingLogs?: Prisma.MeetingLogUpdateManyWithoutPhaseNestedInput
 }
 
 export type PhaseUncheckedUpdateWithoutProjectInput = {
@@ -639,6 +742,7 @@ export type PhaseUncheckedUpdateWithoutProjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliverables?: Prisma.DeliverableUncheckedUpdateManyWithoutPhaseNestedInput
+  meetingLogs?: Prisma.MeetingLogUncheckedUpdateManyWithoutPhaseNestedInput
 }
 
 export type PhaseUncheckedUpdateManyWithoutProjectInput = {
@@ -659,10 +763,12 @@ export type PhaseUncheckedUpdateManyWithoutProjectInput = {
 
 export type PhaseCountOutputType = {
   deliverables: number
+  meetingLogs: number
 }
 
 export type PhaseCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   deliverables?: boolean | PhaseCountOutputTypeCountDeliverablesArgs
+  meetingLogs?: boolean | PhaseCountOutputTypeCountMeetingLogsArgs
 }
 
 /**
@@ -682,6 +788,13 @@ export type PhaseCountOutputTypeCountDeliverablesArgs<ExtArgs extends runtime.Ty
   where?: Prisma.DeliverableWhereInput
 }
 
+/**
+ * PhaseCountOutputType without action
+ */
+export type PhaseCountOutputTypeCountMeetingLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MeetingLogWhereInput
+}
+
 
 export type PhaseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -695,6 +808,7 @@ export type PhaseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   deliverables?: boolean | Prisma.Phase$deliverablesArgs<ExtArgs>
+  meetingLogs?: boolean | Prisma.Phase$meetingLogsArgs<ExtArgs>
   _count?: boolean | Prisma.PhaseCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["phase"]>
 
@@ -740,6 +854,7 @@ export type PhaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type PhaseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   deliverables?: boolean | Prisma.Phase$deliverablesArgs<ExtArgs>
+  meetingLogs?: boolean | Prisma.Phase$meetingLogsArgs<ExtArgs>
   _count?: boolean | Prisma.PhaseCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PhaseIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -754,6 +869,7 @@ export type $PhasePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     project: Prisma.$ProjectPayload<ExtArgs>
     deliverables: Prisma.$DeliverablePayload<ExtArgs>[]
+    meetingLogs: Prisma.$MeetingLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1161,6 +1277,7 @@ export interface Prisma__PhaseClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   deliverables<T extends Prisma.Phase$deliverablesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Phase$deliverablesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliverablePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  meetingLogs<T extends Prisma.Phase$meetingLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Phase$meetingLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MeetingLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1616,6 +1733,30 @@ export type Phase$deliverablesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.DeliverableScalarFieldEnum | Prisma.DeliverableScalarFieldEnum[]
+}
+
+/**
+ * Phase.meetingLogs
+ */
+export type Phase$meetingLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MeetingLog
+   */
+  select?: Prisma.MeetingLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MeetingLog
+   */
+  omit?: Prisma.MeetingLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MeetingLogInclude<ExtArgs> | null
+  where?: Prisma.MeetingLogWhereInput
+  orderBy?: Prisma.MeetingLogOrderByWithRelationInput | Prisma.MeetingLogOrderByWithRelationInput[]
+  cursor?: Prisma.MeetingLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MeetingLogScalarFieldEnum | Prisma.MeetingLogScalarFieldEnum[]
 }
 
 /**

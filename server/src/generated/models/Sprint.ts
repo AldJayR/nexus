@@ -468,6 +468,11 @@ export type SprintScalarRelationFilter = {
   isNot?: Prisma.SprintWhereInput
 }
 
+export type SprintNullableScalarRelationFilter = {
+  is?: Prisma.SprintWhereInput | null
+  isNot?: Prisma.SprintWhereInput | null
+}
+
 export type SprintCreateNestedManyWithoutProjectInput = {
   create?: Prisma.XOR<Prisma.SprintCreateWithoutProjectInput, Prisma.SprintUncheckedCreateWithoutProjectInput> | Prisma.SprintCreateWithoutProjectInput[] | Prisma.SprintUncheckedCreateWithoutProjectInput[]
   connectOrCreate?: Prisma.SprintCreateOrConnectWithoutProjectInput | Prisma.SprintCreateOrConnectWithoutProjectInput[]
@@ -538,10 +543,12 @@ export type SprintCreateNestedOneWithoutMeetingLogsInput = {
   connect?: Prisma.SprintWhereUniqueInput
 }
 
-export type SprintUpdateOneRequiredWithoutMeetingLogsNestedInput = {
+export type SprintUpdateOneWithoutMeetingLogsNestedInput = {
   create?: Prisma.XOR<Prisma.SprintCreateWithoutMeetingLogsInput, Prisma.SprintUncheckedCreateWithoutMeetingLogsInput>
   connectOrCreate?: Prisma.SprintCreateOrConnectWithoutMeetingLogsInput
   upsert?: Prisma.SprintUpsertWithoutMeetingLogsInput
+  disconnect?: Prisma.SprintWhereInput | boolean
+  delete?: Prisma.SprintWhereInput | boolean
   connect?: Prisma.SprintWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.SprintUpdateToOneWithWhereWithoutMeetingLogsInput, Prisma.SprintUpdateWithoutMeetingLogsInput>, Prisma.SprintUncheckedUpdateWithoutMeetingLogsInput>
 }

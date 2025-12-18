@@ -96,6 +96,7 @@ model Phase {
   endDate     DateTime?
   
   deliverables Deliverable[]
+  meetingLogs  MeetingLog[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -210,8 +211,12 @@ model Evidence {
 // For Meeting Minutes (PDF)
 model MeetingLog {
   id          String   @id @default(uuid())
-  sprintId    String
-  sprint      Sprint   @relation(fields: [sprintId], references: [id])
+  
+  sprintId    String?
+  sprint      Sprint?  @relation(fields: [sprintId], references: [id])
+
+  phaseId     String?
+  phase       Phase?   @relation(fields: [phaseId], references: [id])
 
   title       String   // e.g., "Sprint 1 Standup"
   date        DateTime // When the meeting happened
@@ -225,6 +230,7 @@ model MeetingLog {
   updatedAt   DateTime @updatedAt
 
   @@index([sprintId])
+  @@index([phaseId])
   @@index([uploaderId])
   @@index([date])
 }

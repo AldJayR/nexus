@@ -27,6 +27,7 @@ export type AggregateMeetingLog = {
 export type MeetingLogMinAggregateOutputType = {
   id: string | null
   sprintId: string | null
+  phaseId: string | null
   title: string | null
   date: Date | null
   fileUrl: string | null
@@ -38,6 +39,7 @@ export type MeetingLogMinAggregateOutputType = {
 export type MeetingLogMaxAggregateOutputType = {
   id: string | null
   sprintId: string | null
+  phaseId: string | null
   title: string | null
   date: Date | null
   fileUrl: string | null
@@ -49,6 +51,7 @@ export type MeetingLogMaxAggregateOutputType = {
 export type MeetingLogCountAggregateOutputType = {
   id: number
   sprintId: number
+  phaseId: number
   title: number
   date: number
   fileUrl: number
@@ -62,6 +65,7 @@ export type MeetingLogCountAggregateOutputType = {
 export type MeetingLogMinAggregateInputType = {
   id?: true
   sprintId?: true
+  phaseId?: true
   title?: true
   date?: true
   fileUrl?: true
@@ -73,6 +77,7 @@ export type MeetingLogMinAggregateInputType = {
 export type MeetingLogMaxAggregateInputType = {
   id?: true
   sprintId?: true
+  phaseId?: true
   title?: true
   date?: true
   fileUrl?: true
@@ -84,6 +89,7 @@ export type MeetingLogMaxAggregateInputType = {
 export type MeetingLogCountAggregateInputType = {
   id?: true
   sprintId?: true
+  phaseId?: true
   title?: true
   date?: true
   fileUrl?: true
@@ -167,7 +173,8 @@ export type MeetingLogGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type MeetingLogGroupByOutputType = {
   id: string
-  sprintId: string
+  sprintId: string | null
+  phaseId: string | null
   title: string
   date: Date
   fileUrl: string
@@ -199,20 +206,23 @@ export type MeetingLogWhereInput = {
   OR?: Prisma.MeetingLogWhereInput[]
   NOT?: Prisma.MeetingLogWhereInput | Prisma.MeetingLogWhereInput[]
   id?: Prisma.StringFilter<"MeetingLog"> | string
-  sprintId?: Prisma.StringFilter<"MeetingLog"> | string
+  sprintId?: Prisma.StringNullableFilter<"MeetingLog"> | string | null
+  phaseId?: Prisma.StringNullableFilter<"MeetingLog"> | string | null
   title?: Prisma.StringFilter<"MeetingLog"> | string
   date?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
   fileUrl?: Prisma.StringFilter<"MeetingLog"> | string
   uploaderId?: Prisma.StringFilter<"MeetingLog"> | string
   createdAt?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
-  sprint?: Prisma.XOR<Prisma.SprintScalarRelationFilter, Prisma.SprintWhereInput>
+  sprint?: Prisma.XOR<Prisma.SprintNullableScalarRelationFilter, Prisma.SprintWhereInput> | null
+  phase?: Prisma.XOR<Prisma.PhaseNullableScalarRelationFilter, Prisma.PhaseWhereInput> | null
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type MeetingLogOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  sprintId?: Prisma.SortOrder
+  sprintId?: Prisma.SortOrderInput | Prisma.SortOrder
+  phaseId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   date?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
@@ -220,6 +230,7 @@ export type MeetingLogOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sprint?: Prisma.SprintOrderByWithRelationInput
+  phase?: Prisma.PhaseOrderByWithRelationInput
   uploader?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -228,20 +239,23 @@ export type MeetingLogWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.MeetingLogWhereInput | Prisma.MeetingLogWhereInput[]
   OR?: Prisma.MeetingLogWhereInput[]
   NOT?: Prisma.MeetingLogWhereInput | Prisma.MeetingLogWhereInput[]
-  sprintId?: Prisma.StringFilter<"MeetingLog"> | string
+  sprintId?: Prisma.StringNullableFilter<"MeetingLog"> | string | null
+  phaseId?: Prisma.StringNullableFilter<"MeetingLog"> | string | null
   title?: Prisma.StringFilter<"MeetingLog"> | string
   date?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
   fileUrl?: Prisma.StringFilter<"MeetingLog"> | string
   uploaderId?: Prisma.StringFilter<"MeetingLog"> | string
   createdAt?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
-  sprint?: Prisma.XOR<Prisma.SprintScalarRelationFilter, Prisma.SprintWhereInput>
+  sprint?: Prisma.XOR<Prisma.SprintNullableScalarRelationFilter, Prisma.SprintWhereInput> | null
+  phase?: Prisma.XOR<Prisma.PhaseNullableScalarRelationFilter, Prisma.PhaseWhereInput> | null
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type MeetingLogOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  sprintId?: Prisma.SortOrder
+  sprintId?: Prisma.SortOrderInput | Prisma.SortOrder
+  phaseId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   date?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
@@ -258,7 +272,8 @@ export type MeetingLogScalarWhereWithAggregatesInput = {
   OR?: Prisma.MeetingLogScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MeetingLogScalarWhereWithAggregatesInput | Prisma.MeetingLogScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"MeetingLog"> | string
-  sprintId?: Prisma.StringWithAggregatesFilter<"MeetingLog"> | string
+  sprintId?: Prisma.StringNullableWithAggregatesFilter<"MeetingLog"> | string | null
+  phaseId?: Prisma.StringNullableWithAggregatesFilter<"MeetingLog"> | string | null
   title?: Prisma.StringWithAggregatesFilter<"MeetingLog"> | string
   date?: Prisma.DateTimeWithAggregatesFilter<"MeetingLog"> | Date | string
   fileUrl?: Prisma.StringWithAggregatesFilter<"MeetingLog"> | string
@@ -274,13 +289,15 @@ export type MeetingLogCreateInput = {
   fileUrl: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  sprint: Prisma.SprintCreateNestedOneWithoutMeetingLogsInput
+  sprint?: Prisma.SprintCreateNestedOneWithoutMeetingLogsInput
+  phase?: Prisma.PhaseCreateNestedOneWithoutMeetingLogsInput
   uploader: Prisma.UserCreateNestedOneWithoutUploadedMeetingsInput
 }
 
 export type MeetingLogUncheckedCreateInput = {
   id?: string
-  sprintId: string
+  sprintId?: string | null
+  phaseId?: string | null
   title: string
   date: Date | string
   fileUrl: string
@@ -296,13 +313,15 @@ export type MeetingLogUpdateInput = {
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sprint?: Prisma.SprintUpdateOneRequiredWithoutMeetingLogsNestedInput
+  sprint?: Prisma.SprintUpdateOneWithoutMeetingLogsNestedInput
+  phase?: Prisma.PhaseUpdateOneWithoutMeetingLogsNestedInput
   uploader?: Prisma.UserUpdateOneRequiredWithoutUploadedMeetingsNestedInput
 }
 
 export type MeetingLogUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  sprintId?: Prisma.StringFieldUpdateOperationsInput | string
+  sprintId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -313,7 +332,8 @@ export type MeetingLogUncheckedUpdateInput = {
 
 export type MeetingLogCreateManyInput = {
   id?: string
-  sprintId: string
+  sprintId?: string | null
+  phaseId?: string | null
   title: string
   date: Date | string
   fileUrl: string
@@ -333,7 +353,8 @@ export type MeetingLogUpdateManyMutationInput = {
 
 export type MeetingLogUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  sprintId?: Prisma.StringFieldUpdateOperationsInput | string
+  sprintId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -355,6 +376,7 @@ export type MeetingLogOrderByRelationAggregateInput = {
 export type MeetingLogCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   sprintId?: Prisma.SortOrder
+  phaseId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   date?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
@@ -366,6 +388,7 @@ export type MeetingLogCountOrderByAggregateInput = {
 export type MeetingLogMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   sprintId?: Prisma.SortOrder
+  phaseId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   date?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
@@ -377,6 +400,7 @@ export type MeetingLogMaxOrderByAggregateInput = {
 export type MeetingLogMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   sprintId?: Prisma.SortOrder
+  phaseId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   date?: Prisma.SortOrder
   fileUrl?: Prisma.SortOrder
@@ -424,6 +448,48 @@ export type MeetingLogUncheckedUpdateManyWithoutUploaderNestedInput = {
   connect?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
   update?: Prisma.MeetingLogUpdateWithWhereUniqueWithoutUploaderInput | Prisma.MeetingLogUpdateWithWhereUniqueWithoutUploaderInput[]
   updateMany?: Prisma.MeetingLogUpdateManyWithWhereWithoutUploaderInput | Prisma.MeetingLogUpdateManyWithWhereWithoutUploaderInput[]
+  deleteMany?: Prisma.MeetingLogScalarWhereInput | Prisma.MeetingLogScalarWhereInput[]
+}
+
+export type MeetingLogCreateNestedManyWithoutPhaseInput = {
+  create?: Prisma.XOR<Prisma.MeetingLogCreateWithoutPhaseInput, Prisma.MeetingLogUncheckedCreateWithoutPhaseInput> | Prisma.MeetingLogCreateWithoutPhaseInput[] | Prisma.MeetingLogUncheckedCreateWithoutPhaseInput[]
+  connectOrCreate?: Prisma.MeetingLogCreateOrConnectWithoutPhaseInput | Prisma.MeetingLogCreateOrConnectWithoutPhaseInput[]
+  createMany?: Prisma.MeetingLogCreateManyPhaseInputEnvelope
+  connect?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+}
+
+export type MeetingLogUncheckedCreateNestedManyWithoutPhaseInput = {
+  create?: Prisma.XOR<Prisma.MeetingLogCreateWithoutPhaseInput, Prisma.MeetingLogUncheckedCreateWithoutPhaseInput> | Prisma.MeetingLogCreateWithoutPhaseInput[] | Prisma.MeetingLogUncheckedCreateWithoutPhaseInput[]
+  connectOrCreate?: Prisma.MeetingLogCreateOrConnectWithoutPhaseInput | Prisma.MeetingLogCreateOrConnectWithoutPhaseInput[]
+  createMany?: Prisma.MeetingLogCreateManyPhaseInputEnvelope
+  connect?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+}
+
+export type MeetingLogUpdateManyWithoutPhaseNestedInput = {
+  create?: Prisma.XOR<Prisma.MeetingLogCreateWithoutPhaseInput, Prisma.MeetingLogUncheckedCreateWithoutPhaseInput> | Prisma.MeetingLogCreateWithoutPhaseInput[] | Prisma.MeetingLogUncheckedCreateWithoutPhaseInput[]
+  connectOrCreate?: Prisma.MeetingLogCreateOrConnectWithoutPhaseInput | Prisma.MeetingLogCreateOrConnectWithoutPhaseInput[]
+  upsert?: Prisma.MeetingLogUpsertWithWhereUniqueWithoutPhaseInput | Prisma.MeetingLogUpsertWithWhereUniqueWithoutPhaseInput[]
+  createMany?: Prisma.MeetingLogCreateManyPhaseInputEnvelope
+  set?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  disconnect?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  delete?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  connect?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  update?: Prisma.MeetingLogUpdateWithWhereUniqueWithoutPhaseInput | Prisma.MeetingLogUpdateWithWhereUniqueWithoutPhaseInput[]
+  updateMany?: Prisma.MeetingLogUpdateManyWithWhereWithoutPhaseInput | Prisma.MeetingLogUpdateManyWithWhereWithoutPhaseInput[]
+  deleteMany?: Prisma.MeetingLogScalarWhereInput | Prisma.MeetingLogScalarWhereInput[]
+}
+
+export type MeetingLogUncheckedUpdateManyWithoutPhaseNestedInput = {
+  create?: Prisma.XOR<Prisma.MeetingLogCreateWithoutPhaseInput, Prisma.MeetingLogUncheckedCreateWithoutPhaseInput> | Prisma.MeetingLogCreateWithoutPhaseInput[] | Prisma.MeetingLogUncheckedCreateWithoutPhaseInput[]
+  connectOrCreate?: Prisma.MeetingLogCreateOrConnectWithoutPhaseInput | Prisma.MeetingLogCreateOrConnectWithoutPhaseInput[]
+  upsert?: Prisma.MeetingLogUpsertWithWhereUniqueWithoutPhaseInput | Prisma.MeetingLogUpsertWithWhereUniqueWithoutPhaseInput[]
+  createMany?: Prisma.MeetingLogCreateManyPhaseInputEnvelope
+  set?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  disconnect?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  delete?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  connect?: Prisma.MeetingLogWhereUniqueInput | Prisma.MeetingLogWhereUniqueInput[]
+  update?: Prisma.MeetingLogUpdateWithWhereUniqueWithoutPhaseInput | Prisma.MeetingLogUpdateWithWhereUniqueWithoutPhaseInput[]
+  updateMany?: Prisma.MeetingLogUpdateManyWithWhereWithoutPhaseInput | Prisma.MeetingLogUpdateManyWithWhereWithoutPhaseInput[]
   deleteMany?: Prisma.MeetingLogScalarWhereInput | Prisma.MeetingLogScalarWhereInput[]
 }
 
@@ -476,12 +542,14 @@ export type MeetingLogCreateWithoutUploaderInput = {
   fileUrl: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  sprint: Prisma.SprintCreateNestedOneWithoutMeetingLogsInput
+  sprint?: Prisma.SprintCreateNestedOneWithoutMeetingLogsInput
+  phase?: Prisma.PhaseCreateNestedOneWithoutMeetingLogsInput
 }
 
 export type MeetingLogUncheckedCreateWithoutUploaderInput = {
   id?: string
-  sprintId: string
+  sprintId?: string | null
+  phaseId?: string | null
   title: string
   date: Date | string
   fileUrl: string
@@ -520,13 +588,62 @@ export type MeetingLogScalarWhereInput = {
   OR?: Prisma.MeetingLogScalarWhereInput[]
   NOT?: Prisma.MeetingLogScalarWhereInput | Prisma.MeetingLogScalarWhereInput[]
   id?: Prisma.StringFilter<"MeetingLog"> | string
-  sprintId?: Prisma.StringFilter<"MeetingLog"> | string
+  sprintId?: Prisma.StringNullableFilter<"MeetingLog"> | string | null
+  phaseId?: Prisma.StringNullableFilter<"MeetingLog"> | string | null
   title?: Prisma.StringFilter<"MeetingLog"> | string
   date?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
   fileUrl?: Prisma.StringFilter<"MeetingLog"> | string
   uploaderId?: Prisma.StringFilter<"MeetingLog"> | string
   createdAt?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MeetingLog"> | Date | string
+}
+
+export type MeetingLogCreateWithoutPhaseInput = {
+  id?: string
+  title: string
+  date: Date | string
+  fileUrl: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sprint?: Prisma.SprintCreateNestedOneWithoutMeetingLogsInput
+  uploader: Prisma.UserCreateNestedOneWithoutUploadedMeetingsInput
+}
+
+export type MeetingLogUncheckedCreateWithoutPhaseInput = {
+  id?: string
+  sprintId?: string | null
+  title: string
+  date: Date | string
+  fileUrl: string
+  uploaderId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MeetingLogCreateOrConnectWithoutPhaseInput = {
+  where: Prisma.MeetingLogWhereUniqueInput
+  create: Prisma.XOR<Prisma.MeetingLogCreateWithoutPhaseInput, Prisma.MeetingLogUncheckedCreateWithoutPhaseInput>
+}
+
+export type MeetingLogCreateManyPhaseInputEnvelope = {
+  data: Prisma.MeetingLogCreateManyPhaseInput | Prisma.MeetingLogCreateManyPhaseInput[]
+  skipDuplicates?: boolean
+}
+
+export type MeetingLogUpsertWithWhereUniqueWithoutPhaseInput = {
+  where: Prisma.MeetingLogWhereUniqueInput
+  update: Prisma.XOR<Prisma.MeetingLogUpdateWithoutPhaseInput, Prisma.MeetingLogUncheckedUpdateWithoutPhaseInput>
+  create: Prisma.XOR<Prisma.MeetingLogCreateWithoutPhaseInput, Prisma.MeetingLogUncheckedCreateWithoutPhaseInput>
+}
+
+export type MeetingLogUpdateWithWhereUniqueWithoutPhaseInput = {
+  where: Prisma.MeetingLogWhereUniqueInput
+  data: Prisma.XOR<Prisma.MeetingLogUpdateWithoutPhaseInput, Prisma.MeetingLogUncheckedUpdateWithoutPhaseInput>
+}
+
+export type MeetingLogUpdateManyWithWhereWithoutPhaseInput = {
+  where: Prisma.MeetingLogScalarWhereInput
+  data: Prisma.XOR<Prisma.MeetingLogUpdateManyMutationInput, Prisma.MeetingLogUncheckedUpdateManyWithoutPhaseInput>
 }
 
 export type MeetingLogCreateWithoutSprintInput = {
@@ -536,11 +653,13 @@ export type MeetingLogCreateWithoutSprintInput = {
   fileUrl: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  phase?: Prisma.PhaseCreateNestedOneWithoutMeetingLogsInput
   uploader: Prisma.UserCreateNestedOneWithoutUploadedMeetingsInput
 }
 
 export type MeetingLogUncheckedCreateWithoutSprintInput = {
   id?: string
+  phaseId?: string | null
   title: string
   date: Date | string
   fileUrl: string
@@ -577,7 +696,8 @@ export type MeetingLogUpdateManyWithWhereWithoutSprintInput = {
 
 export type MeetingLogCreateManyUploaderInput = {
   id?: string
-  sprintId: string
+  sprintId?: string | null
+  phaseId?: string | null
   title: string
   date: Date | string
   fileUrl: string
@@ -592,12 +712,14 @@ export type MeetingLogUpdateWithoutUploaderInput = {
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sprint?: Prisma.SprintUpdateOneRequiredWithoutMeetingLogsNestedInput
+  sprint?: Prisma.SprintUpdateOneWithoutMeetingLogsNestedInput
+  phase?: Prisma.PhaseUpdateOneWithoutMeetingLogsNestedInput
 }
 
 export type MeetingLogUncheckedUpdateWithoutUploaderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  sprintId?: Prisma.StringFieldUpdateOperationsInput | string
+  sprintId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -607,7 +729,8 @@ export type MeetingLogUncheckedUpdateWithoutUploaderInput = {
 
 export type MeetingLogUncheckedUpdateManyWithoutUploaderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  sprintId?: Prisma.StringFieldUpdateOperationsInput | string
+  sprintId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -615,8 +738,53 @@ export type MeetingLogUncheckedUpdateManyWithoutUploaderInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type MeetingLogCreateManyPhaseInput = {
+  id?: string
+  sprintId?: string | null
+  title: string
+  date: Date | string
+  fileUrl: string
+  uploaderId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MeetingLogUpdateWithoutPhaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sprint?: Prisma.SprintUpdateOneWithoutMeetingLogsNestedInput
+  uploader?: Prisma.UserUpdateOneRequiredWithoutUploadedMeetingsNestedInput
+}
+
+export type MeetingLogUncheckedUpdateWithoutPhaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sprintId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  uploaderId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MeetingLogUncheckedUpdateManyWithoutPhaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sprintId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  uploaderId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type MeetingLogCreateManySprintInput = {
   id?: string
+  phaseId?: string | null
   title: string
   date: Date | string
   fileUrl: string
@@ -632,11 +800,13 @@ export type MeetingLogUpdateWithoutSprintInput = {
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phase?: Prisma.PhaseUpdateOneWithoutMeetingLogsNestedInput
   uploader?: Prisma.UserUpdateOneRequiredWithoutUploadedMeetingsNestedInput
 }
 
 export type MeetingLogUncheckedUpdateWithoutSprintInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  phaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -647,6 +817,7 @@ export type MeetingLogUncheckedUpdateWithoutSprintInput = {
 
 export type MeetingLogUncheckedUpdateManyWithoutSprintInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  phaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -660,45 +831,52 @@ export type MeetingLogUncheckedUpdateManyWithoutSprintInput = {
 export type MeetingLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   sprintId?: boolean
+  phaseId?: boolean
   title?: boolean
   date?: boolean
   fileUrl?: boolean
   uploaderId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  sprint?: boolean | Prisma.SprintDefaultArgs<ExtArgs>
+  sprint?: boolean | Prisma.MeetingLog$sprintArgs<ExtArgs>
+  phase?: boolean | Prisma.MeetingLog$phaseArgs<ExtArgs>
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["meetingLog"]>
 
 export type MeetingLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   sprintId?: boolean
+  phaseId?: boolean
   title?: boolean
   date?: boolean
   fileUrl?: boolean
   uploaderId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  sprint?: boolean | Prisma.SprintDefaultArgs<ExtArgs>
+  sprint?: boolean | Prisma.MeetingLog$sprintArgs<ExtArgs>
+  phase?: boolean | Prisma.MeetingLog$phaseArgs<ExtArgs>
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["meetingLog"]>
 
 export type MeetingLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   sprintId?: boolean
+  phaseId?: boolean
   title?: boolean
   date?: boolean
   fileUrl?: boolean
   uploaderId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  sprint?: boolean | Prisma.SprintDefaultArgs<ExtArgs>
+  sprint?: boolean | Prisma.MeetingLog$sprintArgs<ExtArgs>
+  phase?: boolean | Prisma.MeetingLog$phaseArgs<ExtArgs>
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["meetingLog"]>
 
 export type MeetingLogSelectScalar = {
   id?: boolean
   sprintId?: boolean
+  phaseId?: boolean
   title?: boolean
   date?: boolean
   fileUrl?: boolean
@@ -707,29 +885,34 @@ export type MeetingLogSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MeetingLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sprintId" | "title" | "date" | "fileUrl" | "uploaderId" | "createdAt" | "updatedAt", ExtArgs["result"]["meetingLog"]>
+export type MeetingLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sprintId" | "phaseId" | "title" | "date" | "fileUrl" | "uploaderId" | "createdAt" | "updatedAt", ExtArgs["result"]["meetingLog"]>
 export type MeetingLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  sprint?: boolean | Prisma.SprintDefaultArgs<ExtArgs>
+  sprint?: boolean | Prisma.MeetingLog$sprintArgs<ExtArgs>
+  phase?: boolean | Prisma.MeetingLog$phaseArgs<ExtArgs>
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type MeetingLogIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  sprint?: boolean | Prisma.SprintDefaultArgs<ExtArgs>
+  sprint?: boolean | Prisma.MeetingLog$sprintArgs<ExtArgs>
+  phase?: boolean | Prisma.MeetingLog$phaseArgs<ExtArgs>
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type MeetingLogIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  sprint?: boolean | Prisma.SprintDefaultArgs<ExtArgs>
+  sprint?: boolean | Prisma.MeetingLog$sprintArgs<ExtArgs>
+  phase?: boolean | Prisma.MeetingLog$phaseArgs<ExtArgs>
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $MeetingLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MeetingLog"
   objects: {
-    sprint: Prisma.$SprintPayload<ExtArgs>
+    sprint: Prisma.$SprintPayload<ExtArgs> | null
+    phase: Prisma.$PhasePayload<ExtArgs> | null
     uploader: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    sprintId: string
+    sprintId: string | null
+    phaseId: string | null
     title: string
     date: Date
     fileUrl: string
@@ -1130,7 +1313,8 @@ readonly fields: MeetingLogFieldRefs;
  */
 export interface Prisma__MeetingLogClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  sprint<T extends Prisma.SprintDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SprintDefaultArgs<ExtArgs>>): Prisma.Prisma__SprintClient<runtime.Types.Result.GetResult<Prisma.$SprintPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  sprint<T extends Prisma.MeetingLog$sprintArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MeetingLog$sprintArgs<ExtArgs>>): Prisma.Prisma__SprintClient<runtime.Types.Result.GetResult<Prisma.$SprintPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  phase<T extends Prisma.MeetingLog$phaseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MeetingLog$phaseArgs<ExtArgs>>): Prisma.Prisma__PhaseClient<runtime.Types.Result.GetResult<Prisma.$PhasePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   uploader<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1163,6 +1347,7 @@ export interface Prisma__MeetingLogClient<T, Null = never, ExtArgs extends runti
 export interface MeetingLogFieldRefs {
   readonly id: Prisma.FieldRef<"MeetingLog", 'String'>
   readonly sprintId: Prisma.FieldRef<"MeetingLog", 'String'>
+  readonly phaseId: Prisma.FieldRef<"MeetingLog", 'String'>
   readonly title: Prisma.FieldRef<"MeetingLog", 'String'>
   readonly date: Prisma.FieldRef<"MeetingLog", 'DateTime'>
   readonly fileUrl: Prisma.FieldRef<"MeetingLog", 'String'>
@@ -1562,6 +1747,44 @@ export type MeetingLogDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many MeetingLogs to delete.
    */
   limit?: number
+}
+
+/**
+ * MeetingLog.sprint
+ */
+export type MeetingLog$sprintArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Sprint
+   */
+  select?: Prisma.SprintSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Sprint
+   */
+  omit?: Prisma.SprintOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SprintInclude<ExtArgs> | null
+  where?: Prisma.SprintWhereInput
+}
+
+/**
+ * MeetingLog.phase
+ */
+export type MeetingLog$phaseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Phase
+   */
+  select?: Prisma.PhaseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Phase
+   */
+  omit?: Prisma.PhaseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PhaseInclude<ExtArgs> | null
+  where?: Prisma.PhaseWhereInput
 }
 
 /**

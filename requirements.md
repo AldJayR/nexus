@@ -19,13 +19,14 @@ This system is a support and self-monitoring tool used alongside the actual caps
     *   Update assigned tasks (including blocking issues).
     *   Add comments to explain progress or blockers.
     *   Upload evidence.
+    *   **Upload Meeting Minutes.**
     *   View progress dashboards.
 *   **Team Lead / Project Manager**
     *   **Onboarding:** Create team member accounts via email invitation.
     *   Configure Project details (Title, Repository).
     *   Manage phases, sprints, and deliverables.
     *   Approve task completion.
-    *   **Upload Meeting Minutes.**
+    *   Upload Meeting Minutes.
     *   Restore deleted items.
 *   **Adviser (View-Only)**
     *   View overall progress and evidence.
@@ -116,12 +117,12 @@ The dashboard must display:
 *   **Logged Events:** Task status changes, File uploads, Deliverable approvals.
 *   **Visible to:** Team Leads (to resolve disputes on who did what).
 
-### 5.10 Meeting Minutes (PDF Upload)
-*   Users must be able to upload a PDF file representing the "Minutes of Meeting" (MoM).
-*   **Linking:** Each upload must be linked to a specific Sprint.
-*   **Required Fields:** Meeting Date, Title, PDF File.
-*   **Viewing:** Users must be able to download/preview the uploaded PDF.
-*   **Note:** Structured data for "Attendees" or "Summary" is NOT required in the database; this information is assumed to be inside the PDF.
+### 5.10 Meeting Minutes (PDF/Image Upload)
+*   Users must be able to upload a PDF or Image file representing the "Minutes of Meeting" (MoM).
+*   **Linking:** Each upload must be linked to a specific **Sprint** or a **Phase** (to allow for pre-sprint meetings during Waterfall).
+*   **Required Fields:** Meeting Date, Title, File.
+*   **Viewing:** Users must be able to download/preview the uploaded file.
+*   **Note:** Structured data for "Attendees" or "Summary" is NOT required in the database; this information is assumed to be inside the uploaded document.
 
 ### 5.11 Data Backup
 *   **Export:** Team Lead must be able to download a JSON export of current progress and a ZIP of all files (Evidence + Meeting Minutes).
@@ -162,7 +163,7 @@ The dashboard must display:
 *   **Deliverable** (Required Phase outputs)
 *   **Evidence** (Files linked to deliverables)
 *   **Comment** (Polymorphic: linked to Task OR Deliverable)
-*   **MeetingLog** (Links to Sprint; contains `fileUrl` for PDF)
+*   **MeetingLog** (Links to Sprint OR Phase; contains `fileUrl` for PDF/Image)
 *   **ActivityLog** (Audit Trail)
 *   **Notification** (In-app alerts)
 

@@ -185,6 +185,7 @@ export type EvidenceScalarFieldEnum = (typeof EvidenceScalarFieldEnum)[keyof typ
 export const MeetingLogScalarFieldEnum = {
   id: 'id',
   sprintId: 'sprintId',
+  phaseId: 'phaseId',
   title: 'title',
   date: 'date',
   fileUrl: 'fileUrl',

@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createMeetingLog, getMeetingLogsBySprint, deleteMeetingLog } from "./meeting-log.service.js";
+import { createMeetingLog, getMeetingLogsBySprint, getMeetingLogsByPhase, deleteMeetingLog } from "./meeting-log.service.js";
 import { createMeetingLogSchema } from "./meeting-log.schema.js";
 
 export async function createMeetingLogHandler(request: FastifyRequest, reply: FastifyReply) {
@@ -36,6 +36,12 @@ export async function createMeetingLogHandler(request: FastifyRequest, reply: Fa
 export async function getMeetingLogsBySprintHandler(request: FastifyRequest<{ Params: { sprintId: string } }>, reply: FastifyReply) {
   const { sprintId } = request.params;
   const logs = await getMeetingLogsBySprint(sprintId);
+  return reply.code(200).send(logs);
+}
+
+export async function getMeetingLogsByPhaseHandler(request: FastifyRequest<{ Params: { phaseId: string } }>, reply: FastifyReply) {
+  const { phaseId } = request.params;
+  const logs = await getMeetingLogsByPhase(phaseId);
   return reply.code(200).send(logs);
 }
 

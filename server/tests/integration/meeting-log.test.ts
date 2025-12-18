@@ -18,9 +18,11 @@ describe("MeetingLog Integration Tests", () => {
   let app: FastifyInstance;
   let request: any;
   let teamLeadToken: string;
+  let teamLeadId: string;
   let memberToken: string;
   let projectId: string;
   let sprintId: string;
+  let phaseId: string;
   let memberId: string;
   const prisma = getPrismaClient();
 
@@ -67,6 +69,7 @@ describe("MeetingLog Integration Tests", () => {
         role: "TEAM_LEAD",
       },
     });
+    teamLeadId = teamLead.id;
 
     // Login as Team Lead
     const leadLogin = await request.post("/api/v1/auth/login").send({
@@ -93,7 +96,7 @@ describe("MeetingLog Integration Tests", () => {
     });
     memberToken = memberLogin.body.token;
 
-    // Create Project and Sprint
+    // Create Project, Phase and Sprint
     const project = await prisma.project.create({
       data: {
         name: "Test Project",
@@ -101,6 +104,15 @@ describe("MeetingLog Integration Tests", () => {
       },
     });
     projectId = project.id;
+
+    const phase = await prisma.phase.create({
+      data: {
+        projectId,
+        type: PhaseType.WATERFALL,
+        name: "Planning Phase",
+      },
+    });
+    phaseId = phase.id;
 
     const sprint = await prisma.sprint.create({
       data: {
@@ -114,7 +126,7 @@ describe("MeetingLog Integration Tests", () => {
   });
 
   describe("POST /api/v1/meeting-logs", () => {
-    it("should upload a meeting log successfully", async () => {
+    it("should upload a meeting log for a sprint successfully", async () => {
       const res = await request
         .post("/api/v1/meeting-logs")
         .set("Authorization", `Bearer ${memberToken}`)
@@ -131,6 +143,23 @@ describe("MeetingLog Integration Tests", () => {
       expect(saveFileSpy).toHaveBeenCalled();
     });
 
+    it("should upload a meeting log for a phase successfully", async () => {
+      const res = await request
+        .post("/api/v1/meeting-logs")
+        .set("Authorization", `Bearer ${memberToken}`)
+        .field("phaseId", phaseId)
+        .field("title", "Waterfall Kickoff")
+        .field("date", new Date().toISOString())
+        .attach("file", dummyFilePath);
+
+      expect(res.status).toBe(201);
+      expect(res.body.title).toBe("Waterfall Kickoff");
+      expect(res.body.fileUrl).toBeDefined();
+      expect(res.body.phaseId).toBe(phaseId);
+      expect(res.body.uploaderId).toBe(memberId);
+      expect(saveFileSpy).toHaveBeenCalled();
+    });
+
     it("should fail if no file is provided", async () => {
       const res = await request
         .post("/api/v1/meeting-logs")
@@ -143,7 +172,7 @@ describe("MeetingLog Integration Tests", () => {
       expect(res.body.message).toContain("File is required");
     });
 
-    it("should fail if sprintId is missing", async () => {
+    it("should fail if both sprintId and phaseId are missing", async () => {
       const res = await request
         .post("/api/v1/meeting-logs")
         .set("Authorization", `Bearer ${memberToken}`)
@@ -152,6 +181,7 @@ describe("MeetingLog Integration Tests", () => {
         .attach("file", dummyFilePath);
 
       expect(res.status).toBe(400);
+      expect(res.body.message).toContain("Validation error");
     });
 
     it("should fail if sprint does not exist", async () => {
@@ -166,6 +196,19 @@ describe("MeetingLog Integration Tests", () => {
   
         expect(res.status).toBe(404);
       });
+
+    it("should fail if phase does not exist", async () => {
+      const fakeId = "00000000-0000-0000-0000-000000000000";
+      const res = await request
+        .post("/api/v1/meeting-logs")
+        .set("Authorization", `Bearer ${memberToken}`)
+        .field("phaseId", fakeId)
+        .field("title", "Phase Meeting")
+        .field("date", new Date().toISOString())
+        .attach("file", dummyFilePath);
+
+      expect(res.status).toBe(404);
+    });
 
     it("should fail if title is missing", async () => {
         const res = await request
@@ -196,7 +239,7 @@ describe("MeetingLog Integration Tests", () => {
       await prisma.meetingLog.create({
         data: {
           sprintId,
-          uploaderId: memberId,
+          uploaderId: teamLeadId,
           title: "Initial Meeting",
           date: new Date(),
           fileUrl: "http://example.com/initial-meeting.pdf",
@@ -215,8 +258,33 @@ describe("MeetingLog Integration Tests", () => {
     });
   });
 
+  describe("GET /api/v1/meeting-logs/phase/:phaseId", () => {
+    it("should list meeting logs for a phase", async () => {
+      // Seed a meeting log manually
+      await prisma.meetingLog.create({
+        data: {
+          phaseId,
+          uploaderId: memberId,
+          title: "Phase Meeting",
+          date: new Date(),
+          fileUrl: "http://example.com/phase-meeting.pdf",
+        }
+      });
+
+      const res = await request
+        .get(`/api/v1/meeting-logs/phase/${phaseId}`)
+        .set("Authorization", `Bearer ${teamLeadToken}`);
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].title).toBe("Phase Meeting");
+      expect(res.body[0].uploader).toBeDefined();
+    });
+  });
+
   describe("DELETE /api/v1/meeting-logs/:id", () => {
-    it("should delete a meeting log", async () => {
+    it("should delete a sprint meeting log", async () => {
       const meetingLog = await prisma.meetingLog.create({
         data: {
           sprintId,
@@ -229,12 +297,34 @@ describe("MeetingLog Integration Tests", () => {
 
       const res = await request
         .delete(`/api/v1/meeting-logs/${meetingLog.id}`)
-        .set("Authorization", `Bearer ${memberToken}`);
+        .set("Authorization", `Bearer ${teamLeadToken}`);
 
       expect(res.status).toBe(204);
-      expect(deleteFileSpy).toHaveBeenCalledWith("nexus_uploads/to-delete"); // Verify Cloudinary deletion was called
+      expect(deleteFileSpy).toHaveBeenCalledWith("nexus_uploads/to-delete");
 
-      // Check DB - should be hard deleted
+      const check = await prisma.meetingLog.findUnique({
+        where: { id: meetingLog.id },
+      });
+      expect(check).toBeNull();
+    });
+
+    it("should delete a phase meeting log", async () => {
+      const meetingLog = await prisma.meetingLog.create({
+        data: {
+          phaseId,
+          uploaderId: memberId,
+          title: "Phase Meeting To Delete",
+          date: new Date(),
+          fileUrl: "http://example.com/phase-delete.pdf",
+        }
+      });
+
+      const res = await request
+        .delete(`/api/v1/meeting-logs/${meetingLog.id}`)
+        .set("Authorization", `Bearer ${teamLeadToken}`);
+
+      expect(res.status).toBe(204);
+      
       const check = await prisma.meetingLog.findUnique({
         where: { id: meetingLog.id },
       });
