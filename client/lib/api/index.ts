@@ -1,5 +1,6 @@
 // API Services - Main Export Index
 
+// biome-ignore lint/performance/noBarrelFile: Intentional single entrypoint for API clients.
 export { activityLogApi } from "./activity-log";
 export { analyticsApi } from "./analytics";
 export { authApi } from "./auth";

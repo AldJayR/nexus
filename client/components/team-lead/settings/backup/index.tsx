@@ -95,7 +95,7 @@ export default function BackupSettings() {
         </FrameHeader>
         <FramePanel className="space-y-6">
           {/* Message Alert */}
-          {message && (
+          {message ? (
             <div
               className={`flex gap-3 rounded-lg p-4 ${
                 message.type === "success"
@@ -110,7 +110,7 @@ export default function BackupSettings() {
               )}
               <p className="text-sm">{message.text}</p>
             </div>
-          )}
+          ) : null}
           {/* Export Options */}
           <h3 className="mb-2 font-semibold text-sm">Export Progress</h3>
           <p className="mb-4 text-muted-foreground text-sm">

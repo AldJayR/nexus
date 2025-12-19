@@ -36,7 +36,7 @@ export type AuthState = {
   error: string | null;
 };
 
-export type ServerActionResponse<T = any> = {
+export type ServerActionResponse<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string;

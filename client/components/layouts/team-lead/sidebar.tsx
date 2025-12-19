@@ -7,13 +7,15 @@ import {
   GalleryVerticalEnd,
   LayoutDashboard,
   type LucideIcon,
+  Server,
   Settings,
   Shapes,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { getCurrentUser } from "@/actions/user";
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +27,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavUser } from "../nav-user";
 
 type NavItem = {
   title: string;
@@ -49,13 +52,43 @@ const navItems: NavItem[] = [
       { title: "Deliverables", href: "/deliverables", icon: FolderOpen },
     ],
   },
-  { title: "Settings", href: "/settings", icon: Settings },
+  {
+    title: "Settings",
+    items: [
+      { title: "Team Members", href: "/settings/team-members", icon: Users },
+      {
+        title: "Project Config",
+        href: "/settings/project-config",
+        icon: Settings,
+      },
+      { title: "Backup", href: "/settings/backup", icon: Server },
+    ],
+  },
 ] as const;
 
 const AUTH_ROUTE_REGEX = /^\/(auth)/;
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const [user, setUser] = useState<{ name: string; email: string } | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const currentUser = await getCurrentUser();
+      if (currentUser) {
+        setUser({
+          name: currentUser.name,
+          email: currentUser.email,
+        });
+      }
+      setIsLoading(false);
+    };
+
+    fetchUser();
+  }, []);
 
   // Strip the (auth) route group from pathname
   const cleanPathname = pathname.replace(AUTH_ROUTE_REGEX, "") || "/";
@@ -134,7 +167,20 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter />
+      <SidebarFooter>
+        {!isLoading && user ? (
+          <NavUser
+            user={{
+              name: user.name,
+              email: user.email,
+            }}
+          />
+        ) : (
+          <div className="px-2 py-2 text-muted-foreground text-xs">
+            Loading...
+          </div>
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }

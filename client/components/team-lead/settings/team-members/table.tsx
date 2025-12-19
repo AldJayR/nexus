@@ -34,8 +34,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { userApi } from "@/lib/api";
 import type { User } from "@/lib/types/models";
-import { columns } from "./columns";
+import { createColumns } from "./columns";
 import { TeamMembersFilters } from "./filters";
 import { InviteMemberModal } from "./invite-modal";
 
@@ -60,6 +61,39 @@ export function TeamMembersTable({
     pageSize: 10,
   });
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [loadingUserIds, setLoadingUserIds] = useState<Set<string>>(new Set());
+
+  const withLoading =
+    (userId: string, callback: () => Promise<void>) => async () => {
+      setLoadingUserIds((prev) => new Set(prev).add(userId));
+      try {
+        await callback();
+      } finally {
+        setLoadingUserIds((prev) => {
+          const next = new Set(prev);
+          next.delete(userId);
+          return next;
+        });
+      }
+    };
+
+  const handleSoftDelete = async (user: User) => {
+    await withLoading(user.id, async () => {
+      await userApi.deleteUser(user.id);
+    })();
+  };
+
+  const handleRestore = async (user: User) => {
+    await withLoading(user.id, async () => {
+      await userApi.restoreUser(user.id);
+    })();
+  };
+
+  const columns = createColumns({
+    onSoftDelete: handleSoftDelete,
+    onRestore: handleRestore,
+    loadingUserIds,
+  });
 
   const table = useReactTable({
     columns,
@@ -96,7 +130,10 @@ export function TeamMembersTable({
   return (
     <div className="space-y-4">
       <TeamMembersFilters
-        onAddUser={() => setInviteModalOpen(true)}
+        onAddUser={() => {
+          onAddUser?.();
+          setInviteModalOpen(true);
+        }}
         onSearch={multiColumnFilterFn}
       />
 

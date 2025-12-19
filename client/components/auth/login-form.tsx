@@ -82,9 +82,9 @@ export function LoginForm({
                       placeholder="m@example.com"
                       type="email"
                     />
-                    {fieldState.invalid && (
+                    {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
-                    )}
+                    ) : null}
                   </Field>
                 )}
               />
@@ -102,9 +102,9 @@ export function LoginForm({
                       id={field.name}
                       type="password"
                     />
-                    {fieldState.invalid && (
+                    {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
-                    )}
+                    ) : null}
                   </Field>
                 )}
               />
@@ -113,7 +113,7 @@ export function LoginForm({
                 <Button disabled={isPending} type="submit">
                   Login
                 </Button>
-                {formError && <FieldError>{formError}</FieldError>}
+                {formError ? <FieldError>{formError}</FieldError> : null}
               </Field>
             </FieldGroup>
           </form>

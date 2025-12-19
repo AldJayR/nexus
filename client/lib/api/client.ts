@@ -36,7 +36,7 @@ export const createApiClient = async (): Promise<AxiosInstance> => {
   // Response interceptor: Handle common errors
   client.interceptors.response.use(
     (response) => response,
-    async (error: AxiosError) => {
+    (error: AxiosError) => {
       if (error.response?.status === 401) {
         // Token expired or invalid - will be handled in middleware
         // Client-side logout can be triggered via server action

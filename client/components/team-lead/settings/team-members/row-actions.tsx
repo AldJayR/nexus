@@ -1,7 +1,6 @@
 "use client";
 
 import { EllipsisIcon } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,43 +15,29 @@ import type { User } from "@/lib/types/models";
 type RowActionsProps = {
   user: User;
   onEdit?: (user: User) => void;
-  onResendInvite?: (user: User) => Promise<void>;
-  onDeactivate?: (user: User) => Promise<void>;
+  onSoftDelete?: (user: User) => Promise<void>;
   onRestore?: (user: User) => Promise<void>;
-  onDelete?: (user: User) => Promise<void>;
+  isLoading?: boolean;
 };
 
 export function RowActions({
   user,
   onEdit,
-  onResendInvite,
-  onDeactivate,
+  onSoftDelete,
   onRestore,
-  onDelete,
+  isLoading = false,
 }: RowActionsProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isDeactivating, setIsDeactivating] = useState(false);
   const isDeleted = !!user.deletedAt;
 
-  const handleDeactivate = async () => {
-    setIsDeactivating(true);
-    try {
-      if (onDeactivate) {
-        await onDeactivate(user);
-      }
-    } finally {
-      setIsDeactivating(false);
+  const handleSoftDelete = async () => {
+    if (onSoftDelete) {
+      await onSoftDelete(user);
     }
   };
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      if (onDelete) {
-        await onDelete(user);
-      }
-    } finally {
-      setIsDeleting(false);
+  const handleRestore = async () => {
+    if (onRestore) {
+      await onRestore(user);
     }
   };
 
@@ -63,6 +48,7 @@ export function RowActions({
           <Button
             aria-label="Member actions"
             className="shadow-none"
+            disabled={isLoading}
             size="icon"
             variant="ghost"
           >
@@ -77,9 +63,6 @@ export function RowActions({
               <DropdownMenuItem onClick={() => onEdit?.(user)}>
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onResendInvite?.(user)}>
-                Resend Invitation
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
           </>
@@ -87,31 +70,21 @@ export function RowActions({
 
         {isDeleted ? (
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => onRestore?.(user)}>
-              Restore
+            <DropdownMenuItem disabled={isLoading} onClick={handleRestore}>
+              {isLoading ? "Restoring..." : "Restore"}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         ) : (
           <DropdownMenuGroup>
             <DropdownMenuItem
-              disabled={isDeactivating}
-              onClick={handleDeactivate}
+              className="text-amber-600"
+              disabled={isLoading}
+              onClick={handleSoftDelete}
             >
-              {isDeactivating ? "Deactivating..." : "Deactivate"}
+              {isLoading ? "Deleting..." : "Delete"}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         )}
-
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            disabled={isDeleting}
-            onClick={handleDelete}
-            variant="destructive"
-          >
-            {isDeleting ? "Deleting..." : "Delete Permanently"}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

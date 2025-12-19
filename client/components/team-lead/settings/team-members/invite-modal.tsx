@@ -111,9 +111,9 @@ export function InviteMemberModal({
                     placeholder="member@example.com"
                     type="email"
                   />
-                  {fieldState.invalid && (
+                  {fieldState.invalid ? (
                     <FieldError errors={[fieldState.error]} />
-                  )}
+                  ) : null}
                 </Field>
               )}
             />
@@ -132,9 +132,9 @@ export function InviteMemberModal({
                     placeholder="John Doe"
                     type="text"
                   />
-                  {fieldState.invalid && (
+                  {fieldState.invalid ? (
                     <FieldError errors={[fieldState.error]} />
-                  )}
+                  ) : null}
                 </Field>
               )}
             />
@@ -164,14 +164,14 @@ export function InviteMemberModal({
                       ))}
                     </SelectContent>
                   </Select>
-                  {fieldState.invalid && (
+                  {fieldState.invalid ? (
                     <FieldError errors={[fieldState.error]} />
-                  )}
+                  ) : null}
                 </Field>
               )}
             />
 
-            {formError && <FieldError>{formError}</FieldError>}
+            {formError ? <FieldError>{formError}</FieldError> : null}
           </FieldGroup>
 
           <DialogFooter>

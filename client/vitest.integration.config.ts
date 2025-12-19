@@ -9,7 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./tests/integration-setup.ts"],
     include: ["tests/integration/**/*.test.ts"],
-    testTimeout: 30000, // Integration tests might take longer
+    testTimeout: 30_000, // Integration tests might take longer
   },
   resolve: {
     alias: {

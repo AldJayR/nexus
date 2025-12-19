@@ -1,30 +1,39 @@
 // Core Types matching server Prisma schema
 
-export enum UserRole {
-  MEMBER = "MEMBER",
-  TEAM_LEAD = "TEAM_LEAD",
-  ADVISER = "ADVISER",
-}
+export const UserRole = {
+  MEMBER: "MEMBER",
+  TEAM_LEAD: "TEAM_LEAD",
+  ADVISER: "ADVISER",
+} as const;
 
-export enum PhaseType {
-  WATERFALL = "WATERFALL",
-  SCRUM = "SCRUM",
-  FALL = "FALL",
-}
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
-export enum TaskStatus {
-  TODO = "TODO",
-  IN_PROGRESS = "IN_PROGRESS",
-  BLOCKED = "BLOCKED",
-  DONE = "DONE",
-}
+export const PhaseType = {
+  WATERFALL: "WATERFALL",
+  SCRUM: "SCRUM",
+  FALL: "FALL",
+} as const;
 
-export enum DeliverableStatus {
-  NOT_STARTED = "NOT_STARTED",
-  IN_PROGRESS = "IN_PROGRESS",
-  REVIEW = "REVIEW",
-  COMPLETED = "COMPLETED",
-}
+export type PhaseType = (typeof PhaseType)[keyof typeof PhaseType];
+
+export const TaskStatus = {
+  TODO: "TODO",
+  IN_PROGRESS: "IN_PROGRESS",
+  BLOCKED: "BLOCKED",
+  DONE: "DONE",
+} as const;
+
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus];
+
+export const DeliverableStatus = {
+  NOT_STARTED: "NOT_STARTED",
+  IN_PROGRESS: "IN_PROGRESS",
+  REVIEW: "REVIEW",
+  COMPLETED: "COMPLETED",
+} as const;
+
+export type DeliverableStatus =
+  (typeof DeliverableStatus)[keyof typeof DeliverableStatus];
 
 // User
 export type User = {

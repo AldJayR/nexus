@@ -10,7 +10,7 @@ export type DashboardOverview = {
     progress: number;
   };
   pendingTasksCount: number;
-  upcomingDeadlines: any[];
+  upcomingDeadlines: unknown[];
 };
 
 export type PhaseAnalytics = {
@@ -36,9 +36,9 @@ export type TeamContribution = {
 };
 
 export type TimelineData = {
-  phases: any[];
-  sprints: any[];
-  milestones: any[];
+  phases: unknown[];
+  sprints: unknown[];
+  milestones: unknown[];
 };
 
 export const analyticsApi = {

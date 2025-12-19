@@ -1,5 +1,6 @@
 import 'dotenv/config'
-import { PrismaClient, Role, PhaseType, DeliverableStatus } from '@prisma/client'
+// import { PrismaClient, Role, PhaseType, DeliverableStatus } from ''
+import { DeliverableStatus, PhaseType, PrismaClient, Role } from '../src/generated/client.js'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import bcrypt from 'bcryptjs'
