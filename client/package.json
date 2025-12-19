@@ -6,6 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
+    "test": "vitest",
+    "test:unit": "vitest",
+    "test:integration": "vitest -c vitest.integration.config.ts",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "fix:unsafe": "ultracite fix --unsafe"
@@ -47,13 +50,17 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.1.2",
+    "jsdom": "^27.3.0",
     "lint-staged": "^16.2.7",
+    "msw": "^2.12.4",
     "nanoid": "^5.1.6",
     "picocolors": "^1.1.1",
     "source-map-js": "^1.2.1",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "ultracite": "6.4.1"
+    "ultracite": "6.4.1",
+    "vitest": "^4.0.16"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [

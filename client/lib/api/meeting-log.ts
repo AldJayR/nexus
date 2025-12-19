@@ -34,6 +34,14 @@ export const meetingLogApi = {
     return response.data;
   },
 
+  getMeetingLogsByPhase: async (phaseId: string): Promise<MeetingLog[]> => {
+    const client = await createApiClient();
+    const response = await client.get(
+      API_ENDPOINTS.MEETING_LOGS.BY_PHASE(phaseId)
+    );
+    return response.data;
+  },
+
   deleteMeetingLog: async (id: string): Promise<void> => {
     const client = await createApiClient();
     await client.delete(API_ENDPOINTS.MEETING_LOGS.DELETE(id));

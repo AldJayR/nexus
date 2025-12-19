@@ -6,12 +6,43 @@ Organized patterns for managing API calls across your application.
 
 ```
 src/lib/api/
-├── auth.ts          # Authentication endpoints
-├── sprints.ts       # Sprint endpoints
-├── tasks.ts         # Task endpoints
-├── projects.ts      # Project endpoints
-├── deliverables.ts  # Deliverable endpoints
-└── index.ts         # Barrel export
+ auth.ts          # Authentication endpoints
+ client.ts        # Axios client factory
+ endpoints.ts     # Centralized API endpoint constants
+ sprint.ts        # Sprint endpoints
+ task.ts          # Task endpoints
+ project.ts       # Project endpoints
+ deliverable.ts   # Deliverable endpoints
+ user.ts          # User endpoints
+ phase.ts         # Phase endpoints
+ evidence.ts      # Evidence endpoints
+ comment.ts       # Comment endpoints
+ meeting-log.ts   # Meeting Log endpoints
+ activity-log.ts  # Activity Log endpoints (New)
+ notification.ts  # Notification endpoints (New)
+ analytics.ts     # Analytics endpoints (New)
+ backup.ts        # Backup endpoints (New)
+ index.ts         # Barrel export
+```
+
+## Centralized Endpoints
+
+We use a centralized `endpoints.ts` file to manage all API routes. This avoids hardcoding strings in multiple places.
+
+```typescript
+// src/lib/api/endpoints.ts
+export const API_ENDPOINTS = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    // ...
+  },
+  SPRINTS: {
+    LIST: "/sprints",
+    GET: (id: string) => `/sprints/${id}`,
+    // ...
+  },
+  // ...
+} as const;
 ```
 
 ## Barrel Exports
@@ -20,232 +51,72 @@ Use barrel exports for clean imports:
 
 ```typescript
 // src/lib/api/index.ts
-export * from './auth'
-export * from './sprints'
-export * from './tasks'
-export * from './projects'
-export * from './deliverables'
+export { authApi } from "./auth";
+export { sprintApi } from "./sprint";
+// ...
 ```
 
 Usage:
 
 ```typescript
-// Instead of this
-import { fetchSprints } from '@/lib/api/sprints'
-import { fetchTasks } from '@/lib/api/tasks'
+import { sprintApi, taskApi } from "@/lib/api";
 
-// Use this
-import { fetchSprints, fetchTasks } from '@/lib/api'
+// Use in server components or hooks
+const sprints = await sprintApi.listSprints();
 ```
 
 ---
 
 ## Axios Configuration
 
-The API client is already configured in [04 - Data Fetching](04-data-fetching.md) with request/response interceptors. Import it in your endpoint modules:
+The API client is configured in `src/lib/api/client.ts`. It exports a `createApiClient` function that handles headers and authentication (cookies).
 
 ```typescript
-// src/lib/api/client.ts (already configured)
-import axios from 'axios'
+// src/lib/api/client.ts
+import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
-
-export const apiClient = axios.create({
-  baseURL: API_URL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-
-// Interceptors for auth, error handling, etc.
+export const createApiClient = async () => {
+  // ... configuration with headers and cookies
+};
 ```
-
-All endpoint modules import from this client.
 
 ---
 
 ## Endpoint-Specific Modules
 
-### Sprint API
+### Sprint API Example
 
 ```typescript
-// src/lib/api/sprints.ts
-import { apiClient } from './client'
-import type { Sprint, CreateSprintInput } from '@/types/sprint'
+// src/lib/api/sprint.ts
+import { createApiClient } from "./client";
+import { API_ENDPOINTS } from "./endpoints";
+import type { Sprint } from "@/lib/types";
 
-// GET endpoints
-export async function fetchSprints(): Promise<Sprint[]> {
-  try {
-    const response = await apiClient.get('/sprints')
-    return response.data
-  } catch (error) {
-    console.error('Error fetching sprints:', error)
-    throw error
-  }
-}
+export const sprintApi = {
+  listSprints: async (): Promise<Sprint[]> => {
+    const client = await createApiClient();
+    const response = await client.get(API_ENDPOINTS.SPRINTS.LIST);
+    return response.data;
+  },
 
-export async function fetchSprint(id: string): Promise<Sprint> {
-  try {
-    const response = await apiClient.get(`/sprints/${id}`)
-    return response.data
-  } catch (error) {
-    console.error(`Error fetching sprint ${id}:`, error)
-    throw error
-  }
-}
-
-// POST/PUT endpoints
-export async function createSprint(data: CreateSprintInput): Promise<Sprint> {
-  const response = await apiClient.post('/sprints', data)
-  return response.data
-}
-
-export async function updateSprint(
-  id: string,
-  data: Partial<CreateSprintInput>,
-): Promise<Sprint> {
-  const response = await apiClient.put(`/sprints/${id}`, data)
-  return response.data
-}
-
-// DELETE endpoints
-export async function deleteSprint(id: string): Promise<void> {
-  await apiClient.delete(`/sprints/${id}`)
-}
+  getSprintById: async (id: string): Promise<Sprint> => {
+    const client = await createApiClient();
+    const response = await client.get(API_ENDPOINTS.SPRINTS.GET(id));
+    return response.data;
+  },
+  
+  // ...
+};
 ```
-
-### Task API
-
-```typescript
-// src/lib/api/tasks.ts
-import { apiClient } from './client'
-import type { Task, CreateTaskInput } from '@/types/task'
-
-export async function fetchTasks(sprintId?: string): Promise<Task[]> {
-  const params = sprintId ? { sprintId } : {}
-  const response = await apiClient.get('/tasks', { params })
-  return response.data
-}
-
-export async function fetchTask(id: string): Promise<Task> {
-  const response = await apiClient.get(`/tasks/${id}`)
-  return response.data
-}
-
-export async function createTask(data: CreateTaskInput): Promise<Task> {
-  const response = await apiClient.post('/tasks', data)
-  return response.data
-}
-
-export async function updateTask(
-  id: string,
-  data: Partial<CreateTaskInput>,
-): Promise<Task> {
-  const response = await apiClient.put(`/tasks/${id}`, data)
-  return response.data
-}
-
-export async function deleteTask(id: string): Promise<void> {
-  await apiClient.delete(`/tasks/${id}`)
-}
-```
-
----
 
 ## Error Handling
 
-Errors from Axios are caught and logged. For Server Actions, return error objects instead of throwing. See [04 - Data Fetching](04-data-fetching.md) for Server Action error handling patterns.
+API errors should be handled in the calling component or hook. The `createApiClient` may have interceptors to handle common errors like 401 Unauthorized.
 
 ```typescript
-// src/lib/api/sprints.ts
-export async function fetchSprints(): Promise<Sprint[]> {
-  try {
-    const response = await apiClient.get('/sprints')
-    return response.data
-  } catch (error) {
-    console.error('Error fetching sprints:', error)
-    throw error // Re-throw for Server Components
-  }
+try {
+  await sprintApi.createSprint(data);
+} catch (error) {
+  // Handle error
 }
-```
-
-For mutations in Server Actions, return error objects:
-
-```typescript
-// src/app/actions/sprints.ts
-'use server'
-
-export async function createSprint(prevState: any, formData: FormData) {
-  try {
-    // Validation...
-    // API call...
-    revalidatePath('/sprints')
-  } catch (error) {
-    // Return error object, don't throw
-    return { message: 'Failed to create sprint' }
-  }
-  redirect('/sprints')
-}
-```
-
----
-
-## TypeScript Types
-
-Always define and export types:
-
-```typescript
-// src/types/sprint.ts
-export interface Sprint {
-  id: string
-  name: string
-  description?: string
-  status: SprintStatus
-  startDate: string
-  endDate: string
-  createdAt: string
-  updatedAt: string
-}
-
-export enum SprintStatus {
-  PLANNING = 'PLANNING',
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
-}
-
-export type CreateSprintInput = Omit<Sprint, 'id' | 'createdAt' | 'updatedAt'>
-export type UpdateSprintInput = Partial<CreateSprintInput>
-```
-
----
-
-## Best Practices
-
-1. **Separation**: Keep each endpoint module focused
-2. **Reusability**: Use generic helpers to reduce duplication
-3. **Type Safety**: Always type request and response data
-4. **Error Handling**: Catch and handle errors gracefully
-5. **Constants**: Use environment variables for API URL
-6. **Naming**: Use verb + noun pattern (fetchSprints, createSprint)
-7. **Documentation**: Add JSDoc comments for complex functions
-
----
-
-## API Call Flow
-
-```
-User Interaction
-    ↓
-Server Action (validates and handles mutations)
-    ↓
-apiCall() helper (manages HTTP)
-    ↓
-Response type validation
-    ↓
-Error handling
-    ↓
-Cache revalidation
-    ↓
-UI Update
 ```
