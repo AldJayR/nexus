@@ -30,6 +30,7 @@ const embeddedDeliverableSchema = z.object({
   title: z.string(),
   status: z.nativeEnum(DeliverableStatus),
   description: z.string().nullable(),
+  dueDate: z.date().nullable(),
 });
 
 export const phaseDetailResponseSchema = phaseResponseSchema.extend({

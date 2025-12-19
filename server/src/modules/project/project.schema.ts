@@ -17,6 +17,8 @@ export const projectResponseSchema = z.object({
   repositoryUrl: z.string().nullable().describe('URL to the source code repository'),
   startDate: z.date().describe('Project start date'),
   endDate: z.date().nullable().describe('Project end date'),
+  createdAt: z.date().describe('Project creation timestamp'),
+  updatedAt: z.date().describe('Last project update timestamp'),
 }).describe('Response object containing project details');
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;

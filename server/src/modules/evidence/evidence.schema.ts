@@ -12,4 +12,5 @@ export const evidenceResponseSchema = z.object({
   fileName: z.string(),
   fileType: z.string(),
   createdAt: z.date(),
+  deletedAt: z.date().nullable().optional(),
 });
