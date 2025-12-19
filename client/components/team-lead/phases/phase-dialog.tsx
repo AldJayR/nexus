@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ type PhaseDialogProps = {
 
 export function PhaseDialog({ open, onOpenChange, phase }: PhaseDialogProps) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(phaseSchema),
@@ -83,6 +85,8 @@ export function PhaseDialog({ open, onOpenChange, phase }: PhaseDialogProps) {
 
       if (result.success) {
         toast.success("Phase updated successfully");
+        // Refresh the page to fetch updated data from server
+        router.refresh();
       } else {
         onOpenChange(true);
         toast.error(result.error || "Failed to update phase");

@@ -1,6 +1,7 @@
 "use client";
 
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { deleteDeliverableAction } from "@/actions/phases";
@@ -42,13 +43,17 @@ export function DeliverableTable({
   deliverables,
   onEdit,
 }: DeliverableTableProps) {
+  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     setIsDeleting(id);
-    await deleteDeliverableAction(id);
+    const result = await deleteDeliverableAction(id);
     setIsDeleting(null);
+    if (result.success) {
+      router.refresh();
+    }
   };
 
   const getStatusColor = (status: DeliverableStatus) => {

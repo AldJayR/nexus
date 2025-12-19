@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -53,6 +54,7 @@ export function DeliverableDialog({
   deliverable,
 }: DeliverableDialogProps) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const isEditing = !!deliverable;
 
   const form = useForm({
@@ -129,6 +131,8 @@ export function DeliverableDialog({
             ? "Deliverable updated successfully"
             : "Deliverable created successfully"
         );
+        // Refresh the page to fetch updated data from server
+        router.refresh();
         return;
       }
       onOpenChange(true);
