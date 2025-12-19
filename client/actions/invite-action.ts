@@ -14,7 +14,7 @@ export async function inviteMember(
     const validated = inviteMemberSchema.parse(input);
 
     // Call API
-    const user = await authApi.inviteUser(validated.email, validated.role);
+    const user = await authApi.inviteUser(validated.email, validated.name, validated.role);
 
     return {
       success: true,

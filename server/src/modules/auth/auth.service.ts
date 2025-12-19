@@ -67,10 +67,18 @@ export async function inviteUser(input: InviteUserInput) {
     },
   });
 
-  await emailService.sendInvitationEmail(email, tempPassword);
+  // Send email asynchronously - don't block on email failure
+  // User is already created in database, email is best-effort
+  emailService.sendInvitationEmail(email, tempPassword).catch((err) => {
+    console.error(`Failed to send invitation email to ${email}:`, err);
+    // Could log to monitoring service, sentry, etc.
+  });
 
   return {
-    message: 'User invited successfully. An email with credentials has been sent.',
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
   };
 }
 

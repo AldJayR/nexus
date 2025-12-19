@@ -22,13 +22,10 @@ export const inviteUserSchema = z.object({
 }).describe('Schema for inviting a new user');
 
 export const inviteUserResponseSchema = z.object({
-  message: z.string().describe('Confirmation message'),
-  // Credentials are not sent back in actual response for security, but schema might show it for docs example if needed.
-  // For actual API, we usually don't return temp password. This part is commented out as it's not truly returned.
-  // credentials: z.object({
-  //   email: z.string().email(),
-  //   password: z.string(),
-  // }).optional().describe('Temporary credentials sent to the user via email (not returned in API response)'),
+  id: z.string().uuid().describe('User ID'),
+  email: z.string().email().describe('User email address'),
+  name: z.string().describe('User full name'),
+  role: z.enum(['MEMBER', 'TEAM_LEAD', 'ADVISER']).describe('User role'),
 }).describe('Response object for successful user invitation');
 
 export const changePasswordSchema = z.object({
