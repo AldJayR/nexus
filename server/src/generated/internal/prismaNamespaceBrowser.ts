@@ -129,6 +129,7 @@ export const DeliverableScalarFieldEnum = {
   title: 'title',
   description: 'description',
   status: 'status',
+  stage: 'stage',
   dueDate: 'dueDate',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',

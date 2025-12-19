@@ -30,6 +30,7 @@ export type DeliverableMinAggregateOutputType = {
   title: string | null
   description: string | null
   status: $Enums.DeliverableStatus | null
+  stage: $Enums.DeliverableStage | null
   dueDate: Date | null
   deletedAt: Date | null
   createdAt: Date | null
@@ -42,6 +43,7 @@ export type DeliverableMaxAggregateOutputType = {
   title: string | null
   description: string | null
   status: $Enums.DeliverableStatus | null
+  stage: $Enums.DeliverableStage | null
   dueDate: Date | null
   deletedAt: Date | null
   createdAt: Date | null
@@ -54,6 +56,7 @@ export type DeliverableCountAggregateOutputType = {
   title: number
   description: number
   status: number
+  stage: number
   dueDate: number
   deletedAt: number
   createdAt: number
@@ -68,6 +71,7 @@ export type DeliverableMinAggregateInputType = {
   title?: true
   description?: true
   status?: true
+  stage?: true
   dueDate?: true
   deletedAt?: true
   createdAt?: true
@@ -80,6 +84,7 @@ export type DeliverableMaxAggregateInputType = {
   title?: true
   description?: true
   status?: true
+  stage?: true
   dueDate?: true
   deletedAt?: true
   createdAt?: true
@@ -92,6 +97,7 @@ export type DeliverableCountAggregateInputType = {
   title?: true
   description?: true
   status?: true
+  stage?: true
   dueDate?: true
   deletedAt?: true
   createdAt?: true
@@ -177,6 +183,7 @@ export type DeliverableGroupByOutputType = {
   title: string
   description: string | null
   status: $Enums.DeliverableStatus
+  stage: $Enums.DeliverableStage
   dueDate: Date | null
   deletedAt: Date | null
   createdAt: Date
@@ -210,6 +217,7 @@ export type DeliverableWhereInput = {
   title?: Prisma.StringFilter<"Deliverable"> | string
   description?: Prisma.StringNullableFilter<"Deliverable"> | string | null
   status?: Prisma.EnumDeliverableStatusFilter<"Deliverable"> | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFilter<"Deliverable"> | $Enums.DeliverableStage
   dueDate?: Prisma.DateTimeNullableFilter<"Deliverable"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Deliverable"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Deliverable"> | Date | string
@@ -225,6 +233,7 @@ export type DeliverableOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -243,6 +252,7 @@ export type DeliverableWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Deliverable"> | string
   description?: Prisma.StringNullableFilter<"Deliverable"> | string | null
   status?: Prisma.EnumDeliverableStatusFilter<"Deliverable"> | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFilter<"Deliverable"> | $Enums.DeliverableStage
   dueDate?: Prisma.DateTimeNullableFilter<"Deliverable"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Deliverable"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Deliverable"> | Date | string
@@ -258,6 +268,7 @@ export type DeliverableOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -276,6 +287,7 @@ export type DeliverableScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Deliverable"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Deliverable"> | string | null
   status?: Prisma.EnumDeliverableStatusWithAggregatesFilter<"Deliverable"> | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageWithAggregatesFilter<"Deliverable"> | $Enums.DeliverableStage
   dueDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Deliverable"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Deliverable"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Deliverable"> | Date | string
@@ -287,6 +299,7 @@ export type DeliverableCreateInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -302,6 +315,7 @@ export type DeliverableUncheckedCreateInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -315,6 +329,7 @@ export type DeliverableUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -330,6 +345,7 @@ export type DeliverableUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -344,6 +360,7 @@ export type DeliverableCreateManyInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -355,6 +372,7 @@ export type DeliverableUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -367,6 +385,7 @@ export type DeliverableUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -389,6 +408,7 @@ export type DeliverableCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -401,6 +421,7 @@ export type DeliverableMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -413,6 +434,7 @@ export type DeliverableMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -475,6 +497,10 @@ export type EnumDeliverableStatusFieldUpdateOperationsInput = {
   set?: $Enums.DeliverableStatus
 }
 
+export type EnumDeliverableStageFieldUpdateOperationsInput = {
+  set?: $Enums.DeliverableStage
+}
+
 export type DeliverableCreateNestedOneWithoutEvidenceInput = {
   create?: Prisma.XOR<Prisma.DeliverableCreateWithoutEvidenceInput, Prisma.DeliverableUncheckedCreateWithoutEvidenceInput>
   connectOrCreate?: Prisma.DeliverableCreateOrConnectWithoutEvidenceInput
@@ -510,6 +536,7 @@ export type DeliverableCreateWithoutPhaseInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -523,6 +550,7 @@ export type DeliverableUncheckedCreateWithoutPhaseInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -566,6 +594,7 @@ export type DeliverableScalarWhereInput = {
   title?: Prisma.StringFilter<"Deliverable"> | string
   description?: Prisma.StringNullableFilter<"Deliverable"> | string | null
   status?: Prisma.EnumDeliverableStatusFilter<"Deliverable"> | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFilter<"Deliverable"> | $Enums.DeliverableStage
   dueDate?: Prisma.DateTimeNullableFilter<"Deliverable"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Deliverable"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Deliverable"> | Date | string
@@ -577,6 +606,7 @@ export type DeliverableCreateWithoutEvidenceInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -591,6 +621,7 @@ export type DeliverableUncheckedCreateWithoutEvidenceInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -619,6 +650,7 @@ export type DeliverableUpdateWithoutEvidenceInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -633,6 +665,7 @@ export type DeliverableUncheckedUpdateWithoutEvidenceInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -645,6 +678,7 @@ export type DeliverableCreateWithoutCommentsInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -659,6 +693,7 @@ export type DeliverableUncheckedCreateWithoutCommentsInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -687,6 +722,7 @@ export type DeliverableUpdateWithoutCommentsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -701,6 +737,7 @@ export type DeliverableUncheckedUpdateWithoutCommentsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -713,6 +750,7 @@ export type DeliverableCreateManyPhaseInput = {
   title: string
   description?: string | null
   status?: $Enums.DeliverableStatus
+  stage?: $Enums.DeliverableStage
   dueDate?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -724,6 +762,7 @@ export type DeliverableUpdateWithoutPhaseInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -737,6 +776,7 @@ export type DeliverableUncheckedUpdateWithoutPhaseInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -750,6 +790,7 @@ export type DeliverableUncheckedUpdateManyWithoutPhaseInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumDeliverableStatusFieldUpdateOperationsInput | $Enums.DeliverableStatus
+  stage?: Prisma.EnumDeliverableStageFieldUpdateOperationsInput | $Enums.DeliverableStage
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -802,6 +843,7 @@ export type DeliverableSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   title?: boolean
   description?: boolean
   status?: boolean
+  stage?: boolean
   dueDate?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -818,6 +860,7 @@ export type DeliverableSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   title?: boolean
   description?: boolean
   status?: boolean
+  stage?: boolean
   dueDate?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -831,6 +874,7 @@ export type DeliverableSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   title?: boolean
   description?: boolean
   status?: boolean
+  stage?: boolean
   dueDate?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -844,13 +888,14 @@ export type DeliverableSelectScalar = {
   title?: boolean
   description?: boolean
   status?: boolean
+  stage?: boolean
   dueDate?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DeliverableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phaseId" | "title" | "description" | "status" | "dueDate" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["deliverable"]>
+export type DeliverableOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phaseId" | "title" | "description" | "status" | "stage" | "dueDate" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["deliverable"]>
 export type DeliverableInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   phase?: boolean | Prisma.PhaseDefaultArgs<ExtArgs>
   evidence?: boolean | Prisma.Deliverable$evidenceArgs<ExtArgs>
@@ -877,6 +922,7 @@ export type $DeliverablePayload<ExtArgs extends runtime.Types.Extensions.Interna
     title: string
     description: string | null
     status: $Enums.DeliverableStatus
+    stage: $Enums.DeliverableStage
     dueDate: Date | null
     deletedAt: Date | null
     createdAt: Date
@@ -1312,6 +1358,7 @@ export interface DeliverableFieldRefs {
   readonly title: Prisma.FieldRef<"Deliverable", 'String'>
   readonly description: Prisma.FieldRef<"Deliverable", 'String'>
   readonly status: Prisma.FieldRef<"Deliverable", 'DeliverableStatus'>
+  readonly stage: Prisma.FieldRef<"Deliverable", 'DeliverableStage'>
   readonly dueDate: Prisma.FieldRef<"Deliverable", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Deliverable", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Deliverable", 'DateTime'>

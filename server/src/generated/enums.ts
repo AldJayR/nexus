@@ -45,3 +45,15 @@ export const DeliverableStatus = {
 } as const
 
 export type DeliverableStatus = (typeof DeliverableStatus)[keyof typeof DeliverableStatus]
+
+
+export const DeliverableStage = {
+  PLANNING: 'PLANNING',
+  DESIGN: 'DESIGN',
+  DEVELOPMENT: 'DEVELOPMENT',
+  TESTING: 'TESTING',
+  DEPLOYMENT: 'DEPLOYMENT',
+  GENERAL: 'GENERAL'
+} as const
+
+export type DeliverableStage = (typeof DeliverableStage)[keyof typeof DeliverableStage]

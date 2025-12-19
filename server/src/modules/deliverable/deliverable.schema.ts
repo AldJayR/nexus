@@ -1,17 +1,19 @@
 import { z } from "zod";
-import { DeliverableStatus } from "../../generated/client.js";
+import { DeliverableStatus, DeliverableStage } from "../../generated/client.js";
 
 export const createDeliverableSchema = z.object({
   phaseId: z.string().uuid(),
   title: z.string().min(1),
   description: z.string().optional(),
   dueDate: z.string().datetime().nullable().optional(),
+  stage: z.nativeEnum(DeliverableStage).optional(),
 });
 
 export const updateDeliverableSchema = z.object({
   title: z.string().min(1).optional(),
   description: z.string().optional(),
   status: z.nativeEnum(DeliverableStatus).optional(),
+  stage: z.nativeEnum(DeliverableStage).optional(),
   dueDate: z.string().datetime().nullable().optional(),
 });
 
@@ -21,6 +23,7 @@ export const deliverableResponseSchema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   status: z.nativeEnum(DeliverableStatus),
+  stage: z.nativeEnum(DeliverableStage),
   dueDate: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),

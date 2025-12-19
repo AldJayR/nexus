@@ -26,6 +26,15 @@ export enum DeliverableStatus {
   COMPLETED = "COMPLETED",
 }
 
+export enum DeliverableStage {
+  PLANNING = "PLANNING",
+  DESIGN = "DESIGN",
+  DEVELOPMENT = "DEVELOPMENT",
+  TESTING = "TESTING",
+  DEPLOYMENT = "DEPLOYMENT",
+  GENERAL = "GENERAL",
+}
+
 // User
 export type User = {
   id: string;
@@ -73,6 +82,7 @@ export type Deliverable = {
   title: string;
   description?: string | null;
   status: DeliverableStatus;
+  stage: DeliverableStage;
   dueDate?: string | null;
   createdAt: string;
   updatedAt: string;

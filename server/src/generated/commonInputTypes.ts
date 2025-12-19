@@ -176,6 +176,13 @@ export type EnumDeliverableStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumDeliverableStatusFilter<$PrismaModel> | $Enums.DeliverableStatus
 }
 
+export type EnumDeliverableStageFilter<$PrismaModel = never> = {
+  equals?: $Enums.DeliverableStage | Prisma.EnumDeliverableStageFieldRefInput<$PrismaModel>
+  in?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDeliverableStageFilter<$PrismaModel> | $Enums.DeliverableStage
+}
+
 export type EnumDeliverableStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.DeliverableStatus | Prisma.EnumDeliverableStatusFieldRefInput<$PrismaModel>
   in?: $Enums.DeliverableStatus[] | Prisma.ListEnumDeliverableStatusFieldRefInput<$PrismaModel>
@@ -184,6 +191,16 @@ export type EnumDeliverableStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumDeliverableStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumDeliverableStatusFilter<$PrismaModel>
+}
+
+export type EnumDeliverableStageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DeliverableStage | Prisma.EnumDeliverableStageFieldRefInput<$PrismaModel>
+  in?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDeliverableStageWithAggregatesFilter<$PrismaModel> | $Enums.DeliverableStage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDeliverableStageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDeliverableStageFilter<$PrismaModel>
 }
 
 export type IntFilter<$PrismaModel = never> = {
@@ -418,6 +435,13 @@ export type NestedEnumDeliverableStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumDeliverableStatusFilter<$PrismaModel> | $Enums.DeliverableStatus
 }
 
+export type NestedEnumDeliverableStageFilter<$PrismaModel = never> = {
+  equals?: $Enums.DeliverableStage | Prisma.EnumDeliverableStageFieldRefInput<$PrismaModel>
+  in?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDeliverableStageFilter<$PrismaModel> | $Enums.DeliverableStage
+}
+
 export type NestedEnumDeliverableStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.DeliverableStatus | Prisma.EnumDeliverableStatusFieldRefInput<$PrismaModel>
   in?: $Enums.DeliverableStatus[] | Prisma.ListEnumDeliverableStatusFieldRefInput<$PrismaModel>
@@ -426,6 +450,16 @@ export type NestedEnumDeliverableStatusWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumDeliverableStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumDeliverableStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumDeliverableStageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DeliverableStage | Prisma.EnumDeliverableStageFieldRefInput<$PrismaModel>
+  in?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DeliverableStage[] | Prisma.ListEnumDeliverableStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDeliverableStageWithAggregatesFilter<$PrismaModel> | $Enums.DeliverableStage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDeliverableStageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDeliverableStageFilter<$PrismaModel>
 }
 
 export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {

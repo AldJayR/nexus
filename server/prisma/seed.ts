@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { PrismaClient, Role, PhaseType, DeliverableStatus } from '@prisma/client'
+import { PrismaClient, Role, PhaseType, DeliverableStatus, DeliverableStage } from '../src/generated/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import bcrypt from 'bcryptjs'
@@ -49,9 +49,9 @@ async function main() {
             name: 'Planning & Design',
             deliverables: {
               create: [
-                { title: 'Project Proposal', description: 'Scope and objectives', status: DeliverableStatus.NOT_STARTED },
-                { title: 'Requirements Specification', description: 'Functional requirements', status: DeliverableStatus.NOT_STARTED },
-                { title: 'UI/UX Design', description: 'Wireframes and mockups', status: DeliverableStatus.NOT_STARTED }
+                { title: 'Project Proposal', description: 'Scope and objectives', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.PLANNING },
+                { title: 'Requirements Specification', description: 'Functional requirements', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.PLANNING },
+                { title: 'UI/UX Design', description: 'Wireframes and mockups', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.DESIGN }
               ]
             }
           },
@@ -60,8 +60,8 @@ async function main() {
             name: 'Development',
             deliverables: {
               create: [
-                { title: 'Sprint 1 Code', description: 'Initial MVP', status: DeliverableStatus.NOT_STARTED },
-                { title: 'API Documentation', description: 'Swagger/OpenAPI docs', status: DeliverableStatus.NOT_STARTED }
+                { title: 'Sprint 1 Code', description: 'Initial MVP', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.DEVELOPMENT },
+                { title: 'API Documentation', description: 'Swagger/OpenAPI docs', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.DEVELOPMENT }
               ]
             }
           },
@@ -70,9 +70,9 @@ async function main() {
             name: 'Deployment & Closing',
             deliverables: {
               create: [
-                { title: 'Test Plan', description: 'QA testing procedures', status: DeliverableStatus.NOT_STARTED },
-                { title: 'User Manual', description: 'End-user guide', status: DeliverableStatus.NOT_STARTED },
-                { title: 'Final Report', description: 'Conclusion and results', status: DeliverableStatus.NOT_STARTED }
+                { title: 'Test Plan', description: 'QA testing procedures', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.TESTING },
+                { title: 'User Manual', description: 'End-user guide', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.DEPLOYMENT },
+                { title: 'Final Report', description: 'Conclusion and results', status: DeliverableStatus.NOT_STARTED, stage: DeliverableStage.DEPLOYMENT }
               ]
             }
           },

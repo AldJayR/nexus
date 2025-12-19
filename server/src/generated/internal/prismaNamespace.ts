@@ -1316,6 +1316,7 @@ export const DeliverableScalarFieldEnum = {
   title: 'title',
   description: 'description',
   status: 'status',
+  stage: 'stage',
   dueDate: 'dueDate',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
@@ -1520,6 +1521,20 @@ export type EnumDeliverableStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'DeliverableStatus[]'
  */
 export type ListEnumDeliverableStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliverableStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliverableStage'
+ */
+export type EnumDeliverableStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliverableStage'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliverableStage[]'
+ */
+export type ListEnumDeliverableStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliverableStage[]'>
     
 
 

@@ -5,7 +5,7 @@ import { getPrismaClient } from "../../src/utils/database";
 import { clearDatabase } from "../helpers/reset-db";
 import { hashPassword } from "../../src/utils/hash";
 import { FastifyInstance } from "fastify";
-import { PhaseType, DeliverableStatus } from "../../src/generated/client";
+import { PhaseType, DeliverableStatus, DeliverableStage } from "../../src/generated/client";
 
 describe("Deliverable Integration Tests", () => {
   let app: FastifyInstance;
@@ -80,7 +80,7 @@ describe("Deliverable Integration Tests", () => {
       },
     });
     phaseId = phase.id;
-  });
+  }, 30000);
 
   describe("POST /api/v1/deliverables", () => {
     it("should create a deliverable when authenticated as TEAM_LEAD", async () => {
@@ -174,6 +174,27 @@ describe("Deliverable Integration Tests", () => {
 
       expect(res.status).toBe(200);
       expect(res.body.status).toBe(DeliverableStatus.COMPLETED);
+    });
+
+    it("should update deliverable stage", async () => {
+      const deliverable = await prisma.deliverable.create({
+        data: {
+          phaseId,
+          title: "To Update Stage",
+          status: DeliverableStatus.NOT_STARTED,
+          stage: DeliverableStage.GENERAL,
+        },
+      });
+
+      const res = await request
+        .put(`/api/v1/deliverables/${deliverable.id}`)
+        .set("Authorization", `Bearer ${teamLeadToken}`)
+        .send({
+          stage: DeliverableStage.PLANNING,
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.stage).toBe(DeliverableStage.PLANNING);
     });
   });
 

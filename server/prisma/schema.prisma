@@ -43,6 +43,15 @@ enum DeliverableStatus {
   COMPLETED
 }
 
+enum DeliverableStage {
+  PLANNING
+  DESIGN
+  DEVELOPMENT
+  TESTING
+  DEPLOYMENT
+  GENERAL
+}
+
 // --------------------------------------
 // Core Models
 // --------------------------------------
@@ -115,6 +124,7 @@ model Deliverable {
   title       String
   description String?           @db.Text
   status      DeliverableStatus @default(NOT_STARTED)
+  stage       DeliverableStage  @default(GENERAL)
   dueDate     DateTime?
 
   evidence    Evidence[]

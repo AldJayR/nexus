@@ -81,7 +81,7 @@ The application shall implement **file-system based routing** using the Next.js 
     2.  **Scrum** (Development & Iteration)
     3.  **Fall** (Testing, Deployment, Closure)
 *   Each phase must contain a list of required deliverables.
-*   Each deliverable must have a status: *Not Started, In Progress, Review, Completed*.
+*   Each deliverable must have a status (*Not Started, In Progress, Review, Completed*) and a stage (*Planning, Design, Development, Testing, Deployment, General*).
 
 ### 5.4 Deliverable Tracking
 *   Users must be able to view required deliverables per phase.
@@ -161,7 +161,7 @@ The dashboard must display:
 *   **Phase** (Water, Scrum, Fall)
 *   **Sprint** (Time-boxed iterations)
 *   **Task** (Work items; linked to Sprint OR Phase)
-*   **Deliverable** (Required Phase outputs)
+*   **Deliverable** (Required Phase outputs; categorized by Stage)
 *   **Evidence** (Files linked to deliverables)
 *   **Comment** (Polymorphic: linked to Task OR Deliverable)
 *   **MeetingLog** (Links to Sprint OR Phase; contains `fileUrl` for PDF/Image)
