@@ -1,5 +1,4 @@
 import { PhaseManager } from "@/components/team-lead/phases/phase-manager";
-import { deliverableApi } from "@/lib/api/deliverable";
 import { phaseApi } from "@/lib/api/phase";
 import type { PhaseDetail } from "@/lib/types";
 
@@ -9,21 +8,17 @@ export const metadata = {
 };
 
 export default async function PhasesPage() {
-  // Fetch data in parallel
-  const [phases, deliverables] = await Promise.all([
-    phaseApi.listPhases(),
-    deliverableApi.listDeliverables(),
-  ]);
-
-  // Merge deliverables into phases
-  const phasesWithDeliverables: PhaseDetail[] = phases.map((phase) => ({
-    ...phase,
-    deliverables: deliverables.filter((d) => d.phaseId === phase.id),
-  }));
+  // Fetch all phases with their deliverables included
+  const phases = await phaseApi.listPhases();
+  
+  // Fetch detailed information for each phase (includes deliverables)
+  const phasesWithDeliverables: PhaseDetail[] = await Promise.all(
+    phases.map((phase) => phaseApi.getPhaseById(phase.id))
+  );
 
   return (
-    <div className="">
+    <>
       <PhaseManager phases={phasesWithDeliverables} />
-    </div>
+    </>
   );
 }

@@ -14,8 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { getCurrentUser } from "@/actions/user";
+import React from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -27,6 +26,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import type { User } from "@/lib/types";
 import { NavUser } from "../nav-user";
 
 type NavItem = {
@@ -68,27 +68,12 @@ const navItems: NavItem[] = [
 
 const AUTH_ROUTE_REGEX = /^\/(auth)/;
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  user: User | null;
+};
+
+export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const currentUser = await getCurrentUser();
-      if (currentUser) {
-        setUser({
-          name: currentUser.name,
-          email: currentUser.email,
-        });
-      }
-      setIsLoading(false);
-    };
-
-    fetchUser();
-  }, []);
 
   // Strip the (auth) route group from pathname
   const cleanPathname = pathname.replace(AUTH_ROUTE_REGEX, "") || "/";
@@ -168,7 +153,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        {!isLoading && user ? (
+        {user ? (
           <NavUser
             user={{
               name: user.name,
@@ -177,7 +162,7 @@ export function AppSidebar() {
           />
         ) : (
           <div className="px-2 py-2 text-muted-foreground text-xs">
-            Loading...
+            Not logged in
           </div>
         )}
       </SidebarFooter>

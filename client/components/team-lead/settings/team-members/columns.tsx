@@ -3,7 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { formatDate } from "@/lib/format-date";
+import { formatDate } from "@/lib/helpers/format-date";
 import type { User } from "@/lib/types/models";
 import { UserRole } from "@/lib/types/models";
 import { cn } from "@/lib/utils";

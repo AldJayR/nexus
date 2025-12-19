@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { updateProjectAction } from "@/actions/project-config";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Frame,
   FrameDescription,
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/frame";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { formatRelativeTime } from "@/lib/format-date";
+import { formatRelativeTime } from "@/lib/helpers/format-date";
 import { toISODateTime } from "@/lib/helpers/date";
 import type { Project } from "@/lib/types";
 import DateRange from "./date-range";
@@ -186,9 +186,6 @@ export default function GeneralSettings({ project }: GeneralSettingsProps) {
               rows={3}
               {...form.register("description")}
             />
-            <FieldDescription>
-              Briefly describe the project goals. Markdown is supported.
-            </FieldDescription>
           </Field>
         </FramePanel>
         <FrameFooter className="flex-row justify-between">

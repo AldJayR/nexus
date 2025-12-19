@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDate } from "@/lib/format-date";
+import { formatDate } from "@/lib/helpers/format-date";
 import type { MethodologyInput } from "@/lib/validation/project-config";
 import DateRange from "./date-range";
 import DeliverableDialog from "./deliverable-dialog";
