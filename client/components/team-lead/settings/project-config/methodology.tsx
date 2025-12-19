@@ -5,6 +5,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { savePhaseDeliverables } from "@/actions/phase-deliverables";
 import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
@@ -17,6 +18,7 @@ import {
   FrameTitle,
 } from "@/components/ui/frame";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { PhaseDetail, PhaseType } from "@/lib/types";
 import {
   type MethodologyInput,
   methodologySchema,
@@ -37,37 +39,75 @@ export const emptyDeliverable: DeliverableDialogValues = {
   dueDate: "",
 };
 
-export default function Methodology() {
+const phaseTypeMap: Record<PhaseType, PhaseKey> = {
+  WATERFALL: "waterfall",
+  SCRUM: "scrum",
+  FALL: "fall",
+};
+
+type MethodologyProps = {
+  phases: PhaseDetail[];
+};
+
+export default function Methodology({ phases }: MethodologyProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const [activePhase, setActivePhase] = useState<PhaseKey>("waterfall");
   const [isEditingDeliverable, setIsEditingDeliverable] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  // Initialize form with server-fetched data
+  const methodologyData: MethodologyInput = {
+    phases: {
+      waterfall: {
+        title: "",
+        description: "",
+        dateRange: { start: "", end: "" },
+        deliverables: [],
+      },
+      scrum: {
+        title: "",
+        description: "",
+        dateRange: { start: "", end: "" },
+        deliverables: [],
+      },
+      fall: {
+        title: "",
+        description: "",
+        dateRange: { start: "", end: "" },
+        deliverables: [],
+      },
+    },
+  };
+
+  // Populate phases with fetched data
+  for (const phase of phases) {
+    const phaseKey = phaseTypeMap[phase.type];
+    const startDate = phase.startDate
+      ? new Date(phase.startDate).toISOString().split("T")[0]
+      : "";
+    const endDate = phase.endDate
+      ? new Date(phase.endDate).toISOString().split("T")[0]
+      : "";
+
+    methodologyData.phases[phaseKey] = {
+      title: phase.name,
+      description: phase.description || "",
+      dateRange: { start: startDate, end: endDate },
+      deliverables: (phase.deliverables || []).map((deliverable) => ({
+        title: deliverable.title,
+        description: deliverable.description || "",
+        dueDate: deliverable.dueDate
+          ? new Date(deliverable.dueDate).toISOString().split("T")[0]
+          : "",
+        deletedAt: deliverable.deletedAt || "",
+      })),
+    };
+  }
+
   const form = useForm<MethodologyInput>({
     resolver: zodResolver(methodologySchema),
     mode: "onChange",
-    defaultValues: {
-      phases: {
-        waterfall: {
-          title: "",
-          description: "",
-          dateRange: { start: "", end: "" },
-          deliverables: [],
-        },
-        scrum: {
-          title: "",
-          description: "",
-          dateRange: { start: "", end: "" },
-          deliverables: [],
-        },
-        fall: {
-          title: "",
-          description: "",
-          dateRange: { start: "", end: "" },
-          deliverables: [],
-        },
-      },
-    },
+    defaultValues: methodologyData,
   });
 
   const isTabLocked =
@@ -79,14 +119,17 @@ export default function Methodology() {
     setFormError(null);
 
     startTransition(async () => {
+      const toastId = toast.loading("Saving phase...");
       try {
         const phaseData = values.phases[activePhase];
 
         // Skip if phase is empty
         if (!(phaseData.title && phaseData.description)) {
-          setFormError(
-            "Complete all required fields in the phase configuration"
-          );
+          toast.dismiss(toastId);
+          const errorMsg =
+            "Complete all required fields in the phase configuration";
+          setFormError(errorMsg);
+          toast.error(errorMsg);
           return;
         }
 
@@ -96,23 +139,39 @@ export default function Methodology() {
         });
 
         if (!result.success) {
-          setFormError(result.error || "Failed to save phase deliverables");
+          const errorMessage =
+            result.error || "Failed to save phase deliverables";
+          toast.dismiss(toastId);
+          setFormError(errorMessage);
+          toast.error(errorMessage);
           return;
         }
 
         // Reset form on successful save
         form.reset(form.getValues());
         setFormError(null);
+        toast.dismiss(toastId);
+        toast.success(
+          `${activePhase.charAt(0).toUpperCase() + activePhase.slice(1)} phase saved successfully`
+        );
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Failed to save phase";
+        toast.dismiss(toastId);
         setFormError(message);
+        toast.error(message);
       }
     });
   }
 
+  const handleSaveClick = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const values = form.getValues();
+    onSubmit(values);
+  };
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
+    <div>
       <Frame stackedPanels>
         <FrameHeader>
           <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
@@ -126,6 +185,7 @@ export default function Methodology() {
               onValueChange={(next) => {
                 if (isTabLocked) {
                   setFormError("Save changes before switching phases");
+                  toast.error("Save changes before switching phases");
                   return;
                 }
 
@@ -163,6 +223,7 @@ export default function Methodology() {
             onValueChange={(next) => {
               if (isTabLocked) {
                 setFormError("Save changes before switching phases");
+                toast.error("Save changes before switching phases");
                 return;
               }
 
@@ -202,17 +263,19 @@ export default function Methodology() {
         </FramePanel>
 
         <FrameFooter className="flex-row justify-end gap-2">
-          {formError ? <FieldError>{formError}</FieldError> : null}
+          {formError ? (
+            <FieldError className="sr-only">{formError}</FieldError>
+          ) : null}
           <Button
             className="w-fit"
-            disabled={isPending || !form.formState.isValid}
-            type="submit"
+            disabled={isPending}
+            onClick={handleSaveClick}
             variant="secondary"
           >
             {isPending ? "Saving..." : "Save Changes"}
           </Button>
         </FrameFooter>
       </Frame>
-    </form>
+    </div>
   );
 }

@@ -1,19 +1,48 @@
 "use client";
 
-import { Bell, Search } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
+// Centralized route-to-title mapping
+const ROUTE_TITLES: Record<string, string> = {
+  "/dashboard": "Dashboard",
+  "/phases": "Project Phases",
+  "/sprints": "Sprints",
+  "/deliverables": "Deliverables",
+  "/meetings": "Meeting Minutes",
+  "/settings/team-members": "Team Members",
+  "/settings/project-config": "Project Configuration",
+  "/settings/backup": "Backup & Export",
+};
+
+function getPageTitle(pathname: string): string | undefined {
+  // Check for exact match first
+  if (ROUTE_TITLES[pathname]) {
+    return ROUTE_TITLES[pathname];
+  }
+
+  // Check for sprint detail page pattern
+  if (pathname.startsWith("/sprints/") && pathname !== "/sprints") {
+    return "Sprint Details";
+  }
+
+  return;
+}
+
 /**
  * App Header Component
  * Provides main navigation header with sidebar toggle, search, notifications, and user avatar
+ * Title updates dynamically based on current route
  */
-export function AppHeader({ title }: { title?: string }) {
+export function AppHeader() {
+  const pathname = usePathname();
+  const title = getPageTitle(pathname);
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b bg-sidebar">
+    <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between gap-3 border-b bg-sidebar/60 backdrop-blur-2xl">
       <div className="flex items-center gap-2 px-3">
         <SidebarTrigger
           aria-label="Toggle sidebar navigation"
@@ -21,7 +50,7 @@ export function AppHeader({ title }: { title?: string }) {
         />
         <Separator aria-hidden="true" className="h-4" orientation="vertical" />
         {title ? (
-          <h1 className="font-semibold text-sm md:font-bold md:text-lg">
+          <h1 className="font-semibold text-sm md:font-semibold md:text-lg">
             {title}
           </h1>
         ) : null}
@@ -35,15 +64,16 @@ export function AppHeader({ title }: { title?: string }) {
           </div>
         </div>
 
-        <Button
+        {/* <Button
           aria-label="Notifications"
           className="relative"
           size="icon"
           variant="ghost"
         >
           <Bell className="size-4" />
-          <span className="absolute top-2 right-2 size-2 rounded-full bg-destructive ring-2 ring-background" />
-        </Button>
+          <span className="absolute rounded-full top-2 right-2 size-2 bg-destructive ring-2 ring-background" />
+        </Button> */}
+        <ThemeToggle />
       </div>
     </header>
   );

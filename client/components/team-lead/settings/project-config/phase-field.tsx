@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { formatDate } from "@/lib/helpers/format-date";
 import type { MethodologyInput } from "@/lib/validation/project-config";
 import DateRange from "./date-range";
 import DeliverableDialog from "./deliverable-dialog";
@@ -239,7 +240,9 @@ export default function PhaseFields({
                     {value?.title || "Untitled"}
                   </p>
                   <p className="text-muted-foreground text-sm">
-                    {value?.dueDate ? `Due ${value.dueDate}` : "No due date"}
+                    {value?.dueDate
+                      ? `Due ${formatDate(value.dueDate)}`
+                      : "No due date"}
                   </p>
                   {value?.description ? (
                     <p className="line-clamp-2 text-muted-foreground text-sm">

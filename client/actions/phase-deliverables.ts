@@ -1,9 +1,25 @@
 "use server";
 
+/**
+ * Phase Deliverables Bulk Sync Action
+ *
+ * Complex bulk synchronization logic for methodology configuration.
+ * Used in project settings to save entire methodology phases with deliverables.
+ *
+ * Handles:
+ * - Creating/updating phases based on methodology type
+ * - Syncing multiple deliverables at once
+ * - Detecting and removing deleted deliverables
+ * - Comparing existing vs new deliverables to minimize API calls
+ *
+ * For simple CRUD operations, see phases.ts
+ */
+
 import { z } from "zod";
 
 import { createApiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
+import { toDateOnly, toISODateTime } from "@/lib/helpers/date";
 import type { ServerActionResponse } from "@/lib/types";
 import { methodologyPhaseSchema } from "@/lib/validation/project-config";
 
@@ -32,26 +48,11 @@ type PhaseDetail = PhaseListItem & {
   }>;
 };
 
-function toIsoDateTimeOrUndefined(dateOnly: string): string | undefined {
-  if (!dateOnly) {
-    return;
-  }
-  return `${dateOnly}T00:00:00.000Z`;
-}
-
-function dueDateKeyFromIsoOrDateOnly(value: string | null | undefined): string {
-  if (!value) {
-    return "";
-  }
-  // Accept either YYYY-MM-DD or full ISO datetime, normalize to YYYY-MM-DD
-  return value.length >= 10 ? value.slice(0, 10) : value;
-}
-
 function deliverableKey(
   title: string,
   dueDate: string | null | undefined
 ): string {
-  return `${title.trim().toLowerCase()}|${dueDateKeyFromIsoOrDateOnly(dueDate)}`;
+  return `${title.trim().toLowerCase()}|${toDateOnly(dueDate)}`;
 }
 
 export async function savePhaseDeliverables(
@@ -84,12 +85,14 @@ export async function savePhaseDeliverables(
     const phasesResponse = await client.get(API_ENDPOINTS.PHASES.LIST);
     const phases = phasesResponse.data as PhaseListItem[];
 
-    const phaseType: PhaseListItem["type"] =
-      phaseKey === "waterfall"
-        ? "WATERFALL"
-        : phaseKey === "scrum"
-          ? "SCRUM"
-          : "FALL";
+    let phaseType: PhaseListItem["type"];
+    if (phaseKey === "waterfall") {
+      phaseType = "WATERFALL";
+    } else if (phaseKey === "scrum") {
+      phaseType = "SCRUM";
+    } else {
+      phaseType = "FALL";
+    }
 
     const existingPhase = phases.find((p) => {
       if (p.type !== phaseType) {
@@ -101,8 +104,8 @@ export async function savePhaseDeliverables(
       return p.projectId === projectId;
     });
 
-    const startDate = toIsoDateTimeOrUndefined(phaseData.dateRange.start);
-    const endDate = toIsoDateTimeOrUndefined(phaseData.dateRange.end);
+    const startDate = toISODateTime(phaseData.dateRange.start);
+    const endDate = toISODateTime(phaseData.dateRange.end);
 
     let phaseId: string;
     if (existingPhase) {
@@ -199,15 +202,10 @@ export async function savePhaseDeliverables(
         );
         const existing = existingByKey.get(key);
 
-        const dueDate = deliverable.dueDate
-          ? (toIsoDateTimeOrUndefined(deliverable.dueDate) ?? null)
-          : null;
-
         if (existing) {
           const needsUpdate =
             (existing.description ?? "") !== (deliverable.description ?? "") ||
-            dueDateKeyFromIsoOrDateOnly(existing.dueDate ?? null) !==
-              dueDateKeyFromIsoOrDateOnly(deliverable.dueDate ?? null) ||
+            toDateOnly(existing.dueDate) !== toDateOnly(deliverable.dueDate) ||
             existing.title !== deliverable.title;
 
           if (!needsUpdate) {
@@ -217,7 +215,7 @@ export async function savePhaseDeliverables(
           await client.put(API_ENDPOINTS.DELIVERABLES.UPDATE(existing.id), {
             title: deliverable.title,
             description: deliverable.description ?? "",
-            dueDate,
+            dueDate: toISODateTime(deliverable.dueDate),
           });
           return;
         }
@@ -226,7 +224,7 @@ export async function savePhaseDeliverables(
           phaseId,
           title: deliverable.title,
           description: deliverable.description ?? "",
-          dueDate,
+          dueDate: toISODateTime(deliverable.dueDate),
         });
       })
     );

@@ -3,6 +3,7 @@
  * All form validation schemas organized by feature domain
  */
 
+// biome-ignore lint/performance/noBarrelFile: Intentional single entrypoint for validation schemas.
 export {
   type ChangePasswordInput,
   changePasswordSchema,
@@ -12,6 +13,18 @@ export {
   type SignupInput,
   signupSchema,
 } from "./auth";
+export {
+  type CreateDeliverableInput,
+  createDeliverableSchema,
+  type DeliverableInput,
+  deliverableSchema,
+  type PhaseInput,
+  phaseSchema,
+  type UpdateDeliverableInput,
+  type UpdatePhaseInput,
+  updateDeliverableSchema,
+  updatePhaseSchema,
+} from "./phases";
 export {
   type MethodologyInput,
   methodologyDeliverableSchema,

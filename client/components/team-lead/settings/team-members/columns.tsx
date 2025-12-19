@@ -3,7 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { formatDate } from "@/lib/format-date";
+import { formatDate } from "@/lib/helpers/format-date";
 import type { User } from "@/lib/types/models";
 import { UserRole } from "@/lib/types/models";
 import { cn } from "@/lib/utils";
@@ -21,39 +21,34 @@ type SortableHeaderProps = {
   sorted?: false | "asc" | "desc";
 };
 
-const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => {
-  const getAriaSort = () => {
-    if (sorted === "asc") {
-      return "ascending";
-    }
-    if (sorted === "desc") {
-      return "descending";
-    }
-    return "none";
-  };
-
-  return (
-    <button
-      aria-sort={getAriaSort()}
-      className={cn(
-        "flex items-center justify-between gap-2",
-        onClick && "cursor-pointer select-none hover:text-foreground/80"
-      )}
-      onClick={onClick}
-      type="button"
-    >
-      <span>{children}</span>
-      {sorted === "asc" && (
-        <ChevronUpIcon aria-hidden="true" className="opacity-60" size={14} />
-      )}
-      {sorted === "desc" && (
-        <ChevronDownIcon aria-hidden="true" className="opacity-60" size={14} />
-      )}
-    </button>
-  );
+type ColumnsContextType = {
+  onSoftDelete?: (user: User) => Promise<void>;
+  onRestore?: (user: User) => Promise<void>;
+  loadingUserIds?: Set<string>;
 };
 
-export const columns: ColumnDef<User>[] = [
+const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => (
+  <button
+    className={cn(
+      "flex items-center justify-between gap-2",
+      onClick && "cursor-pointer select-none hover:text-foreground/80"
+    )}
+    onClick={onClick}
+    type="button"
+  >
+    <span>{children}</span>
+    {sorted === "asc" && (
+      <ChevronUpIcon aria-hidden="true" className="opacity-60" size={14} />
+    )}
+    {sorted === "desc" && (
+      <ChevronDownIcon aria-hidden="true" className="opacity-60" size={14} />
+    )}
+  </button>
+);
+
+export const createColumns = (
+  context: ColumnsContextType
+): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -137,7 +132,14 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     header: () => <span className="sr-only">Actions</span>,
-    cell: ({ row }) => <RowActions user={row.original} />,
+    cell: ({ row }) => (
+      <RowActions
+        isLoading={context.loadingUserIds?.has(row.original.id) ?? false}
+        onRestore={context.onRestore}
+        onSoftDelete={context.onSoftDelete}
+        user={row.original}
+      />
+    ),
     enableHiding: false,
     enableSorting: false,
     size: 60,

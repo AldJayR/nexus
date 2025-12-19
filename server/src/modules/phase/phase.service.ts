@@ -16,7 +16,18 @@ export async function getPhaseById(id: string) {
   const phase = await prisma.phase.findUnique({
     where: { id },
     include: {
-      deliverables: true,
+      deliverables: {
+        where: {
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          dueDate: true,
+        },
+      },
     },
   });
 

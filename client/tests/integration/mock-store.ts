@@ -8,6 +8,4 @@ export const setMockCookie = (key: string, value: string) => {
   mockCookieStore.set(key, value);
 };
 
-export const getMockCookie = (key: string) => {
-  return mockCookieStore.get(key);
-};
+export const getMockCookie = (key: string) => mockCookieStore.get(key);

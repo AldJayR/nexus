@@ -190,11 +190,15 @@ export default function DashboardPage() {
               <CardContent className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className={`font-semibold text-sm ${phase.textColor}`}>
-                    {phase.isCurrent
-                      ? "Active Phase"
-                      : phase.completion === 100
-                        ? "Completed"
-                        : "Pending"}
+                    {(() => {
+                      if (phase.isCurrent) {
+                        return "Active Phase";
+                      }
+                      if (phase.completion === 100) {
+                        return "Completed";
+                      }
+                      return "Pending";
+                    })()}
                   </span>
                   <span className="font-bold text-sm">{phase.completion}%</span>
                 </div>
