@@ -1,4 +1,4 @@
-import { deleteTeamMembers } from "@/actions/team-members";
+import { getCurrentUser } from "@/actions/user";
 import { TeamMembersClient } from "@/components/team-lead/settings/team-members/client";
 import { getTeamUsers } from "@/lib/data/team";
 
@@ -8,7 +8,10 @@ export const metadata = {
 };
 
 export default async function TeamMembersPage() {
-  const data = await getTeamUsers();
+  const [data, currentUser] = await Promise.all([
+    getTeamUsers(),
+    getCurrentUser(),
+  ]);
 
-  return <TeamMembersClient data={data} onDelete={deleteTeamMembers} />;
+  return <TeamMembersClient currentUser={currentUser} data={data} />;
 }

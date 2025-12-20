@@ -103,7 +103,9 @@ export function formatRelativeDueDate(dueDateString: string): string {
   }
 
   if (daysDifference > 0) {
-    return daysDifference === 1 ? "due in 1 day" : `due in ${daysDifference} days`;
+    return daysDifference === 1
+      ? "due in 1 day"
+      : `due in ${daysDifference} days`;
   }
 
   // Overdue (negative days)
@@ -120,7 +122,8 @@ export function formatRelativeDueDate(dueDateString: string): string {
  * isDateInPast('2025-01-15T00:00:00Z') // true (if today is 2025-01-17)
  */
 export function isDateInPast(dateString: string | Date): boolean {
-  const date = typeof dateString === "string" ? new Date(dateString) : dateString;
+  const date =
+    typeof dateString === "string" ? new Date(dateString) : dateString;
   const today = new Date();
 
   date.setHours(0, 0, 0, 0);
@@ -138,7 +141,8 @@ export function isDateInPast(dateString: string | Date): boolean {
  * isLessThanWeekRemaining('2025-01-25T00:00:00Z') // true (if today is 2025-01-20)
  */
 export function isLessThanWeekRemaining(endDateString: string | Date): boolean {
-  const endDate = typeof endDateString === "string" ? new Date(endDateString) : endDateString;
+  const endDate =
+    typeof endDateString === "string" ? new Date(endDateString) : endDateString;
   const today = new Date();
 
   endDate.setHours(0, 0, 0, 0);
@@ -147,4 +151,3 @@ export function isLessThanWeekRemaining(endDateString: string | Date): boolean {
   const daysRemaining = calculateDaysBetween(today, endDate);
   return daysRemaining < 7;
 }
-

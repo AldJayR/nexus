@@ -6,10 +6,10 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import type { Project } from "@/lib/types";
 
-// Centralized route-to-title mapping
+// Centralized route-to-title mapping (excludes /dashboard which gets project name)
 const ROUTE_TITLES: Record<string, string> = {
-  "/dashboard": "Dashboard",
   "/phases": "Project Phases",
   "/sprints": "Sprints",
   "/deliverables": "Deliverables",
@@ -36,11 +36,18 @@ function getPageTitle(pathname: string): string | undefined {
 /**
  * App Header Component
  * Provides main navigation header with sidebar toggle, search, notifications, and user avatar
- * Title updates dynamically based on current route
+ * Title updates dynamically based on current route - shows project name on dashboard
  */
-export function AppHeader() {
+export function AppHeader({ project }: { project: Project | null }) {
   const pathname = usePathname();
-  const title = getPageTitle(pathname);
+
+  // For dashboard, show project name; for other routes, use mapping
+  let title: string | undefined;
+  if (pathname === "/dashboard") {
+    title = project?.name;
+  } else {
+    title = getPageTitle(pathname);
+  }
   return (
     <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between gap-3 border-b bg-sidebar/60 backdrop-blur-2xl">
       <div className="flex items-center gap-2 px-3">

@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { inviteMember } from "@/actions/invite-action";
 import { Button } from "@/components/ui/button";
 import {
@@ -73,10 +74,16 @@ export function InviteMemberModal({
     const result: ServerActionResponse<User> = await inviteMember(values);
 
     if (result.success && result.data) {
+      toast.success(`${result.data.name} has been invited successfully`, {
+        description: `An email invitation has been sent to ${result.data.email}`,
+      });
       form.reset();
       handleOpenChange(false);
       onSuccess?.(result.data);
     } else {
+      toast.error(result.error ?? "Failed to invite member", {
+        description: "Please check your input and try again",
+      });
       setFormError(result.error ?? "Failed to invite member");
     }
   }

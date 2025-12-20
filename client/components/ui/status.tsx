@@ -2,18 +2,12 @@ import type { ComponentProps, HTMLAttributes } from "react";
 import type { DeliverableStatus, TaskStatus } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { formatTitleCase } from "@/lib/helpers";
 
 type StatusType = DeliverableStatus | TaskStatus;
 
 export type StatusBadgeProps = ComponentProps<typeof Badge> & {
   status: StatusType;
-};
-
-const formatStatusLabel = (status: StatusType): string => {
-  return status
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
 };
 
 const getStatusClass = (status: StatusType): string => {
@@ -46,7 +40,7 @@ export const StatusBadge = ({
     {...props}
   >
     <StatusIndicator />
-    <StatusLabel>{formatStatusLabel(status)}</StatusLabel>
+    <StatusLabel>{formatTitleCase(status)}</StatusLabel>
   </Badge>
 );
 

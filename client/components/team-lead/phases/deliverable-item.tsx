@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { StatusBadge } from "@/components/ui/status";
 import { formatRelativeDueDate, isDateInPast } from "@/lib/helpers/format-date";
-import { type Deliverable } from "@/lib/types";
+import type { Deliverable } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type DeliverableItemProps = {
@@ -96,14 +96,14 @@ export function DeliverableItem({
       <div className="space-y-2">
         {deliverables.map((item) => (
           <div
+            className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 p-3 transition-colors hover:bg-muted/50"
             key={item.id}
-            className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 p-3 hover:bg-muted/50 transition-colors"
           >
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground text-sm truncate">
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-medium text-foreground text-sm">
                 {item.title}
               </p>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="mt-1 flex items-center gap-2">
                 <StatusBadge status={item.status} />
                 {item.dueDate ? (
                   <span
@@ -120,11 +120,7 @@ export function DeliverableItem({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  className="shrink-0"
-                  size="icon"
-                  variant="ghost"
-                >
+                <Button className="shrink-0" size="icon" variant="ghost">
                   <MoreHorizontal size={16} />
                   <span className="sr-only">Open menu</span>
                 </Button>

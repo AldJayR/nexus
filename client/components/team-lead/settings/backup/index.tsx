@@ -127,7 +127,7 @@ export default function BackupSettings() {
               <>Exporting...</>
             ) : (
               <>
-                <Download className="mr-2 h-4 w-4" />
+                <Download size={16} />
                 Export Progress (JSON)
               </>
             )}
@@ -149,7 +149,7 @@ export default function BackupSettings() {
               <>Exporting...</>
             ) : (
               <>
-                <Download className="mr-2 h-4 w-4" />
+                <Download size={16} />
                 Export Files (ZIP)
               </>
             )}

@@ -2,6 +2,7 @@ import fp from 'fastify-plugin';
 import fastifyJwt, { FastifyJWTOptions } from '@fastify/jwt';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { env } from '../config/env.js';
+import { getPrismaClient } from '../utils/database.js';
 
 export default fp(async (fastify) => {
   fastify.register(fastifyJwt, {
@@ -14,6 +15,20 @@ export default fp(async (fastify) => {
   fastify.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       await request.jwtVerify();
+
+      const prisma = getPrismaClient();
+      const user = await prisma.user.findUnique({
+        where: { id: request.user.id },
+        select: { id: true },
+      });
+
+      if (!user) {
+        return reply.code(401).send({
+          success: false,
+          error: 'Invalid session. Please sign in again.',
+          statusCode: 401,
+        });
+      }
     } catch (err) {
       reply.send(err);
     }

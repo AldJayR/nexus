@@ -127,6 +127,7 @@ export type Task = {
   description?: string | null;
   status: TaskStatus;
   priority?: string | null;
+  lastComment?: Comment | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
@@ -137,6 +138,10 @@ export type Comment = {
   id: string;
   content: string;
   authorId: string;
+  author?: {
+    id: string;
+    name: string;
+  };
   taskId?: string | null;
   deliverableId?: string | null;
   createdAt: string;

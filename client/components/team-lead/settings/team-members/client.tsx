@@ -5,16 +5,12 @@ import { TeamMembersTable } from "./table";
 
 type TeamMembersClientProps = {
   data: User[];
-  onDelete?: (userIds: string[]) => Promise<void>;
-  onAddUser?: () => void;
+  currentUser: User | null;
 };
 
 export function TeamMembersClient({
   data,
-  onDelete,
-  onAddUser,
+  currentUser,
 }: TeamMembersClientProps) {
-  return (
-    <TeamMembersTable data={data} onAddUser={onAddUser} onDelete={onDelete} />
-  );
+  return <TeamMembersTable currentUser={currentUser} data={data} />;
 }

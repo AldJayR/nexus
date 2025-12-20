@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { authApi } from "@/lib/api/auth";
 import type { ServerActionResponse } from "@/lib/types/auth";
@@ -14,7 +15,14 @@ export async function inviteMember(
     const validated = inviteMemberSchema.parse(input);
 
     // Call API
-    const user = await authApi.inviteUser(validated.email, validated.name, validated.role);
+    const user = await authApi.inviteUser(
+      validated.email,
+      validated.name,
+      validated.role
+    );
+
+    // Revalidate the team members page to refresh the table
+    revalidatePath("/settings/team-members");
 
     return {
       success: true,
@@ -24,7 +32,7 @@ export async function inviteMember(
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: "Validation failed",
+        error: "Please check your input and try again",
         fieldErrors: error.flatten().fieldErrors as Record<string, string[]>,
       };
     }
@@ -32,7 +40,10 @@ export async function inviteMember(
     console.error("Failed to invite member:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to invite member",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to invite member. Please try again.",
     };
   }
 }

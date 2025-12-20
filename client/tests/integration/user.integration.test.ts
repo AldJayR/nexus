@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { authApi } from "@/lib/api/auth";
 import { userApi } from "@/lib/api/user";
 import { clearAuth, loginAsAdmin } from "./helpers";
 
@@ -37,6 +38,47 @@ describe("User Integration Tests", () => {
       expect(adminUser).toBeDefined();
       expect(adminUser).toHaveProperty("id");
       expect(adminUser).toHaveProperty("role");
+    } catch (error: any) {
+      if (error.code === "ECONNREFUSED") {
+        console.warn("Skipping test: Backend server is not running");
+        return;
+      }
+      throw error;
+    }
+  });
+
+  it("should soft delete and restore a user", async () => {
+    try {
+      await loginAsAdmin();
+
+      // 1. Create a temporary user
+      const tempEmail = `test-delete-${Date.now()}@nexus.local`;
+      const newUser = await authApi.inviteUser(
+        tempEmail,
+        "Test Delete User",
+        "MEMBER"
+      );
+      expect(newUser).toBeDefined();
+      expect(newUser.id).toBeDefined();
+
+      // 2. Verify user is in the list
+      let users = await userApi.listUsers();
+      expect(users.find((u) => u.id === newUser.id)).toBeDefined();
+
+      // 3. Soft Delete the user
+      await userApi.deleteUser(newUser.id);
+
+      // 4. Verify user is NOT in the list (or marked deleted if API returns them)
+      // Based on service logic, listUsers filters out deletedAt: null
+      users = await userApi.listUsers();
+      expect(users.find((u) => u.id === newUser.id)).toBeUndefined();
+
+      // 5. Restore the user
+      await userApi.restoreUser(newUser.id);
+
+      // 6. Verify user is back in the list
+      users = await userApi.listUsers();
+      expect(users.find((u) => u.id === newUser.id)).toBeDefined();
     } catch (error: any) {
       if (error.code === "ECONNREFUSED") {
         console.warn("Skipping test: Backend server is not running");

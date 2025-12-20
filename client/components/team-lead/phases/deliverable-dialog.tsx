@@ -37,6 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { formatTitleCase } from "@/lib/helpers";
 import { type Deliverable, DeliverableStatus } from "@/lib/types";
 import { deliverableSchema } from "@/lib/validation";
 
@@ -200,7 +201,7 @@ export function DeliverableDialog({
                       <SelectContent>
                         {Object.values(DeliverableStatus).map((status) => (
                           <SelectItem key={status} value={status}>
-                            {status.replace("_", " ")}
+                            {formatTitleCase(status)}
                           </SelectItem>
                         ))}
                       </SelectContent>

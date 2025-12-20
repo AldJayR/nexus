@@ -30,6 +30,13 @@ export {
   methodologyDeliverableSchema,
   methodologySchema,
 } from "./project-config";
+export { type CreateSprintInput, createSprintSchema } from "./sprints";
+export {
+  type CreateSprintTaskInput,
+  createSprintTaskSchema,
+  type UpdateTaskStatusInput,
+  updateTaskStatusSchema,
+} from "./tasks";
 export {
   type BulkMemberActionsInput,
   bulkMemberActionsSchema,

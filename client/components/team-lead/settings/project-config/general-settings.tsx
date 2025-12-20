@@ -20,10 +20,10 @@ import {
 } from "@/components/ui/frame";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { formatRelativeTime } from "@/lib/helpers/format-date";
 import { toISODateTime } from "@/lib/helpers/date";
+import { formatRelativeTime } from "@/lib/helpers/format-date";
 import type { Project } from "@/lib/types";
-import DateRange from "./date-range";
+import DateRange from "../../../shared/date-range";
 
 const generalSettingsSchema = z.object({
   name: z.string().min(1, "Project name is required"),

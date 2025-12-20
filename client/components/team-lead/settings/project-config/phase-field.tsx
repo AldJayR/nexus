@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDate } from "@/lib/helpers/format-date";
 import type { MethodologyInput } from "@/lib/validation/project-config";
-import DateRange from "./date-range";
+import DateRange from "../../../shared/date-range";
 import DeliverableDialog from "./deliverable-dialog";
 import { emptyDeliverable, type PhaseKey } from "./methodology";
 

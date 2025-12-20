@@ -7,7 +7,7 @@ const prisma = getPrismaClient();
 
 export async function getTasks(query: TaskQuery) {
   const { sprintId, phaseId, assigneeId, status } = query;
-  return prisma.task.findMany({
+  const tasks = await prisma.task.findMany({
     where: {
       sprintId,
       phaseId,
@@ -26,8 +26,29 @@ export async function getTasks(query: TaskQuery) {
           email: true,
         },
       },
+      comments: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 1,
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
+
+  // Transform tasks to extract lastComment from most recent comment
+  return tasks.map((task) => ({
+    ...task,
+    lastComment: task.comments[0] || null,
+    comments: undefined,
+  })) as any;
 }
 
 export async function getTaskById(id: string) {

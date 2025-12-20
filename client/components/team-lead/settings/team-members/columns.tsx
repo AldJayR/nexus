@@ -2,7 +2,6 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { formatDate } from "@/lib/helpers/format-date";
 import type { User } from "@/lib/types/models";
 import { UserRole } from "@/lib/types/models";
@@ -25,6 +24,7 @@ type ColumnsContextType = {
   onSoftDelete?: (user: User) => Promise<void>;
   onRestore?: (user: User) => Promise<void>;
   loadingUserIds?: Set<string>;
+  currentUser?: User | null;
 };
 
 const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => (
@@ -49,29 +49,6 @@ const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => (
 export const createColumns = (
   context: ColumnsContextType
 ): ColumnDef<User>[] => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        aria-label="Select all"
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        aria-label="Select row"
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-      />
-    ),
-    enableHiding: false,
-    enableSorting: false,
-    size: 28,
-  },
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -134,6 +111,7 @@ export const createColumns = (
     header: () => <span className="sr-only">Actions</span>,
     cell: ({ row }) => (
       <RowActions
+        currentUser={context.currentUser}
         isLoading={context.loadingUserIds?.has(row.original.id) ?? false}
         onRestore={context.onRestore}
         onSoftDelete={context.onSoftDelete}

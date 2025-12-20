@@ -34,7 +34,11 @@ export const authApi = {
     });
   },
 
-  inviteUser: async (email: string, name: string, role: string): Promise<User> => {
+  inviteUser: async (
+    email: string,
+    name: string,
+    role: string
+  ): Promise<User> => {
     const client = await createApiClient();
     const response = await client.post(API_ENDPOINTS.AUTH.INVITE, {
       email,

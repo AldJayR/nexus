@@ -10,15 +10,11 @@ export const metadata = {
 export default async function PhasesPage() {
   // Fetch all phases with their deliverables included
   const phases = await phaseApi.listPhases();
-  
+
   // Fetch detailed information for each phase (includes deliverables)
   const phasesWithDeliverables: PhaseDetail[] = await Promise.all(
     phases.map((phase) => phaseApi.getPhaseById(phase.id))
   );
 
-  return (
-    <>
-      <PhaseManager phases={phasesWithDeliverables} />
-    </>
-  );
+  return <PhaseManager phases={phasesWithDeliverables} />;
 }
