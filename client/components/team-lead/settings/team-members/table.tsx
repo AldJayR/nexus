@@ -2,7 +2,6 @@
 
 import {
   type ColumnFiltersState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -15,17 +14,22 @@ import {
 import { useState } from "react";
 import { deleteUser, restoreUser } from "@/actions/team-members";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 import type { User } from "@/lib/types/models";
 import { createColumns } from "./columns";
 import { TeamMembersFilters } from "./filters";
 import { InviteMemberModal } from "./invite-modal";
+import { GenericTableBody, GenericTableHeader } from "@/components/shared/table";
 
 type TeamMembersTableProps = {
   data: User[];
@@ -44,6 +48,7 @@ export function TeamMembersTable({ data, currentUser }: TeamMembersTableProps) {
   });
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [loadingUserIds, setLoadingUserIds] = useState<Set<string>>(new Set());
+  const [selfDeleteAlertOpen, setSelfDeleteAlertOpen] = useState(false);
 
   const withLoading =
     (userId: string, callback: () => Promise<void>) => async () => {
@@ -59,21 +64,25 @@ export function TeamMembersTable({ data, currentUser }: TeamMembersTableProps) {
       }
     };
 
-  const handleSoftDelete = async (user: User) => {
-    await withLoading(user.id, async () => {
-      await deleteUser(user.id);
-    })();
-  };
-
-  const handleRestore = async (user: User) => {
-    await withLoading(user.id, async () => {
-      await restoreUser(user.id);
-    })();
+  const handleAction = async (actionId: string, user: User) => {
+    if (actionId === "delete") {
+      // Validate: prevent deletion of current user's account
+      if (currentUser?.id === user.id) {
+        setSelfDeleteAlertOpen(true);
+        return;
+      }
+      await withLoading(user.id, async () => {
+        await deleteUser(user.id);
+      })();
+    } else if (actionId === "restore") {
+      await withLoading(user.id, async () => {
+        await restoreUser(user.id);
+      })();
+    }
   };
 
   const columns = createColumns({
-    onSoftDelete: handleSoftDelete,
-    onRestore: handleRestore,
+    onAction: handleAction,
     loadingUserIds,
     currentUser,
   });
@@ -116,55 +125,24 @@ export function TeamMembersTable({ data, currentUser }: TeamMembersTableProps) {
 
       <div className="overflow-hidden rounded-md border bg-background">
         <Table className="table-fixed">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow className="hover:bg-transparent" key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    style={{ width: `${header.getSize()}px` }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  data-state={row.getIsSelected() && "selected"}
-                  key={row.id}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell className="last:py-0" key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  className="h-24 text-center"
-                  colSpan={columns.length}
-                >
-                  No members found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <GenericTableHeader table={table} />
+          <GenericTableBody table={table} emptyMessage="No team members found." />
         </Table>
       </div>
+
+      <AlertDialog onOpenChange={setSelfDeleteAlertOpen} open={selfDeleteAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cannot delete personal account</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your personal team lead account cannot be deleted. If you need to deactivate your role, please contact an administrator.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogAction onClick={() => setSelfDeleteAlertOpen(false)}>
+            Understood
+          </AlertDialogAction>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

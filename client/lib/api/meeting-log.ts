@@ -3,16 +3,24 @@ import { createApiClient } from "./client";
 import { API_ENDPOINTS } from "./endpoints";
 
 export const meetingLogApi = {
-  uploadMeetingLog: async (
-    sprintId: string,
-    title: string,
-    file: File
-  ): Promise<MeetingLog> => {
+  uploadMeetingLog: async (input: {
+    title: string;
+    date: string;
+    file: File;
+    sprintId?: string;
+    phaseId?: string;
+  }): Promise<MeetingLog> => {
     const client = await createApiClient();
     const formData = new FormData();
-    formData.append("sprintId", sprintId);
-    formData.append("title", title);
-    formData.append("file", file);
+    if (input.sprintId) {
+      formData.append("sprintId", input.sprintId);
+    }
+    if (input.phaseId) {
+      formData.append("phaseId", input.phaseId);
+    }
+    formData.append("title", input.title);
+    formData.append("date", input.date);
+    formData.append("file", input.file);
 
     const response = await client.post(
       API_ENDPOINTS.MEETING_LOGS.CREATE,
@@ -20,6 +28,13 @@ export const meetingLogApi = {
       {
         headers: {
           "Content-Type": "multipart/form-data",
+        },
+        timeout: 120000, // 120 seconds for file uploads
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            console.log(`Upload progress: ${percentCompleted}%`);
+          }
         },
       }
     );

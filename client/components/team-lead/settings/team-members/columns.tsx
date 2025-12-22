@@ -1,12 +1,10 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { formatDate } from "@/lib/helpers/format-date";
 import type { User } from "@/lib/types/models";
 import { UserRole } from "@/lib/types/models";
-import { cn } from "@/lib/utils";
-import { RowActions } from "./row-actions";
+import { GenericRowActions, type ActionConfig } from "@/components/shared/table";
 
 const roleDisplay: Record<UserRole, string> = {
   [UserRole.MEMBER]: "Member",
@@ -14,51 +12,18 @@ const roleDisplay: Record<UserRole, string> = {
   [UserRole.ADVISER]: "Adviser",
 };
 
-type SortableHeaderProps = {
-  children: React.ReactNode;
-  onClick?: (event: React.SyntheticEvent) => void;
-  sorted?: false | "asc" | "desc";
-};
-
 type ColumnsContextType = {
-  onSoftDelete?: (user: User) => Promise<void>;
-  onRestore?: (user: User) => Promise<void>;
+  onAction?: (actionId: string, user: User) => void;
   loadingUserIds?: Set<string>;
   currentUser?: User | null;
 };
-
-const SortableHeader = ({ children, onClick, sorted }: SortableHeaderProps) => (
-  <button
-    className={cn(
-      "flex items-center justify-between gap-2",
-      onClick && "cursor-pointer select-none hover:text-foreground/80"
-    )}
-    onClick={onClick}
-    type="button"
-  >
-    <span>{children}</span>
-    {sorted === "asc" && (
-      <ChevronUpIcon aria-hidden="true" className="opacity-60" size={14} />
-    )}
-    {sorted === "desc" && (
-      <ChevronDownIcon aria-hidden="true" className="opacity-60" size={14} />
-    )}
-  </button>
-);
 
 export const createColumns = (
   context: ColumnsContextType
 ): ColumnDef<User>[] => [
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <SortableHeader
-        onClick={column.getToggleSortingHandler()}
-        sorted={column.getIsSorted()}
-      >
-        Name
-      </SortableHeader>
-    ),
+    header: "Name",
     cell: ({ row }) => (
       <div className="font-medium">{row.getValue("name")}</div>
     ),
@@ -67,26 +32,12 @@ export const createColumns = (
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <SortableHeader
-        onClick={column.getToggleSortingHandler()}
-        sorted={column.getIsSorted()}
-      >
-        Email
-      </SortableHeader>
-    ),
+    header: "Email",
     size: 220,
   },
   {
     accessorKey: "role",
-    header: ({ column }) => (
-      <SortableHeader
-        onClick={column.getToggleSortingHandler()}
-        sorted={column.getIsSorted()}
-      >
-        Role
-      </SortableHeader>
-    ),
+    header: "Role",
     cell: ({ row }) => {
       const role = row.getValue("role") as UserRole;
       return <span className="text-sm">{roleDisplay[role]}</span>;
@@ -95,29 +46,37 @@ export const createColumns = (
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => (
-      <SortableHeader
-        onClick={column.getToggleSortingHandler()}
-        sorted={column.getIsSorted()}
-      >
-        Joined
-      </SortableHeader>
-    ),
+    header: "Joined",
     cell: ({ row }) => formatDate(row.getValue("createdAt")),
     size: 120,
   },
   {
     id: "actions",
     header: () => <span className="sr-only">Actions</span>,
-    cell: ({ row }) => (
-      <RowActions
-        currentUser={context.currentUser}
-        isLoading={context.loadingUserIds?.has(row.original.id) ?? false}
-        onRestore={context.onRestore}
-        onSoftDelete={context.onSoftDelete}
-        user={row.original}
-      />
-    ),
+    cell: ({ row }) => {
+      const user = row.original;
+      const isDeleted = !!user.deletedAt;
+      // const isSelf = context.currentUser?.id === user.id;
+
+      const actions: ActionConfig[] = isDeleted
+        ? [{ id: "restore", label: "Restore" }]
+        : [
+            {
+              id: "delete",
+              label: "Delete",
+              variant: "destructive",
+            },
+          ];
+
+      return (
+        <GenericRowActions
+          row={row}
+          actions={actions}
+          onAction={(actionId) => context.onAction?.(actionId, user)}
+          isLoading={context.loadingUserIds?.has(user.id) ?? false}
+        />
+      );
+    },
     enableHiding: false,
     enableSorting: false,
     size: 60,

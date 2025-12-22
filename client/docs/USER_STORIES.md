@@ -788,7 +788,7 @@ As an Adviser, I want to export a summary report showing project completion, tea
 | **Export Data**            | ✅         | ❌             | ✅ (summary only)   |
 | **Restore Deleted Items**  | ✅         | ❌             | ❌                  |
 | **View Contributions**     | ✅         | ❌             | ✅ (read-only)      |
-| **Upload Meeting Minutes** | ✅         | ❌             | ❌                  |
+| **Upload Meeting Minutes** | ✅         | ✅             | ❌                  |
 | **View Meetings**          | ✅         | ✅             | ✅                  |
 
 ---

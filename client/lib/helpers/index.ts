@@ -7,3 +7,4 @@
 export * from "./date";
 export * from "./format-title-case";
 export * from "./sprint";
+export * from "./meetings";

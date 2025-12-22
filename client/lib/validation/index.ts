@@ -49,3 +49,6 @@ export {
   type UpdateMemberRoleInput,
   updateMemberRoleSchema,
 } from "./team-members";
+export {
+  uploadSchema,
+} from "./meeting";

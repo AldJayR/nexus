@@ -169,6 +169,11 @@ export type MeetingLog = {
   date: string;
   fileUrl: string;
   uploaderId: string;
+  uploader?: {
+    id: string;
+    name: string;
+    email: string;
+  };
   createdAt: string;
   updatedAt: string;
 };
