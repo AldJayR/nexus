@@ -1,11 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
-import { loginAction } from "@/actions/login";
+import { type LoginActionResponse, loginAction } from "@/actions/login";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
-  email: z.string().email("Enter a valid email address."),
+  email: z.email("Enter a valid email address."),
   password: z.string().min(6, "Password must be at least 6 characters."),
 });
 
@@ -35,7 +36,7 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [isPending, startTransition] = useTransition();
-  const [formError, setFormError] = useState<string | null>(null);
+  const [lastError, setLastError] = useState<LoginActionResponse | null>(null);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -45,13 +46,58 @@ export function LoginForm({
     },
   });
 
+  // Show toast notifications for errors
+  useEffect(() => {
+    if (lastError?.authError) {
+      toast.error(lastError.authError.message, {
+        duration: 5000,
+      });
+    }
+  }, [lastError]);
+
   function onSubmit(values: LoginValues) {
-    setFormError(null);
+    setLastError(null);
 
     startTransition(async () => {
-      const result = await loginAction(values);
-      if (!result.success) {
-        setFormError(result.error ?? "Login failed");
+      try {
+        const result = await loginAction(values);
+
+        // If result is undefined/null, a redirect likely happened (successful login)
+        if (result === undefined || result === null) {
+          return;
+        }
+
+        if (!result.success) {
+          // Store the error but don't reset the form
+          setLastError(result as LoginActionResponse);
+
+          // Show field-specific errors if any
+          if (result.fieldErrors) {
+            Object.entries(result.fieldErrors).forEach(([field, errors]) => {
+              if (errors && errors.length > 0) {
+                form.setError(field as keyof LoginValues, {
+                  type: "manual",
+                  message: errors[0],
+                });
+              }
+            });
+          }
+        }
+      } catch (error) {
+        // Only show toast for actual errors, not navigation-related ones
+        // Navigation errors typically have these characteristics
+        const errorStr = String(error);
+        const isNavigationError =
+          errorStr.includes("NEXT_REDIRECT") ||
+          errorStr.includes("redirect") ||
+          errorStr.includes("navigation");
+
+        if (!isNavigationError) {
+          console.error("Unexpected login error:", error);
+          toast.error("An unexpected error occurred", {
+            description: "Please try again or contact support if the issue persists.",
+          });
+        }
       }
     });
   }
@@ -81,6 +127,7 @@ export function LoginForm({
                       id={field.name}
                       placeholder="m@example.com"
                       type="email"
+                      disabled={isPending}
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
@@ -101,6 +148,7 @@ export function LoginForm({
                       autoComplete="current-password"
                       id={field.name}
                       type="password"
+                      disabled={isPending}
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
@@ -111,9 +159,8 @@ export function LoginForm({
 
               <Field>
                 <Button disabled={isPending} type="submit">
-                  Login
+                  {isPending ? "Logging in..." : "Login"}
                 </Button>
-                {formError ? <FieldError>{formError}</FieldError> : null}
               </Field>
             </FieldGroup>
           </form>

@@ -1,11 +1,17 @@
 "use server";
 
+import type { AxiosError } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { createApiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
+import {
+  type AuthError,
+  AuthErrorCode,
+  createAuthError,
+} from "@/lib/helpers/auth-errors";
 import type { ServerActionResponse } from "@/lib/types";
 
 const loginInputSchema = z.object({
@@ -13,9 +19,13 @@ const loginInputSchema = z.object({
   password: z.string().min(6),
 });
 
+export interface LoginActionResponse extends ServerActionResponse {
+  authError?: AuthError;
+}
+
 export async function loginAction(
   input: unknown
-): Promise<ServerActionResponse> {
+): Promise<LoginActionResponse> {
   const parsed = loginInputSchema.safeParse(input);
 
   if (!parsed.success) {
@@ -31,12 +41,17 @@ export async function loginAction(
 
     const data = response.data as { token?: string; user?: unknown };
 
-    console.log("Login response status:", response.status);
-    console.log("Login response data:", data);
-
     if (!data.token) {
       console.error("No token in response:", data);
-      return { success: false, error: "Login failed - no token received" };
+      return {
+        success: false,
+        error: "Login failed - no token received",
+        authError: {
+          code: AuthErrorCode.SERVER_ERROR,
+          message:
+            "Something went wrong on our end. Please try again in a few moments.",
+        },
+      };
     }
 
     const cookieStore = await cookies();
@@ -45,7 +60,7 @@ export async function loginAction(
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
     redirect("/dashboard");
@@ -56,11 +71,38 @@ export async function loginAction(
     }
 
     console.error("Login error:", error);
-    const message =
-      error instanceof Error ? error.message : "Invalid email or password";
+
+    // Create structured auth error
+    const authError = createAuthError(error);
+
+    // Check for specific axios error patterns
+    const axiosError = error as AxiosError<{ message?: string }>;
+
+    // Handle specific error responses from the server
+    if (axiosError.response?.data?.message) {
+      const serverMessage = axiosError.response.data.message.toLowerCase();
+
+      // Check for account deactivation
+      if (
+        serverMessage.includes("deactivated") ||
+        serverMessage.includes("inactive")
+      ) {
+        return {
+          success: false,
+          error: authError.message,
+          authError: {
+            code: AuthErrorCode.ACCOUNT_INACTIVE,
+            message:
+              "Your account has been deactivated. Please contact your team lead for assistance.",
+          },
+        };
+      }
+    }
+
     return {
       success: false,
-      error: message,
+      error: authError.message,
+      authError,
     };
   }
 }

@@ -19,6 +19,13 @@ export async function login(input: LoginInput, app: FastifyInstance) {
     throw new AuthenticationError('Invalid email or password');
   }
 
+  // Check if account has been deactivated (soft deleted)
+  if (user.deletedAt) {
+    const error = new AuthenticationError('Your account has been deactivated');
+    error.statusCode = 403;
+    throw error;
+  }
+
   const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
   if (!isPasswordValid) {
