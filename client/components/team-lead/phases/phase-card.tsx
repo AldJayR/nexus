@@ -56,11 +56,11 @@ export function PhaseCard({
       }`}
     >
       {/* Current Phase Badge */}
-      {isActive && (
+      {isActive ? (
         <Badge className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full">
           Current Phase
         </Badge>
-      )}
+      ) : null}
 
       {/* Card Header */}
       <div className="flex items-start justify-between gap-3 border-border border-b px-4 pt-5 pb-3">
@@ -93,7 +93,7 @@ export function PhaseCard({
       </div>
 
       {/* Progress Bar - Only for Active Phase */}
-      {isActive && (
+      {isActive ? (
         <div className="flex items-center gap-3 border-border border-b px-4 py-3">
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
             <div
@@ -105,7 +105,7 @@ export function PhaseCard({
             {progress}%
           </span>
         </div>
-      )}
+      ) : null}
 
       {/* Card Content */}
       <div className="flex flex-1 flex-col px-4 py-4">

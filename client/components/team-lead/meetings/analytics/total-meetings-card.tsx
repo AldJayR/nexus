@@ -1,13 +1,13 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import type { MeetingLog } from "@/lib/types";
-import { calculateTotalMeetings } from "@/lib/helpers/meeting-analytics";
 import { FileText } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { calculateTotalMeetings } from "@/lib/helpers/meeting-analytics";
+import type { MeetingLog } from "@/lib/types";
 
-interface TotalMeetingsCardProps {
+type TotalMeetingsCardProps = {
   logs: MeetingLog[];
-}
+};
 
 /**
  * TotalMeetingsCard Component
@@ -24,14 +24,12 @@ export default function TotalMeetingsCard({ logs }: TotalMeetingsCardProps) {
       <CardContent>
         <div className="flex items-start justify-between">
           <div>
-            <dt className="text-sm font-medium text-muted-foreground">
+            <dt className="font-medium text-muted-foreground text-sm">
               Total Meetings
             </dt>
-            <dd className="text-3xl font-bold text-foreground mt-2">
-              {total}
-            </dd>
+            <dd className="mt-2 font-bold text-3xl text-foreground">{total}</dd>
           </div>
-          <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+          <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
             <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           </div>
         </div>

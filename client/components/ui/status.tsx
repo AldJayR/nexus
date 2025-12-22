@@ -1,10 +1,10 @@
 import type { ComponentProps, HTMLAttributes } from "react";
-import type { DeliverableStatus, TaskStatus } from "@/lib/types";
+import type { DeliverableStatus, TaskStatus, PhaseType } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatTitleCase } from "@/lib/helpers";
 
-type StatusType = DeliverableStatus | TaskStatus;
+type StatusType = DeliverableStatus | TaskStatus | PhaseType;
 
 export type StatusBadgeProps = ComponentProps<typeof Badge> & {
   status: StatusType;
@@ -23,6 +23,12 @@ const getStatusClass = (status: StatusType): string => {
       return "blocked";
     case "TODO":
       return "todo";
+    case "WATERFALL":
+      return "waterfall";
+    case "SCRUM":
+      return "scrum";
+    case "FALL":
+      return "fall";
     case "NOT_STARTED":
     default:
       return "not-started";
@@ -59,7 +65,10 @@ export const StatusIndicator = ({
         "group-[.review]:bg-purple-500",
         "group-[.blocked]:bg-red-500",
         "group-[.todo]:bg-slate-500",
-        "group-[.not-started]:bg-slate-500"
+        "group-[.not-started]:bg-slate-500",
+        "group-[.waterfall]:bg-amber-500",
+        "group-[.scrum]:bg-cyan-500",
+        "group-[.fall]:bg-orange-500"
       )}
     />
     <span
@@ -70,7 +79,10 @@ export const StatusIndicator = ({
         "group-[.review]:bg-purple-500",
         "group-[.blocked]:bg-red-500",
         "group-[.todo]:bg-slate-500",
-        "group-[.not-started]:bg-slate-500"
+        "group-[.not-started]:bg-slate-500",
+        "group-[.waterfall]:bg-amber-500",
+        "group-[.scrum]:bg-cyan-500",
+        "group-[.fall]:bg-orange-500"
       )}
     />
   </span>

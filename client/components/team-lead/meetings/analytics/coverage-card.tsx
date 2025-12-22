@@ -1,16 +1,16 @@
 "use client";
 
+import { CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import type { MeetingLog, Sprint, Phase } from "@/lib/types";
 import { calculateCoveragePercentage } from "@/lib/helpers/meeting-analytics";
-import { CheckCircle2 } from "lucide-react";
+import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 
-interface CoverageCardProps {
+type CoverageCardProps = {
   logs: MeetingLog[];
   sprints: Sprint[];
   phases: Phase[];
-}
+};
 
 /**
  * CoverageCard Component
@@ -34,20 +34,20 @@ export default function CoverageCard({
       <CardContent>
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <dt className="text-sm font-medium text-muted-foreground">
+            <dt className="font-medium text-muted-foreground text-sm">
               Coverage
             </dt>
-            <dd className="text-3xl font-bold text-foreground mt-2">
+            <dd className="mt-2 font-bold text-3xl text-foreground">
               {coverage.percentage}%
             </dd>
             <div className="mt-3 space-y-2">
-              <Progress value={coverage.percentage} className="h-2" />
-              <p className="text-xs text-muted-foreground">
+              <Progress className="h-2" value={coverage.percentage} />
+              <p className="text-muted-foreground text-xs">
                 {coverage.covered} of {coverage.total} sprints/phases documented
               </p>
             </div>
           </div>
-          <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+          <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
             <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
           </div>
         </div>

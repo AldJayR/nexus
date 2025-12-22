@@ -1,7 +1,7 @@
 "use client";
 
 import { GripVertical } from "lucide-react";
-import * as React from "react";
+import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,18 @@ const COLUMN_TITLES: Record<string, string> = {
   done: "Done",
 };
 
+function getPriorityVariant(
+  priority: "low" | "medium" | "high"
+): "destructive" | "secondary" | "outline" {
+  if (priority === "high") {
+    return "destructive";
+  }
+  if (priority === "medium") {
+    return "secondary";
+  }
+  return "outline";
+}
+
 interface TaskCardProps
   extends Omit<React.ComponentProps<typeof KanbanItem>, "value" | "children"> {
   task: Task;
@@ -48,19 +60,13 @@ function TaskCard({ task, asHandle, ...props }: TaskCardProps) {
           <Badge
             className="pointer-events-none h-5 shrink-0 rounded-sm px-1.5 text-[11px] capitalize"
             // variant="outline"
-            variant={
-              task.priority === "high"
-                ? "destructive"
-                : task.priority === "medium"
-                  ? "secondary"
-                  : "outline"
-            }
+            variant={getPriorityVariant(task.priority)}
           >
             {task.priority}
           </Badge>
         </div>
         <div className="flex items-center justify-between text-muted-foreground text-xs">
-          {task.assignee && (
+          {task.assignee ? (
             <div className="flex items-center gap-1">
               <Avatar className="size-4">
                 <AvatarImage src={task.assigneeAvatar} />
@@ -68,12 +74,12 @@ function TaskCard({ task, asHandle, ...props }: TaskCardProps) {
               </Avatar>
               <span className="line-clamp-1">{task.assignee}</span>
             </div>
-          )}
-          {task.dueDate && (
+          ) : null}
+          {task.dueDate ? (
             <time className="whitespace-nowrap text-[10px] tabular-nums">
               {task.dueDate}
             </time>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
@@ -210,15 +216,15 @@ export default function Component() {
             return <TaskColumn isOverlay tasks={tasks} value={String(value)} />;
           }
 
-          const task = Object.values(columns)
+          const targetTask = Object.values(columns)
             .flat()
-            .find((task) => task.id === value);
+            .find((item) => item.id === value);
 
-          if (!task) {
+          if (!targetTask) {
             return null;
           }
 
-          return <TaskCard task={task} />;
+          return <TaskCard task={targetTask} />;
         }}
       </KanbanOverlay>
     </Kanban>

@@ -7,6 +7,12 @@ export const uploadSchema = z.object({
   entityId: z.string().min(1, "Please select a sprint or phase"),
   file: z
     .instanceof(File)
-    .refine((file) => file.size <= 10 * 1024 * 1024, "File size must be under 10MB")
-    .refine((file) => file.type === "application/pdf", "Only PDF files are allowed"),
+    .refine(
+      (file) => file.size <= 10 * 1024 * 1024,
+      "File size must be under 10MB"
+    )
+    .refine(
+      (file) => file.type === "application/pdf",
+      "Only PDF files are allowed"
+    ),
 });

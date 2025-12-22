@@ -8,18 +8,18 @@ import type { MeetingLog } from "@/lib/types";
 /**
  * Chart data entry for meeting frequency visualization
  */
-export interface MeetingFrequencyChartEntry {
+export type MeetingFrequencyChartEntry = {
   month: string;
   meetingCount: number;
-}
+};
 
 /**
  * Chart data entry for meeting duration analysis
  */
-export interface MeetingDurationChartEntry {
+export type MeetingDurationChartEntry = {
   month: string;
   duration: number;
-}
+};
 
 /**
  * Aggregate meeting logs by month and count them
@@ -60,12 +60,12 @@ export function aggregateMeetingsByMonth(
   ];
 
   // Aggregate meetings by month
-  logs.forEach((log) => {
+  for (const log of logs) {
     const date = new Date(log.date);
     const monthKey = monthNames[date.getUTCMonth()];
 
     monthMap.set(monthKey, (monthMap.get(monthKey) ?? 0) + 1);
-  });
+  }
 
   // Convert to chart data format, maintaining month order
   return monthNames
@@ -102,10 +102,7 @@ export function calculateAverageDurationByMonth(
     return [];
   }
 
-  const monthMap = new Map<
-    string,
-    { totalDuration: number; count: number }
-  >();
+  const monthMap = new Map<string, { totalDuration: number; count: number }>();
   const monthNames = [
     "January",
     "February",
@@ -124,7 +121,7 @@ export function calculateAverageDurationByMonth(
   // Aggregate durations by month
   // TODO: When meeting logs include duration metadata, use actual values
   // For now, using mock duration based on logs
-  logs.forEach((log) => {
+  for (const log of logs) {
     const date = new Date(log.date);
     const monthKey = monthNames[date.getUTCMonth()];
 
@@ -136,16 +133,20 @@ export function calculateAverageDurationByMonth(
       totalDuration: current.totalDuration + mockDuration,
       count: current.count + 1,
     });
-  });
+  }
 
   // Calculate averages and convert to chart data
   return monthNames
     .filter((month) => monthMap.has(month))
     .map((month) => {
-      const data = monthMap.get(month)!;
+      const data = monthMap.get(month);
+      if (!data) {
+        return null;
+      }
       return {
         month,
         duration: Math.round(data.totalDuration / data.count),
       };
-    });
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 }

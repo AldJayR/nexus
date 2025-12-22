@@ -18,7 +18,10 @@ export const loginAsAdmin = async () => {
     return response;
   } catch (error: any) {
     // Check if it's a connection error (server not running)
-    if (error.code === "ECONNREFUSED" || error.message?.includes("ECONNREFUSED")) {
+    if (
+      error.code === "ECONNREFUSED" ||
+      error.message?.includes("ECONNREFUSED")
+    ) {
       console.warn("⚠️ Backend server is not running at http://localhost:3001");
       console.warn("Integration tests require the backend to be running");
       throw new Error("BACKEND_NOT_RUNNING");

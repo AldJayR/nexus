@@ -14,22 +14,22 @@ import {
 import { useState } from "react";
 import { deleteUser, restoreUser } from "@/actions/team-members";
 import {
+  GenericTableBody,
+  GenericTableHeader,
+} from "@/components/shared/table";
+import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Table,
-} from "@/components/ui/table";
+import { Table } from "@/components/ui/table";
 import type { User } from "@/lib/types/models";
 import { createColumns } from "./columns";
 import { TeamMembersFilters } from "./filters";
 import { InviteMemberModal } from "./invite-modal";
-import { GenericTableBody, GenericTableHeader } from "@/components/shared/table";
 
 type TeamMembersTableProps = {
   data: User[];
@@ -126,16 +126,23 @@ export function TeamMembersTable({ data, currentUser }: TeamMembersTableProps) {
       <div className="overflow-hidden rounded-md border bg-background">
         <Table className="table-fixed">
           <GenericTableHeader table={table} />
-          <GenericTableBody table={table} emptyMessage="No team members found." />
+          <GenericTableBody
+            emptyMessage="No team members found."
+            table={table}
+          />
         </Table>
       </div>
 
-      <AlertDialog onOpenChange={setSelfDeleteAlertOpen} open={selfDeleteAlertOpen}>
+      <AlertDialog
+        onOpenChange={setSelfDeleteAlertOpen}
+        open={selfDeleteAlertOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Cannot delete personal account</AlertDialogTitle>
             <AlertDialogDescription>
-              Your personal team lead account cannot be deleted. If you need to deactivate your role, please contact an administrator.
+              Your personal team lead account cannot be deleted. If you need to
+              deactivate your role, please contact an administrator.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogAction onClick={() => setSelfDeleteAlertOpen(false)}>

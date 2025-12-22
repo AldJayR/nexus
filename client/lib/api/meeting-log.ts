@@ -29,10 +29,12 @@ export const meetingLogApi = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        timeout: 120000, // 120 seconds for file uploads
+        timeout: 120_000, // 120 seconds for file uploads
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
             console.log(`Upload progress: ${percentCompleted}%`);
           }
         },

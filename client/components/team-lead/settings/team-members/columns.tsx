@@ -1,10 +1,13 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import {
+  type ActionConfig,
+  GenericRowActions,
+} from "@/components/shared/table";
 import { formatDate } from "@/lib/helpers/format-date";
 import type { User } from "@/lib/types/models";
 import { UserRole } from "@/lib/types/models";
-import { GenericRowActions, type ActionConfig } from "@/components/shared/table";
 
 const roleDisplay: Record<UserRole, string> = {
   [UserRole.MEMBER]: "Member",
@@ -70,10 +73,10 @@ export const createColumns = (
 
       return (
         <GenericRowActions
-          row={row}
           actions={actions}
-          onAction={(actionId) => context.onAction?.(actionId, user)}
           isLoading={context.loadingUserIds?.has(user.id) ?? false}
+          onAction={(actionId) => context.onAction?.(actionId, user)}
+          row={row}
         />
       );
     },

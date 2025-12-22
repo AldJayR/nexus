@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { getCurrentUser } from "@/actions/user";
 import { authApi } from "@/lib/api/auth";
 import { userApi } from "@/lib/api/user";
-import { getCurrentUser } from "@/actions/user";
 import { clearAuth, loginAsAdmin } from "./helpers";
 
 const SKIP_ON_BACKEND_ERROR = (error: any) => {
@@ -10,9 +10,7 @@ const SKIP_ON_BACKEND_ERROR = (error: any) => {
     error.message === "BACKEND_NOT_RUNNING" ||
     error.message === "INVALID_SEED_CREDENTIALS"
   ) {
-    console.warn(
-      "⏭️  Skipping: Backend not running or not properly seeded"
-    );
+    console.warn("⏭️  Skipping: Backend not running or not properly seeded");
     return true;
   }
   return false;
@@ -29,7 +27,9 @@ describe("User Integration Tests - API", () => {
       await userApi.getUserById("non-existent-id-99999");
       expect.fail("Should have thrown an error");
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       expect([404, 400, 401]).toContain(error.response?.status);
     }
   });
@@ -46,7 +46,9 @@ describe("User Integration Tests - API", () => {
       expect(users[0]).toHaveProperty("id");
       expect(users[0]).toHaveProperty("role");
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       throw error;
     }
   });
@@ -77,7 +79,9 @@ describe("User Integration Tests - API", () => {
       users = await userApi.listUsers();
       expect(users.find((u) => u.id === newUser.id)).toBeDefined();
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       throw error;
     }
   });
@@ -93,7 +97,9 @@ describe("User Integration Tests - Server Actions", () => {
       const user = await getCurrentUser();
       expect(user).toBeNull();
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       expect.fail("getCurrentUser should return null, not throw");
     }
   });
@@ -109,7 +115,9 @@ describe("User Integration Tests - Server Actions", () => {
       expect(user?.id).toBeDefined();
       expect(user?.role).toBeDefined();
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       throw error;
     }
   });
@@ -119,7 +127,9 @@ describe("User Integration Tests - Server Actions", () => {
       const user = await getCurrentUser();
       expect(user).toBeNull();
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       expect.fail("getCurrentUser should return null on error");
     }
   });
@@ -138,7 +148,9 @@ describe("User Data Fetching - Error Handling", () => {
         expect(typeof error.response.status).toBe("number");
       }
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       throw error;
     }
   });
@@ -148,7 +160,9 @@ describe("User Data Fetching - Error Handling", () => {
       await userApi.listUsers();
       expect.fail("Should have thrown 401");
     } catch (error: any) {
-      if (SKIP_ON_BACKEND_ERROR(error)) return;
+      if (SKIP_ON_BACKEND_ERROR(error)) {
+        return;
+      }
       // Error might be a network error without response object
       // Check if it's an axios error with status, or a network error
       if (error.response?.status) {

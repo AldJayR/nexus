@@ -13,18 +13,18 @@ import {
 
 export default function UnauthorizedPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-white">
+    <div className="flex min-h-screen items-center justify-center bg-white p-4">
       <Empty>
         <EmptyHeader>
           <EmptyMedia className="pointer-events-none">
             <Image
-              src="/unauthorized.svg"
               alt="Access Denied"
-              width={500}
               height={500}
+              src="/unauthorized.svg"
+              width={500}
             />
           </EmptyMedia>
-          <EmptyTitle className="text-blue-900 font-bold text-3xl">
+          <EmptyTitle className="font-bold text-3xl text-blue-900">
             Access Denied
           </EmptyTitle>
           <EmptyDescription className="text-blue-600 text-sm md:text-base">
@@ -41,9 +41,9 @@ export default function UnauthorizedPage() {
               </Link>
             </Button>
             <Button
-              variant="outline"
               asChild
               className="text-blue-950 hover:text-blue-800 dark:border-blue-300"
+              variant="outline"
             >
               <Link href="/">
                 <House className="size-4" />

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { authApi } from "../auth";
 import {
+  AuthErrorCode,
+  createAuthError,
   getAuthErrorCode,
   getAuthErrorMessage,
-  createAuthError,
-  AuthErrorCode,
 } from "@/lib/helpers/auth-errors";
+import { authApi } from "../auth";
 
 describe("Auth API", () => {
   it("should login successfully with valid credentials", async () => {

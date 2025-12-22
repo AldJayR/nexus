@@ -1,24 +1,23 @@
 "use client";
 
-import type { Row } from "@tanstack/react-table";
-import { MoreVertical, type LucideIcon, Eye } from "lucide-react";
+import { Eye, type LucideIcon, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { ActionConfig, GenericRowActionsProps } from "./types";
+import type { GenericRowActionsProps } from "./types";
 
 const defaultActionIcons: Record<string, LucideIcon> = {
-	view: Eye,
-	open: Eye,
-	delete: Eye,
-	restore: Eye,
-	approve: Eye,
-	reject: Eye,
+  view: Eye,
+  open: Eye,
+  delete: Eye,
+  restore: Eye,
+  approve: Eye,
+  reject: Eye,
 };
 
 /**
@@ -38,51 +37,51 @@ const defaultActionIcons: Record<string, LucideIcon> = {
  * ```
  */
 export function GenericRowActions<T>({
-	row,
-	actions,
-	onAction,
-	isLoading = false,
+  row,
+  actions,
+  onAction,
+  isLoading = false,
 }: GenericRowActionsProps<T>) {
-	if (actions.length === 0) {
-		return null;
-	}
+  if (actions.length === 0) {
+    return null;
+  }
 
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button
-					size="icon"
-					variant="ghost"
-					className="h-8 w-8 p-0"
-					aria-label="Row actions"
-					disabled={isLoading}
-				>
-					<MoreVertical size={16} className="opacity-60" aria-hidden="true" />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" suppressHydrationWarning>
-				{actions.map((action, index) => {
-					const Icon = action.icon || defaultActionIcons[action.id] || Eye;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          aria-label="Row actions"
+          className="h-8 w-8 p-0"
+          disabled={isLoading}
+          size="icon"
+          variant="ghost"
+        >
+          <MoreVertical aria-hidden="true" className="opacity-60" size={16} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" suppressHydrationWarning>
+        {actions.map((action, index) => {
+          const Icon = action.icon || defaultActionIcons[action.id] || Eye;
 
-					return (
-						<div key={action.id}>
-							<DropdownMenuItem
-								onClick={() => onAction(action.id, row)}
-								className={`cursor-pointer gap-2 ${
-									action.variant === "destructive" ? "text-red-600" : ""
-								}`}
-								disabled={isLoading}
-							>
-								<Icon size={16} className="opacity-60" aria-hidden="true" />
-								<span>{action.label}</span>
-							</DropdownMenuItem>
-							{action.showDividerAfter && index < actions.length - 1 && (
-								<DropdownMenuSeparator aria-hidden="true" />
-							)}
-						</div>
-					);
-				})}
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
+          return (
+            <div key={action.id}>
+              <DropdownMenuItem
+                className={`cursor-pointer gap-2 ${
+                  action.variant === "destructive" ? "text-red-600" : ""
+                }`}
+                disabled={isLoading}
+                onClick={() => onAction(action.id, row)}
+              >
+                <Icon aria-hidden="true" className="opacity-60" size={16} />
+                <span>{action.label}</span>
+              </DropdownMenuItem>
+              {action.showDividerAfter && index < actions.length - 1 && (
+                <DropdownMenuSeparator aria-hidden="true" />
+              )}
+            </div>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }

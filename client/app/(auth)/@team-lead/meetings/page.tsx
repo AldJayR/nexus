@@ -10,12 +10,12 @@ import { getMeetingsData } from "@/lib/data/meetings";
  * Allows Team Lead to upload meeting minutes
  */
 export default async function TeamLeadMeetingsPage() {
-	const { logs, sprints, phases } = await getMeetingsData();
+  const { logs, sprints, phases } = await getMeetingsData();
 
-	return (
-		<div className="space-y-8">
-			<SummaryCardsRow logs={logs} sprints={sprints} phases={phases} />
-			<MeetingsTable initialLogs={logs} phases={phases} sprints={sprints} />
-		</div>
-	);
+  return (
+    <div className="space-y-8">
+      <SummaryCardsRow logs={logs} phases={phases} sprints={sprints} />
+      <MeetingsTable initialLogs={logs} phases={phases} sprints={sprints} />
+    </div>
+  );
 }

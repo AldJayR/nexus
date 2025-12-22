@@ -1,15 +1,15 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import type { MeetingLog, Sprint, Phase } from "@/lib/types";
-import { calculateMissingMeetings } from "@/lib/helpers/meeting-analytics";
 import { AlertCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { calculateMissingMeetings } from "@/lib/helpers/meeting-analytics";
+import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 
-interface MissingMeetingsCardProps {
+type MissingMeetingsCardProps = {
   logs: MeetingLog[];
   sprints: Sprint[];
   phases: Phase[];
-}
+};
 
 /**
  * MissingMeetingsCard Component
@@ -31,37 +31,41 @@ export default function MissingMeetingsCard({
   const isAlert = missing.count > 0;
 
   return (
-    <Card className={`py-4 ${isAlert ? "border-red-200 dark:border-red-800" : ""}`}>
+    <Card
+      className={`py-4 ${isAlert ? "border-red-200 dark:border-red-800" : ""}`}
+    >
       <CardContent>
         <div className="flex items-start justify-between">
           <div>
-            <dt className="text-sm font-medium text-muted-foreground">
+            <dt className="font-medium text-muted-foreground text-sm">
               Missing Meetings
             </dt>
             <dd
-              className={`text-3xl font-bold mt-2 ${
+              className={`mt-2 font-bold text-3xl ${
                 isAlert ? "text-red-600 dark:text-red-400" : "text-foreground"
               }`}
             >
               {missing.count}
             </dd>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="mt-2 text-muted-foreground text-xs">
               {missing.sprints.length > 0 && (
                 <>
-                  {missing.sprints.length} sprint{missing.sprints.length !== 1 ? "s" : ""}
+                  {missing.sprints.length} sprint
+                  {missing.sprints.length !== 1 ? "s" : ""}
                   {missing.phases.length > 0 && " and "}
                 </>
               )}
               {missing.phases.length > 0 && (
                 <>
-                  {missing.phases.length} phase{missing.phases.length !== 1 ? "s" : ""}
+                  {missing.phases.length} phase
+                  {missing.phases.length !== 1 ? "s" : ""}
                 </>
               )}
               {missing.count > 0 && " without meetings"}
             </p>
           </div>
           <div
-            className={`p-3 rounded-lg ${
+            className={`rounded-lg p-3 ${
               isAlert
                 ? "bg-red-100 dark:bg-red-900"
                 : "bg-gray-100 dark:bg-gray-800"

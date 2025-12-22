@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { authApi } from "@/lib/api/auth";
 import { loginAction } from "@/actions/login";
+import { authApi } from "@/lib/api/auth";
 import { AuthErrorCode } from "@/lib/helpers/auth-errors";
 import { clearAuth, loginAsAdmin, SEED_CREDENTIALS } from "./helpers";
 
@@ -68,9 +68,7 @@ describe("Auth Integration Tests - API", () => {
         error.message === "BACKEND_NOT_RUNNING" ||
         error.message === "INVALID_SEED_CREDENTIALS"
       ) {
-        console.warn(
-          "⏭️  Skipping: Backend not running or not properly seeded"
-        );
+        console.warn("⏭️  Skipping: Backend not running or not properly seeded");
         return;
       }
       throw error;
@@ -90,14 +88,14 @@ describe("Auth Integration Tests - Server Action (loginAction)", () => {
         password: "wrongpassword",
       });
 
-      if (!result.success) {
+      if (result.success) {
+        expect.fail("Should have failed with invalid credentials");
+      } else {
         // Verify error response structure
         expect(result.authError).toBeDefined();
         expect(result.authError?.code).toBe(AuthErrorCode.INVALID_CREDENTIALS);
         expect(result.authError?.message).toBeDefined();
         expect(result.error).toBeDefined();
-      } else {
-        expect.fail("Should have failed with invalid credentials");
       }
     } catch (error: any) {
       if (
@@ -155,9 +153,7 @@ describe("Auth Integration Tests - Server Action (loginAction)", () => {
         error.message === "BACKEND_NOT_RUNNING" ||
         error.message === "INVALID_SEED_CREDENTIALS"
       ) {
-        console.warn(
-          "⏭️  Skipping: Backend not running or not properly seeded"
-        );
+        console.warn("⏭️  Skipping: Backend not running or not properly seeded");
         return;
       }
       // redirect() throws NEXT_REDIRECT error which is expected on success

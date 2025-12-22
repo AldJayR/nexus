@@ -13,6 +13,7 @@ export {
   type SignupInput,
   signupSchema,
 } from "./auth";
+export { uploadSchema } from "./meeting";
 export {
   type CreateDeliverableInput,
   createDeliverableSchema,
@@ -49,6 +50,3 @@ export {
   type UpdateMemberRoleInput,
   updateMemberRoleSchema,
 } from "./team-members";
-export {
-  uploadSchema,
-} from "./meeting";

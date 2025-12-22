@@ -1,18 +1,16 @@
 export { GenericRowActions } from "./row-actions";
-export type { GenericRowActionsProps, ActionConfig } from "./types";
-
-export { GenericTableHeader } from "./table-header";
-export type { GenericTableHeaderProps } from "./types";
-
 export { GenericTableBody } from "./table-body";
-export type { GenericTableBodyProps } from "./types";
-
 export { GenericTableFilters } from "./table-filters";
+export { GenericTableHeader } from "./table-header";
 export type {
-	GenericTableFiltersProps,
-	TableFiltersConfig,
-	FilterSectionConfig,
-	SearchFilterConfig,
-	ColumnVisibilityConfig,
-	FilterOption,
+  ActionConfig,
+  ColumnVisibilityConfig,
+  FilterOption,
+  FilterSectionConfig,
+  GenericRowActionsProps,
+  GenericTableBodyProps,
+  GenericTableFiltersProps,
+  GenericTableHeaderProps,
+  SearchFilterConfig,
+  TableFiltersConfig,
 } from "./types";

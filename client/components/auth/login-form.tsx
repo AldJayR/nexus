@@ -95,7 +95,8 @@ export function LoginForm({
         if (!isNavigationError) {
           console.error("Unexpected login error:", error);
           toast.error("An unexpected error occurred", {
-            description: "Please try again or contact support if the issue persists.",
+            description:
+              "Please try again or contact support if the issue persists.",
           });
         }
       }
@@ -124,10 +125,10 @@ export function LoginForm({
                       {...field}
                       aria-invalid={fieldState.invalid}
                       autoComplete="email"
+                      disabled={isPending}
                       id={field.name}
                       placeholder="m@example.com"
                       type="email"
-                      disabled={isPending}
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />
@@ -146,9 +147,9 @@ export function LoginForm({
                       {...field}
                       aria-invalid={fieldState.invalid}
                       autoComplete="current-password"
+                      disabled={isPending}
                       id={field.name}
                       type="password"
-                      disabled={isPending}
                     />
                     {fieldState.invalid ? (
                       <FieldError errors={[fieldState.error]} />

@@ -1,16 +1,16 @@
 "use client";
 
+import { Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import type { MeetingLog, Sprint, Phase } from "@/lib/types";
 import { calculateOnTimePercentage } from "@/lib/helpers/meeting-analytics";
-import { Clock } from "lucide-react";
+import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 
-interface OnTimeCardProps {
+type OnTimeCardProps = {
   logs: MeetingLog[];
   sprints: Sprint[];
   phases: Phase[];
-}
+};
 
 /**
  * OnTimeCard Component
@@ -22,11 +22,7 @@ interface OnTimeCardProps {
  * @param sprints - Array of all sprints
  * @param phases - Array of all phases
  */
-export default function OnTimeCard({
-  logs,
-  sprints,
-  phases,
-}: OnTimeCardProps) {
+export default function OnTimeCard({ logs, sprints, phases }: OnTimeCardProps) {
   const onTime = calculateOnTimePercentage(logs, sprints, phases);
 
   return (
@@ -34,20 +30,20 @@ export default function OnTimeCard({
       <CardContent>
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <dt className="text-sm font-medium text-muted-foreground">
+            <dt className="font-medium text-muted-foreground text-sm">
               On-Time %
             </dt>
-            <dd className="text-3xl font-bold text-foreground mt-2">
+            <dd className="mt-2 font-bold text-3xl text-foreground">
               {onTime.percentage}%
             </dd>
             <div className="mt-3 space-y-2">
-              <Progress value={onTime.percentage} className="h-2" />
-              <p className="text-xs text-muted-foreground">
+              <Progress className="h-2" value={onTime.percentage} />
+              <p className="text-muted-foreground text-xs">
                 {onTime.onTime} of {onTime.total} documented on time
               </p>
             </div>
           </div>
-          <div className="p-2 bg-amber-100 dark:bg-amber-900 rounded-lg">
+          <div className="rounded-lg bg-amber-100 p-2 dark:bg-amber-900">
             <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
           </div>
         </div>

@@ -1,18 +1,18 @@
 /**
  * Server Actions for Deliverable Management
- * 
+ *
  * This module contains server-side actions for managing deliverables,
  * particularly for approval workflows and feedback submission.
- * 
+ *
  * Actions:
  * - approveDeliverableAction: Marks a deliverable as completed
  * - requestChangesDeliverableAction: Requests changes and adds feedback
- * 
+ *
  * Security:
  * - These are server actions that should be called from client components
  * - Authorization checks should be implemented at the API layer
  * - Input validation using Zod schemas
- * 
+ *
  * @module actions/deliverables
  */
 "use server";
@@ -44,11 +44,11 @@ const requestChangesSchema = z.object({
 
 /**
  * Approves a deliverable, marking its status as COMPLETED
- * 
+ *
  * Side Effects:
  * - Updates deliverable status to COMPLETED
  * - Revalidates /deliverables and /phases paths for fresh data
- * 
+ *
  * @param input - Object containing deliverableId (validated with schema)
  * @returns {success: true} on success, {success: false, error: string} on failure
  */
@@ -72,12 +72,12 @@ export async function approveDeliverableAction(input: unknown) {
 
 /**
  * Requests changes on a deliverable and adds feedback comment
- * 
+ *
  * Side Effects:
  * - Reverts deliverable status to IN_PROGRESS
  * - Creates a new comment with the feedback
  * - Revalidates /deliverables and /phases paths for fresh data
- * 
+ *
  * @param input - Object with deliverableId and comment (validated with schema)
  * @returns {success: true} on success, {success: false, error: string} on failure
  */

@@ -1,13 +1,7 @@
+export { MeetingsTable } from "./body";
 export {
   createMeetingColumns,
   type MeetingsTableRow,
 } from "./columns";
-export {
-  MeetingsTable,
-} from "./body";
-export {
-  MeetingsFilters
-} from "./filter";
-export {
-  MeetingsTableControls
-} from "./controls";
+export { MeetingsTableControls } from "./controls";
+export { MeetingsFilters } from "./filter";

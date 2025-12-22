@@ -15,7 +15,7 @@
  * @module lib/helpers/meeting-analytics
  */
 
-import type { MeetingLog, Sprint, Phase } from "@/lib/types";
+import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 
 /**
  * Filters sprints to include only valid ones
@@ -23,8 +23,10 @@ import type { MeetingLog, Sprint, Phase } from "@/lib/types";
  * Note: Sprints have a deletedAt field for soft deletes
  */
 function getValidSprints(sprints: Sprint[] | undefined): Sprint[] {
-  if (!sprints || !Array.isArray(sprints)) return [];
-  return sprints.filter(s => !s.deletedAt && s.startDate && s.endDate);
+  if (!(sprints && Array.isArray(sprints))) {
+    return [];
+  }
+  return sprints.filter((s) => !s.deletedAt && s.startDate && s.endDate);
 }
 
 /**
@@ -33,8 +35,10 @@ function getValidSprints(sprints: Sprint[] | undefined): Sprint[] {
  * Note: Phases do NOT have soft delete (no deletedAt field in schema)
  */
 function getValidPhases(phases: Phase[] | undefined): Phase[] {
-  if (!phases || !Array.isArray(phases)) return [];
-  return phases.filter(p => p.startDate && p.endDate);
+  if (!(phases && Array.isArray(phases))) {
+    return [];
+  }
+  return phases.filter((p) => p.startDate && p.endDate);
 }
 
 /**
@@ -72,10 +76,10 @@ export function calculateCoveragePercentage(
   const phasesWithMeetings = new Set<string>();
 
   for (const log of logs) {
-    if (log.sprintId && validSprints.some(s => s.id === log.sprintId)) {
+    if (log.sprintId && validSprints.some((s) => s.id === log.sprintId)) {
       sprintsWithMeetings.add(log.sprintId);
     }
-    if (log.phaseId && validPhases.some(p => p.id === log.phaseId)) {
+    if (log.phaseId && validPhases.some((p) => p.id === log.phaseId)) {
       phasesWithMeetings.add(log.phaseId);
     }
   }
@@ -116,11 +120,11 @@ export function calculateOnTimePercentage(
 
     // Check if linked to a valid sprint
     if (log.sprintId) {
-      const sprint = validSprints.find(s => s.id === log.sprintId);
-      if (sprint && sprint.endDate) {
+      const sprint = validSprints.find((s) => s.id === log.sprintId);
+      if (sprint?.endDate) {
         const sprintEndDate = new Date(sprint.endDate).getTime();
         if (uploadedAt <= sprintEndDate) {
-          onTimeCount++;
+          onTimeCount += 1;
           continue;
         }
       }
@@ -128,12 +132,11 @@ export function calculateOnTimePercentage(
 
     // Check if linked to a valid phase
     if (log.phaseId) {
-      const phase = validPhases.find(p => p.id === log.phaseId);
-      if (phase && phase.endDate) {
+      const phase = validPhases.find((p) => p.id === log.phaseId);
+      if (phase?.endDate) {
         const phaseEndDate = new Date(phase.endDate).getTime();
         if (uploadedAt <= phaseEndDate) {
-          onTimeCount++;
-          continue;
+          onTimeCount += 1;
         }
       }
     }
@@ -165,12 +168,20 @@ export function calculateMissingMeetings(
   const validPhases = getValidPhases(phases);
 
   // Get unique sprint/phase IDs that have meetings
-  const sprintsWithMeetings = new Set(logs.map(log => log.sprintId).filter(Boolean));
-  const phasesWithMeetings = new Set(logs.map(log => log.phaseId).filter(Boolean));
+  const sprintsWithMeetings = new Set(
+    logs.map((log) => log.sprintId).filter(Boolean)
+  );
+  const phasesWithMeetings = new Set(
+    logs.map((log) => log.phaseId).filter(Boolean)
+  );
 
   // Find which valid sprints/phases are missing meetings
-  const missingSprintsArray = validSprints.filter(s => !sprintsWithMeetings.has(s.id));
-  const missingPhasesArray = validPhases.filter(p => !phasesWithMeetings.has(p.id));
+  const missingSprintsArray = validSprints.filter(
+    (s) => !sprintsWithMeetings.has(s.id)
+  );
+  const missingPhasesArray = validPhases.filter(
+    (p) => !phasesWithMeetings.has(p.id)
+  );
 
   const count = missingSprintsArray.length + missingPhasesArray.length;
 

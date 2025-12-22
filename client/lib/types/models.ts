@@ -35,14 +35,17 @@ export const DeliverableStatus = {
 export type DeliverableStatus =
   (typeof DeliverableStatus)[keyof typeof DeliverableStatus];
 
-export enum DeliverableStage {
-  PLANNING = "PLANNING",
-  DESIGN = "DESIGN",
-  DEVELOPMENT = "DEVELOPMENT",
-  TESTING = "TESTING",
-  DEPLOYMENT = "DEPLOYMENT",
-  GENERAL = "GENERAL",
-}
+export const DeliverableStage = {
+  PLANNING: "PLANNING",
+  DESIGN: "DESIGN",
+  DEVELOPMENT: "DEVELOPMENT",
+  TESTING: "TESTING",
+  DEPLOYMENT: "DEPLOYMENT",
+  GENERAL: "GENERAL",
+} as const;
+
+export type DeliverableStage =
+  (typeof DeliverableStage)[keyof typeof DeliverableStage];
 
 // User
 export type User = {

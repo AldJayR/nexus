@@ -4,19 +4,21 @@
  * Following security best practices to not expose system internals
  */
 
-export enum AuthErrorCode {
-  INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
-  ACCOUNT_INACTIVE = "ACCOUNT_INACTIVE",
-  NETWORK_ERROR = "NETWORK_ERROR",
-  SERVER_ERROR = "SERVER_ERROR",
-  TIMEOUT = "TIMEOUT",
-  UNKNOWN_ERROR = "UNKNOWN_ERROR",
-}
+export const AuthErrorCode = {
+  INVALID_CREDENTIALS: "INVALID_CREDENTIALS",
+  ACCOUNT_INACTIVE: "ACCOUNT_INACTIVE",
+  NETWORK_ERROR: "NETWORK_ERROR",
+  SERVER_ERROR: "SERVER_ERROR",
+  TIMEOUT: "TIMEOUT",
+  UNKNOWN_ERROR: "UNKNOWN_ERROR",
+} as const;
 
-export interface AuthError {
+export type AuthErrorCode = (typeof AuthErrorCode)[keyof typeof AuthErrorCode];
+
+export type AuthError = {
   code: AuthErrorCode;
   message: string;
-}
+};
 
 /**
  * Maps error codes to user-friendly messages
@@ -45,7 +47,11 @@ export const AUTH_ERROR_MESSAGES: Record<AuthErrorCode, string> = {
 export function getAuthErrorCode(error: unknown): AuthErrorCode {
   // Network or timeout errors
   if (error && typeof error === "object") {
-    const err = error as { code?: string; message?: string; response?: { status?: number; data?: { message?: string } } };
+    const err = error as {
+      code?: string;
+      message?: string;
+      response?: { status?: number; data?: { message?: string } };
+    };
 
     // Check for network errors
     if (err.code === "ECONNABORTED" || err.code === "ENOTFOUND") {
@@ -65,7 +71,10 @@ export function getAuthErrorCode(error: unknown): AuthErrorCode {
       switch (status) {
         case 401:
           // Check if account is inactive based on server message
-          if (serverMessage.includes("inactive") || serverMessage.includes("deactivated")) {
+          if (
+            serverMessage.includes("inactive") ||
+            serverMessage.includes("deactivated")
+          ) {
             return AuthErrorCode.ACCOUNT_INACTIVE;
           }
           return AuthErrorCode.INVALID_CREDENTIALS;

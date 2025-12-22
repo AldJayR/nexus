@@ -20,8 +20,8 @@ export async function createSprintAction(input: unknown) {
 
     const transformed = {
       goal: parsed.goal || "",
-      startDate: toISODateTime(startDate)!,
-      endDate: toISODateTime(endDate)!,
+      startDate: toISODateTime(startDate) as string,
+      endDate: toISODateTime(endDate) as string,
     };
 
     await sprintApi.createSprint(transformed);

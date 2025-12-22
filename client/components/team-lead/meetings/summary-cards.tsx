@@ -1,18 +1,18 @@
 "use client";
 
-import type { MeetingLog, Sprint, Phase } from "@/lib/types";
+import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 import {
-	TotalMeetingsCard,
-	CoverageCard,
-	OnTimeCard,
-	MissingMeetingsCard,
+  CoverageCard,
+  MissingMeetingsCard,
+  OnTimeCard,
+  TotalMeetingsCard,
 } from "./analytics";
 
-interface SummaryCardsRowProps {
-	logs: MeetingLog[];
-	sprints: Sprint[];
-	phases: Phase[];
-}
+type SummaryCardsRowProps = {
+  logs: MeetingLog[];
+  sprints: Sprint[];
+  phases: Phase[];
+};
 
 /**
  * SummaryCardsRow Component
@@ -28,16 +28,16 @@ interface SummaryCardsRowProps {
  * @param phases - Array of all phases
  */
 export default function SummaryCardsRow({
-	logs,
-	sprints,
-	phases,
+  logs,
+  sprints,
+  phases,
 }: SummaryCardsRowProps) {
-	return (
-		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-			<TotalMeetingsCard logs={logs} />
-			<CoverageCard logs={logs} sprints={sprints} phases={phases} />
-			<OnTimeCard logs={logs} sprints={sprints} phases={phases} />
-			<MissingMeetingsCard logs={logs} sprints={sprints} phases={phases} />
-		</div>
-	);
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <TotalMeetingsCard logs={logs} />
+      <CoverageCard logs={logs} phases={phases} sprints={sprints} />
+      <OnTimeCard logs={logs} phases={phases} sprints={sprints} />
+      <MissingMeetingsCard logs={logs} phases={phases} sprints={sprints} />
+    </div>
+  );
 }
