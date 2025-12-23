@@ -1,5 +1,5 @@
 import type { Deliverable, DeliverableStatus } from "@/lib/types";
-import type { PhaseFilter, StatusFilter } from "./deliverables-types";
+import type { PhaseFilter, StatusFilter } from "@/lib/types/deliverables-types";
 
 export type DeliverablesFilterInput = {
   deliverables: Deliverable[];

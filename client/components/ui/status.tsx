@@ -41,7 +41,7 @@ export const StatusBadge = ({
   ...props
 }: StatusBadgeProps) => (
   <Badge
-    className={cn("flex items-center gap-2", "group", getStatusClass(status), className)}
+    className={cn("flex items-center gap-1.5", "group", getStatusClass(status), className)}
     variant="secondary"
     {...props}
   >

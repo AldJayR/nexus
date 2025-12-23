@@ -1,18 +1,31 @@
-import { format } from "date-fns";
+import { Calendar } from "lucide-react";
 import Link from "next/link";
-
-import { Badge } from "@/components/ui/badge";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatTitleCase } from "@/lib/helpers/format-title-case";
+  FrameDescription,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/status";
+import { formatDateRange } from "@/lib/helpers/format-date";
 import { getSprintStatus } from "@/lib/helpers/sprint";
-import type { Sprint, SprintProgress } from "@/lib/types";
+import type { Sprint, SprintProgress, TaskStatus } from "@/lib/types";
+
+function mapSprintStatusToTaskStatus(
+  sprintStatus: "ACTIVE" | "PLANNED" | "COMPLETED"
+): TaskStatus {
+  switch (sprintStatus) {
+    case "ACTIVE":
+      return "IN_PROGRESS";
+    case "PLANNED":
+      return "TODO";
+    case "COMPLETED":
+      return "DONE";
+  }
+}
 
 type PhaseSectionProps = {
   title: string;
@@ -24,9 +37,6 @@ type PhaseSectionProps = {
 };
 
 export function PhaseSection({
-  title,
-  subtitle,
-  badgeText,
   sprints,
   progressById,
   now,
@@ -36,48 +46,31 @@ export function PhaseSection({
   }
 
   return (
-    <section className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="space-y-0.5">
-          <h2 className="font-semibold text-lg">{title}</h2>
-          {subtitle ? (
-            <p className="text-muted-foreground text-sm">{subtitle}</p>
-          ) : null}
-        </div>
-        {badgeText ? <Badge variant="secondary">{badgeText}</Badge> : null}
-      </div>
+    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {sprints.map((sprint) => {
+        const sprintStatus = getSprintStatus(sprint, now);
+        const progress = progressById[sprint.id];
+        const percent = progress?.percentage ?? 0;
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {sprints.map((sprint) => {
-          const status = getSprintStatus(sprint, now);
-          const progress = progressById[sprint.id];
-          const percent = progress?.percentage ?? 0;
-
-          return (
-            <Card key={sprint.id}>
-              <CardHeader className="border-b">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <CardTitle>Sprint {sprint.number}</CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {sprint.goal || "No goal set"}
-                    </CardDescription>
-                  </div>
-                  <Badge
-                    variant={
-                      status === "ACTIVE"
-                        ? "default"
-                        : status === "COMPLETED"
-                          ? "secondary"
-                          : "outline"
-                    }
-                  >
-                    {formatTitleCase(status)}
-                  </Badge>
+        return (
+          <Suspense
+            fallback={<Skeleton className="h-80 w-full" />}
+            key={sprint.id}
+          >
+            <FramePanel className="space-y-2">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-0">
+                  <FrameTitle>Sprint {sprint.number}</FrameTitle>
+                  <FrameDescription className="line-clamp-1">
+                    {sprint.goal || "No goal set"}
+                  </FrameDescription>
                 </div>
-              </CardHeader>
+                <StatusBadge
+                  status={mapSprintStatusToTaskStatus(sprintStatus)}
+                />
+              </div>
 
-              <CardContent className="space-y-4">
+              <div className="space-y-4">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Progress</span>
@@ -87,30 +80,24 @@ export function PhaseSection({
                         : "0/0"}
                     </span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-muted">
-                    <div
-                      className="h-2 rounded-full bg-primary"
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
+                  <Progress className="h-2" value={percent} />
                 </div>
 
-                <div className="flex items-center justify-between gap-2 text-sm">
-                  <span className="text-muted-foreground">Dates</span>
+                <div className="svg]:text-muted-foreground flex items-center gap-2 text-sm [&">
+                  <Calendar size={16} />
                   <span className="font-medium">
-                    {format(new Date(sprint.startDate), "MMM d")} to{" "}
-                    {format(new Date(sprint.endDate), "MMM d")}
+                    {formatDateRange(sprint.startDate, sprint.endDate)}
                   </span>
                 </div>
 
                 <Button asChild className="w-full" variant="outline">
                   <Link href={`/sprints/${sprint.id}`}>Open Sprint Board</Link>
                 </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+              </div>
+            </FramePanel>
+          </Suspense>
+        );
+      })}
     </section>
   );
 }

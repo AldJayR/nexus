@@ -190,6 +190,10 @@ export type ActivityLog = {
   entityId: string;
   details?: string | null;
   createdAt: string;
+  user?: {
+    name: string;
+    email: string;
+  } | null;
 };
 
 // Notification

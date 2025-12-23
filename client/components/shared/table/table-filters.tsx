@@ -85,7 +85,7 @@ export function GenericTableFilters<T>({
           <div className="relative">
             <Input
               aria-label={config.search.ariaLabel || "Filter table"}
-              className={`peer min-w-80 ps-9${searchValue ? "pe-9" : ""}`}
+              className={`peer min-w-80 ps-9 ${searchValue ? "pe-9" : ""}`}
               id={`${filterId}-search`}
               onChange={(e) => table.setGlobalFilter(e.target.value)}
               placeholder={config.search.placeholder || "Search..."}

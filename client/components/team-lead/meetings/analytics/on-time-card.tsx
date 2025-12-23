@@ -1,7 +1,13 @@
 "use client";
 
 import { Clock } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { Progress } from "@/components/ui/progress";
 import { calculateOnTimePercentage } from "@/lib/helpers/meeting-analytics";
 import type { MeetingLog, Phase, Sprint } from "@/lib/types";
@@ -26,28 +32,27 @@ export default function OnTimeCard({ logs, sprints, phases }: OnTimeCardProps) {
   const onTime = calculateOnTimePercentage(logs, sprints, phases);
 
   return (
-    <Card>
-      <CardContent>
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <dt className="font-medium text-muted-foreground text-sm">
-              On-Time %
-            </dt>
-            <dd className="mt-2 font-bold text-3xl text-foreground">
-              {onTime.percentage}%
-            </dd>
-            <div className="mt-3 space-y-2">
-              <Progress className="h-2" value={onTime.percentage} />
-              <p className="text-muted-foreground text-xs">
-                {onTime.onTime} of {onTime.total} documented on time
-              </p>
-            </div>
-          </div>
-          <div className="rounded-lg bg-amber-100 p-2 dark:bg-amber-900">
-            <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-          </div>
+    <Frame>
+      <FrameHeader className="flex-row items-center gap-2">
+        <div className="rounded-md bg-linear-120 from-amber-500 to-amber-400 p-2 shadow-sm dark:from-amber-800 dark:to-amber-700">
+          <Clock className="size-4 text-white" />
         </div>
-      </CardContent>
-    </Card>
+        <div className="space-y-0">
+          <FrameTitle className="text-sm">On-Time</FrameTitle>
+          <FrameDescription className="line-clamp-1 text-xs">
+            documented on time
+          </FrameDescription>
+        </div>
+      </FrameHeader>
+      <FramePanel className="flex items-center gap-4">
+        <p className="font-bold font-sora text-3xl">{onTime.percentage}%</p>
+        <div className="w-full">
+          <Progress className="mb-2 h-2" value={onTime.percentage} />
+          <FrameDescription className="line-clamp-1 text-xs">
+            {onTime.onTime} of {onTime.total}
+          </FrameDescription>
+        </div>
+      </FramePanel>
+    </Frame>
   );
 }

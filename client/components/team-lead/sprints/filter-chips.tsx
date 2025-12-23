@@ -1,19 +1,18 @@
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 
 export type FilterKey = "all" | "active" | "planned" | "completed";
 
 type FilterChipsProps = {
   selected: FilterKey;
+  onFilterChange: (filter: FilterKey) => void;
 };
 
-export function FilterChips({ selected }: FilterChipsProps) {
-  const items: Array<{ key: FilterKey; label: string; href: string }> = [
-    { key: "all", label: "All", href: "/sprints" },
-    { key: "active", label: "Active", href: "/sprints?filter=active" },
-    { key: "completed", label: "Completed", href: "/sprints?filter=completed" },
-    { key: "planned", label: "Planned", href: "/sprints?filter=planned" },
+export function FilterChips({ selected, onFilterChange }: FilterChipsProps) {
+  const items: Array<{ key: FilterKey; label: string }> = [
+    { key: "all", label: "All" },
+    { key: "active", label: "Active" },
+    { key: "completed", label: "Completed" },
+    { key: "planned", label: "Planned" },
   ];
 
   return (
@@ -22,12 +21,12 @@ export function FilterChips({ selected }: FilterChipsProps) {
         const isSelected = item.key === selected;
         return (
           <Button
-            asChild
             key={item.key}
+            onClick={() => onFilterChange(item.key)}
             size="sm"
             variant={isSelected ? "default" : "outline"}
           >
-            <Link href={item.href}>{item.label}</Link>
+            {item.label}
           </Button>
         );
       })}

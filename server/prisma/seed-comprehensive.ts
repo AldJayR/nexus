@@ -136,10 +136,10 @@ async function main() {
   const project = await prisma.project.create({
     data: {
       name: 'Nexus Capstone Project',
-      description: 'A comprehensive capstone project management and tracking system spanning 18 months with full team collaboration features',
+      description: 'A comprehensive capstone project management and tracking system spanning 19 months with full team collaboration features',
       repositoryUrl: 'https://github.com/nexus/capstone-project',
-      startDate: createDate(2025, 6, 1),
-      endDate: createDate(2026, 12, 15)
+      startDate: createDate(2025, 12, 19),
+      endDate: createDate(2027, 7, 19)
     }
   })
 
@@ -157,8 +157,8 @@ async function main() {
         type: PhaseType.WATERFALL,
         name: 'Planning & Design',
         description: 'Requirements gathering, stakeholder analysis, system architecture design, and UI/UX mockups',
-        startDate: createDate(2025, 6, 1),
-        endDate: createDate(2025, 8, 31)
+        startDate: createDate(2025, 12, 19),
+        endDate: createDate(2026, 3, 19)
       }
     }),
     prisma.phase.create({
@@ -167,8 +167,8 @@ async function main() {
         type: PhaseType.SCRUM,
         name: 'Development & Iteration',
         description: 'Sprint-based development with 2-week iterations, continuous integration, and agile delivery',
-        startDate: createDate(2025, 9, 1),
-        endDate: createDate(2026, 10, 31)
+        startDate: createDate(2026, 3, 20),
+        endDate: createDate(2027, 4, 20)
       }
     }),
     prisma.phase.create({
@@ -177,8 +177,8 @@ async function main() {
         type: PhaseType.FALL,
         name: 'Testing, Deployment & Closure',
         description: 'QA testing, user acceptance testing, production deployment, documentation, and project closure',
-        startDate: createDate(2026, 11, 1),
-        endDate: createDate(2026, 12, 15)
+        startDate: createDate(2027, 4, 21),
+        endDate: createDate(2027, 7, 19)
       }
     })
   ])
@@ -201,7 +201,7 @@ async function main() {
         description: 'Formal project charter defining scope, objectives, stakeholders, and success criteria',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.PLANNING,
-        dueDate: createDate(2025, 6, 15)
+        dueDate: createDate(2026, 1, 5)
       }
     }),
     prisma.deliverable.create({
@@ -211,7 +211,7 @@ async function main() {
         description: 'Comprehensive functional and non-functional requirements from all stakeholders',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.PLANNING,
-        dueDate: createDate(2025, 6, 30)
+        dueDate: createDate(2026, 1, 20)
       }
     }),
     prisma.deliverable.create({
@@ -221,7 +221,7 @@ async function main() {
         description: 'High-level system architecture showing components, integrations, and data flow',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.DESIGN,
-        dueDate: createDate(2025, 7, 15)
+        dueDate: createDate(2026, 2, 5)
       }
     }),
     prisma.deliverable.create({
@@ -231,7 +231,7 @@ async function main() {
         description: 'Normalized database design with entity-relationship diagram and schema specification',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.DESIGN,
-        dueDate: createDate(2025, 7, 30)
+        dueDate: createDate(2026, 2, 20)
       }
     }),
     prisma.deliverable.create({
@@ -241,7 +241,7 @@ async function main() {
         description: 'Low-fidelity wireframes and high-fidelity mockups for all user interfaces',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.DESIGN,
-        dueDate: createDate(2025, 8, 15)
+        dueDate: createDate(2026, 3, 5)
       }
     }),
     prisma.deliverable.create({
@@ -251,7 +251,7 @@ async function main() {
         description: 'Detailed technical design including APIs, database queries, and implementation approach',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.DESIGN,
-        dueDate: createDate(2025, 8, 30)
+        dueDate: createDate(2026, 3, 19)
       }
     }),
     // Scrum Phase Deliverables
@@ -262,7 +262,7 @@ async function main() {
         description: 'Code quality assessment, testing coverage, and technical debt tracking for early sprints',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.DEVELOPMENT,
-        dueDate: createDate(2025, 10, 15)
+        dueDate: createDate(2026, 5, 15)
       }
     }),
     prisma.deliverable.create({
@@ -272,7 +272,7 @@ async function main() {
         description: 'Comprehensive OpenAPI/Swagger documentation for all backend APIs',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.DEVELOPMENT,
-        dueDate: createDate(2026, 2, 28)
+        dueDate: createDate(2026, 9, 30)
       }
     }),
     prisma.deliverable.create({
@@ -282,7 +282,7 @@ async function main() {
         description: 'Reusable React component library with Storybook documentation',
         status: DeliverableStatus.COMPLETED,
         stage: DeliverableStage.DEVELOPMENT,
-        dueDate: createDate(2026, 5, 31)
+        dueDate: createDate(2026, 12, 31)
       }
     }),
     prisma.deliverable.create({
@@ -292,7 +292,7 @@ async function main() {
         description: 'Third-party security audit and performance benchmarking results',
         status: DeliverableStatus.IN_PROGRESS,
         stage: DeliverableStage.DEVELOPMENT,
-        dueDate: createDate(2026, 10, 31)
+        dueDate: createDate(2027, 4, 15)
       }
     }),
     // Fall Phase Deliverables
@@ -303,7 +303,7 @@ async function main() {
         description: 'Comprehensive testing strategy including unit, integration, and end-to-end testing',
         status: DeliverableStatus.IN_PROGRESS,
         stage: DeliverableStage.TESTING,
-        dueDate: createDate(2026, 11, 15)
+        dueDate: createDate(2027, 5, 15)
       }
     }),
     prisma.deliverable.create({
@@ -313,7 +313,7 @@ async function main() {
         description: 'UAT findings, bug reports, and sign-off from stakeholders',
         status: DeliverableStatus.IN_PROGRESS,
         stage: DeliverableStage.TESTING,
-        dueDate: createDate(2026, 11, 30)
+        dueDate: createDate(2027, 6, 10)
       }
     }),
     prisma.deliverable.create({
@@ -323,7 +323,7 @@ async function main() {
         description: 'Step-by-step deployment procedures, rollback plans, and monitoring setup',
         status: DeliverableStatus.IN_PROGRESS,
         stage: DeliverableStage.DEPLOYMENT,
-        dueDate: createDate(2026, 12, 5)
+        dueDate: createDate(2027, 6, 25)
       }
     }),
     prisma.deliverable.create({
@@ -333,7 +333,7 @@ async function main() {
         description: 'User manuals, video tutorials, and FAQ documentation',
         status: DeliverableStatus.NOT_STARTED,
         stage: DeliverableStage.DEPLOYMENT,
-        dueDate: createDate(2026, 12, 10)
+        dueDate: createDate(2027, 7, 10)
       }
     }),
     prisma.deliverable.create({
@@ -343,7 +343,7 @@ async function main() {
         description: 'Final project report including lessons learned, metrics, and recommendations',
         status: DeliverableStatus.NOT_STARTED,
         stage: DeliverableStage.DEPLOYMENT,
-        dueDate: createDate(2026, 12, 15)
+        dueDate: createDate(2027, 7, 19)
       }
     })
   ])
@@ -356,275 +356,96 @@ async function main() {
   console.log('\n🔄 Creating sprints...')
 
   const sprints = await Promise.all([
-    // Scrum Phase Sprints
+    // Sprints 1-10 - All within SCRUM phase (Mar 20, 2026 - Aug 6, 2026)
+    // 2-week sprints during Scrum phase only
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 1,
-        goal: 'Backend infrastructure setup and authentication system',
-        startDate: createDate(2025, 9, 2),
-        endDate: createDate(2025, 9, 15)
+        goal: 'Project setup, requirements gathering, and initial planning',
+        startDate: createDate(2026, 3, 20),
+        endDate: createDate(2026, 4, 2)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 2,
-        goal: 'Core API endpoints and database integration',
-        startDate: createDate(2025, 9, 16),
-        endDate: createDate(2025, 9, 29)
+        goal: 'System architecture design and technical specifications',
+        startDate: createDate(2026, 4, 3),
+        endDate: createDate(2026, 4, 16)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 3,
-        goal: 'Frontend setup and component library foundation',
-        startDate: createDate(2025, 9, 30),
-        endDate: createDate(2025, 10, 13)
+        goal: 'Database design and backend infrastructure setup',
+        startDate: createDate(2026, 4, 17),
+        endDate: createDate(2026, 4, 30)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 4,
-        goal: 'User authentication UI and form implementation',
-        startDate: createDate(2025, 10, 14),
-        endDate: createDate(2025, 10, 27)
+        goal: 'Core API development and authentication system',
+        startDate: createDate(2026, 5, 1),
+        endDate: createDate(2026, 5, 14)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 5,
-        goal: 'Dashboard and main page development',
-        startDate: createDate(2025, 10, 28),
-        endDate: createDate(2025, 11, 10)
+        goal: 'Frontend setup and component library foundation',
+        startDate: createDate(2026, 5, 15),
+        endDate: createDate(2026, 5, 28)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 6,
-        goal: 'Sprint management features and task board',
-        startDate: createDate(2025, 11, 11),
-        endDate: createDate(2025, 11, 24)
+        goal: 'User interface implementation and integration',
+        startDate: createDate(2026, 5, 29),
+        endDate: createDate(2026, 6, 11)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 7,
-        goal: 'Reporting and analytics features',
-        startDate: createDate(2025, 11, 25),
-        endDate: createDate(2025, 12, 8)
+        goal: 'Feature completion and comprehensive testing',
+        startDate: createDate(2026, 6, 12),
+        endDate: createDate(2026, 6, 25)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 8,
-        goal: 'User management and team collaboration',
-        startDate: createDate(2025, 12, 9),
-        endDate: createDate(2025, 12, 22)
+        goal: 'Performance optimization and security hardening',
+        startDate: createDate(2026, 6, 26),
+        endDate: createDate(2026, 7, 9)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 9,
-        goal: 'Notification system and email integration',
-        startDate: createDate(2025, 12, 23),
-        endDate: createDate(2026, 1, 5)
+        goal: 'User acceptance testing and bug fixes',
+        startDate: createDate(2026, 7, 10),
+        endDate: createDate(2026, 7, 23)
       }
     }),
     prisma.sprint.create({
       data: {
         projectId: project.id,
         number: 10,
-        goal: 'Mobile responsiveness improvements',
-        startDate: createDate(2026, 1, 6),
-        endDate: createDate(2026, 1, 19)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 11,
-        goal: 'Advanced filtering and search features',
-        startDate: createDate(2026, 1, 20),
-        endDate: createDate(2026, 2, 2)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 12,
-        goal: 'Caching and performance optimization',
-        startDate: createDate(2026, 2, 3),
-        endDate: createDate(2026, 2, 16)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 13,
-        goal: 'API security hardening',
-        startDate: createDate(2026, 2, 17),
-        endDate: createDate(2026, 3, 2)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 14,
-        goal: 'Documentation and API cleanup',
-        startDate: createDate(2026, 3, 3),
-        endDate: createDate(2026, 3, 16)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 15,
-        goal: 'Integration testing and bug fixes',
-        startDate: createDate(2026, 3, 17),
-        endDate: createDate(2026, 3, 30)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 16,
-        goal: 'Advanced reporting features',
-        startDate: createDate(2026, 3, 31),
-        endDate: createDate(2026, 4, 13)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 17,
-        goal: 'Export functionality and data migration',
-        startDate: createDate(2026, 4, 14),
-        endDate: createDate(2026, 4, 27)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 18,
-        goal: 'Accessibility improvements and compliance',
-        startDate: createDate(2026, 4, 28),
-        endDate: createDate(2026, 5, 11)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 19,
-        goal: 'Admin dashboard and system monitoring',
-        startDate: createDate(2026, 5, 12),
-        endDate: createDate(2026, 5, 25)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 20,
-        goal: 'Feature refinement and edge case handling',
-        startDate: createDate(2026, 5, 26),
-        endDate: createDate(2026, 6, 8)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 21,
-        goal: 'Load testing and scalability optimization',
-        startDate: createDate(2026, 6, 9),
-        endDate: createDate(2026, 6, 22)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 22,
-        goal: 'Final feature development and polishing',
-        startDate: createDate(2026, 6, 23),
-        endDate: createDate(2026, 7, 6)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 23,
-        goal: 'Bug fixes and stabilization',
-        startDate: createDate(2026, 7, 7),
-        endDate: createDate(2026, 7, 20)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 24,
-        goal: 'Code review and technical debt reduction',
-        startDate: createDate(2026, 7, 21),
-        endDate: createDate(2026, 8, 3)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 25,
-        goal: 'Pre-release testing and validation',
-        startDate: createDate(2026, 8, 4),
-        endDate: createDate(2026, 8, 17)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 26,
-        goal: 'Release candidate preparation',
-        startDate: createDate(2026, 8, 18),
-        endDate: createDate(2026, 8, 31)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 27,
-        goal: 'Final QA and UAT support',
-        startDate: createDate(2026, 9, 1),
-        endDate: createDate(2026, 9, 14)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 28,
-        goal: 'Production readiness check',
-        startDate: createDate(2026, 9, 15),
-        endDate: createDate(2026, 9, 28)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 29,
-        goal: 'Deployment and go-live support',
-        startDate: createDate(2026, 9, 29),
-        endDate: createDate(2026, 10, 12)
-      }
-    }),
-    prisma.sprint.create({
-      data: {
-        projectId: project.id,
-        number: 30,
-        goal: 'Post-release monitoring and hotfixes',
-        startDate: createDate(2026, 10, 13),
-        endDate: createDate(2026, 10, 26)
+        goal: 'Final polishing, documentation, and deployment preparation',
+        startDate: createDate(2026, 7, 24),
+        endDate: createDate(2026, 8, 6)
       }
     })
   ])
@@ -754,21 +575,26 @@ async function main() {
       
       // Determine status based on sprint date
       let status: TaskStatus
-      if (sprint.endDate < createDate(2026, 9, 1)) {
-        // Completed sprints should have mostly DONE tasks
+      const now = new Date()
+      
+      if (sprint.endDate < now) {
+        // Past sprints should have mostly DONE tasks
         const rand = Math.random()
-        status = rand > 0.9 ? TaskStatus.BLOCKED : TaskStatus.DONE
-      } else if (sprint.endDate < new Date()) {
-        // Recent sprints mix of statuses
+        if (rand < 0.7) status = TaskStatus.DONE
+        else if (rand < 0.85) status = TaskStatus.IN_PROGRESS
+        else if (rand < 0.95) status = TaskStatus.TODO
+        else status = TaskStatus.BLOCKED
+      } else if (sprint.startDate <= now && sprint.endDate >= now) {
+        // Active sprint (Sprint 1) mix of statuses
         const rand = Math.random()
-        if (rand < 0.4) status = TaskStatus.DONE
-        else if (rand < 0.7) status = TaskStatus.IN_PROGRESS
+        if (rand < 0.3) status = TaskStatus.DONE
+        else if (rand < 0.6) status = TaskStatus.IN_PROGRESS
         else if (rand < 0.9) status = TaskStatus.TODO
         else status = TaskStatus.BLOCKED
       } else {
         // Future sprints mostly TODO
         const rand = Math.random()
-        status = rand > 0.7 ? TaskStatus.IN_PROGRESS : TaskStatus.TODO
+        status = rand > 0.8 ? TaskStatus.IN_PROGRESS : TaskStatus.TODO
       }
 
       const task = await prisma.task.create({
@@ -1049,7 +875,8 @@ async function main() {
   console.log('\n📅 Timeline:')
   console.log(`   Project Start: ${project.startDate.toDateString()}`)
   console.log(`   Project End: ${project.endDate?.toDateString()}`)
-  console.log(`   Duration: 18 months`)
+  console.log(`   Duration: 19 months`)
+  console.log(`   Current Sprint: Sprint 1 (Active)`)
   console.log('\n🔐 Default Credentials:')
   users.forEach(user => {
     console.log(`   Email: ${user.email}, Password: password123, Role: ${user.role}`)

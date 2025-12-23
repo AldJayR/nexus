@@ -1,7 +1,13 @@
 "use client";
 
 import { FileText } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { calculateTotalMeetings } from "@/lib/helpers/meeting-analytics";
 import type { MeetingLog } from "@/lib/types";
 
@@ -20,20 +26,19 @@ export default function TotalMeetingsCard({ logs }: TotalMeetingsCardProps) {
   const total = calculateTotalMeetings(logs);
 
   return (
-    <Card className="py-4">
-      <CardContent>
-        <div className="flex items-start justify-between">
-          <div>
-            <dt className="font-medium text-muted-foreground text-sm">
-              Total Meetings
-            </dt>
-            <dd className="mt-2 font-bold text-3xl text-foreground">{total}</dd>
-          </div>
-          <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
-            <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-          </div>
+    <Frame>
+      <FrameHeader className="flex-row items-center gap-2">
+        <div className="rounded-md bg-linear-120 from-blue-500 to-blue-400 p-2 shadow-sm dark:from-blue-800 dark:to-blue-700">
+          <FileText className="size-4 text-white" />
         </div>
-      </CardContent>
-    </Card>
+        <div className="space-y-0">
+          <FrameTitle className="text-sm">Total</FrameTitle>
+          <FrameDescription className="text-xs">Meetings</FrameDescription>
+        </div>
+      </FrameHeader>
+      <FramePanel>
+        <p className="font-bold font-sora text-3xl">{total}</p>
+      </FramePanel>
+    </Frame>
   );
 }

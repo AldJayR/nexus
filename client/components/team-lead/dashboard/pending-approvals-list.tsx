@@ -1,0 +1,119 @@
+/**
+ * Pending Approvals List
+ * Shows deliverables awaiting team lead approval
+ */
+"use client";
+
+import { formatDistanceToNow } from "date-fns";
+import { CheckCircle2, Clock } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Frame,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
+import type { PendingApproval } from "@/lib/helpers/dashboard-computations";
+
+type PendingApprovalsListProps = {
+  items: PendingApproval[];
+};
+
+export function PendingApprovalsList({ items }: PendingApprovalsListProps) {
+  if (items.length === 0) {
+    return (
+      <Frame>
+        <FrameHeader className="flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="rounded-md bg-linear-120 from-amber-500 to-amber-400 p-2 shadow-sm dark:from-amber-800 dark:to-amber-700">
+              <CheckCircle2 className="size-4 text-white" />
+            </div>
+            <FrameTitle className="text-sm">Pending Approvals</FrameTitle>
+          </div>
+        </FrameHeader>
+        <FramePanel>
+          <div className="py-12 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-chart-4/10">
+              <CheckCircle2 className="h-6 w-6 text-chart-4" />
+            </div>
+            <p className="mt-4 font-medium text-muted-foreground text-sm">
+              No pending approvals
+            </p>
+            <p className="text-muted-foreground text-xs">
+              All deliverables have been reviewed
+            </p>
+          </div>
+        </FramePanel>
+      </Frame>
+    );
+  }
+
+  return (
+    <Frame>
+      <FrameHeader className="flex-row items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="rounded-md bg-linear-120 from-amber-500 to-amber-400 p-2 shadow-sm dark:from-amber-800 dark:to-amber-700">
+            <CheckCircle2 className="size-4 text-white" />
+          </div>
+          <div className="flex items-center gap-2">
+            <FrameTitle className="text-sm">Pending Approvals</FrameTitle>
+            <Badge variant="outline">{items.length}</Badge>
+          </div>
+        </div>
+        <Button asChild size="sm" variant="outline">
+          <Link href="/deliverables">View All</Link>
+        </Button>
+      </FrameHeader>
+      <FramePanel>
+        <div className="divide-y divide-border">
+          {items.slice(0, 5).map((item) => (
+            <Link
+              className="group flex items-start gap-4 p-4 transition-colors hover:bg-muted/50"
+              href="/deliverables"
+              key={item.id}
+            >
+              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-chart-4/10">
+                <CheckCircle2 className="h-4 w-4 text-chart-4" />
+              </div>
+
+              <div className="flex-1 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-1">
+                    <p className="font-medium text-sm leading-tight group-hover:text-primary">
+                      {item.title}
+                    </p>
+                    <Badge className="text-[10px]" variant="outline">
+                      Deliverable
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground text-xs">
+                    <Clock className="h-3 w-3" />
+                    {formatDistanceToNow(new Date(item.updatedAt), {
+                      addSuffix: true,
+                    })}
+                  </div>
+                </div>
+
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  {item.reason}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {items.length > 5 && (
+          <div className="border-border border-t p-3 text-center">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/deliverables">
+                View {items.length - 5} more pending approvals
+              </Link>
+            </Button>
+          </div>
+        )}
+      </FramePanel>
+    </Frame>
+  );
+}

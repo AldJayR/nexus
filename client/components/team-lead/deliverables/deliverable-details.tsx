@@ -25,7 +25,7 @@ import { formatDate } from "@/lib/helpers/format-date";
 import type { Deliverable, Evidence, Phase } from "@/lib/types";
 import { DeliverableStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { isDeliverableOverdue } from "./deliverables-utils";
+import { isDeliverableOverdue } from "../../../lib/types/deliverables-utils";
 
 type DeliverableDetailsProps = {
   deliverable: Deliverable;

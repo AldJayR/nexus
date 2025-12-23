@@ -29,13 +29,12 @@ import {
   requestChangesDeliverableAction,
 } from "@/actions/deliverables";
 import type { Deliverable, Evidence, Phase } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import type { PhaseFilter, StatusFilter } from "@/lib/types/deliverables-types";
+import { getDeliverablesSummary } from "../../../hooks/get-deliverables-summary";
+import { getFilteredDeliverables } from "../../../hooks/get-filtered-deliverables";
 import { DeliverableCard } from "./deliverable-card";
 import { DeliverableDetails } from "./deliverable-details";
-import type { PhaseFilter, StatusFilter, ViewMode } from "./deliverables-types";
 import { DeliverablesFilters } from "./filters";
-import { getDeliverablesSummary } from "./get-deliverables-summary";
-import { getFilteredDeliverables } from "./get-filtered-deliverables";
 import { RequestChangesDialog } from "./request-changes-dialog";
 import { DeliverablesSummaryCards } from "./summary-cards";
 
@@ -64,7 +63,6 @@ export function DeliverablesClient({
   const [selectedDeliverableId, setSelectedDeliverableId] = useState<
     string | null
   >(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [isPending, startTransition] = useTransition();
 
   const phaseById = useMemo(
@@ -134,12 +132,10 @@ export function DeliverablesClient({
         onPhaseFilterChange={setPhaseFilter}
         onQueryChange={setQuery}
         onStatusFilterChange={setStatusFilter}
-        onViewModeChange={setViewMode}
         phaseFilter={phaseFilter}
         phases={phases}
         query={query}
         statusFilter={statusFilter}
-        viewMode={viewMode}
       />
 
       {filtered.length === 0 ? (
@@ -147,13 +143,7 @@ export function DeliverablesClient({
           No deliverables found.
         </div>
       ) : (
-        <section
-          className={cn(
-            viewMode === "grid"
-              ? "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
-              : "grid grid-cols-1 gap-4"
-          )}
-        >
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((deliverable) => {
             const phase = phaseById[deliverable.phaseId];
             const evidence = evidenceByDeliverableId[deliverable.id] ?? [];

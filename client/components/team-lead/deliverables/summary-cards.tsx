@@ -1,32 +1,32 @@
-import { TriangleAlert } from "lucide-react";
+import { Barcode, Blocks, TriangleAlert } from "lucide-react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { Tracker } from "@/components/ui/tracker";
+import type { DeliverablesSummary } from "@/hooks/get-deliverables-summary";
 import { formatTitleCase } from "@/lib/helpers";
 import { formatDate } from "@/lib/helpers/format-date";
 import type { Deliverable } from "@/lib/types";
-import type { DeliverablesSummary } from "./get-deliverables-summary";
 
 const getStatusColor = (status: string): string => {
   switch (status) {
     case "COMPLETED":
     case "DONE":
-      return "bg-green-500";
+      return "bg-emerald-500";
     case "IN_PROGRESS":
-      return "bg-blue-500";
+      return "bg-primary";
     case "REVIEW":
       return "bg-purple-500";
     case "BLOCKED":
       return "bg-red-500";
     case "TODO":
-      return "bg-slate-500";
+      return "bg-accent";
     default:
-      return "bg-slate-500";
+      return "bg-accent";
   }
 };
 
@@ -58,41 +58,55 @@ export function DeliverablesSummaryCards({
 
   return (
     <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between space-y-0">
-          <CardDescription>Total Deliverables</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="font-bold text-3xl">{summary.total}</div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex items-start justify-between space-y-0">
-          <CardTitle>Overdue</CardTitle>
-          <div className="rounded-lg bg-red-100 p-2 dark:bg-red-950">
-            <TriangleAlert className="size-4 text-destructive" />
+      <Frame>
+        <FrameHeader className="flex-row items-center gap-2">
+          <div className="rounded-md bg-linear-120 from-blue-500 to-blue-400 p-2 shadow-sm">
+            <Blocks className="size-4 text-white" />
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="font-bold text-3xl">{summary.overdue}</div>
-          <div className="text-muted-foreground text-xs">Action needed</div>
-        </CardContent>
-      </Card>
+          <FrameTitle>Total Deliverables</FrameTitle>
+        </FrameHeader>
+        <FramePanel>
+          <div className="font-bold font-sora text-3xl">{summary.total}</div>
+        </FramePanel>
+      </Frame>
 
-      <Card className="sm:col-span-2 lg:col-span-1">
-        <CardHeader>
-          <CardTitle className="text-sm">Deliverables Timeline</CardTitle>
-          <CardDescription>Sorted by due date</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Frame>
+        <FrameHeader className="flex-row items-center gap-2">
+          <div className="rounded-md bg-linear-120 from-red-500 to-red-400 p-2 shadow-sm">
+            <TriangleAlert className="size-4 text-white" />
+          </div>
+          <div className="space-y-0">
+            <FrameTitle className="text-sm">Overdue</FrameTitle>
+            <FrameDescription className="text-xs">
+              Action needed
+            </FrameDescription>
+          </div>
+        </FrameHeader>
+        <FramePanel>
+          <p className="font-bold text-3xl">{summary.overdue}</p>
+        </FramePanel>
+      </Frame>
+
+      <Frame className="sm:col-span-2 lg:col-span-1">
+        <FrameHeader className="flex-row items-center gap-2">
+          <div className="rounded-md bg-linear-120 from-emerald-500 to-emerald-400 p-2 shadow-sm">
+            <Barcode className="size-4 text-white" />
+          </div>
+          <div className="space-y-0">
+            <FrameTitle className="text-sm">Deliverables Timeline</FrameTitle>
+            <FrameDescription className="text-xs">
+              Sorted by due date
+            </FrameDescription>
+          </div>
+        </FrameHeader>
+        <FramePanel>
           {trackerData.length === 0 ? (
             <div className="text-muted-foreground text-xs">No deliverables</div>
           ) : (
-            <Tracker data={trackerData} />
+            <Tracker data={trackerData} showTooltip />
           )}
-        </CardContent>
-      </Card>
+        </FramePanel>
+      </Frame>
     </section>
   );
 }

@@ -12,6 +12,31 @@ export function formatDate(dateString: string): string {
 }
 
 /**
+ * Format date to month and day only
+ * @example formatMonthDay('2025-01-17T10:30:00Z') -> 'Jan 17'
+ * @example formatMonthDay(new Date('2025-01-17')) -> 'Jan 17'
+ */
+export function formatMonthDay(dateString: string | Date): string {
+  const date =
+    typeof dateString === "string" ? new Date(dateString) : dateString;
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+/**
+ * Format a date range with month and day
+ * @example formatDateRange('2025-01-17', '2025-01-24') -> 'Jan 17 to Jan 24'
+ */
+export function formatDateRange(
+  startDate: string | Date,
+  endDate: string | Date
+): string {
+  return `${formatMonthDay(startDate)} to ${formatMonthDay(endDate)}`;
+}
+
+/**
  * Format ISO date/time to user-friendly format with time
  * @example formatDateTime('2025-01-17T10:30:00Z') -> 'Jan 17, 2025 at 10:30 AM'
  */

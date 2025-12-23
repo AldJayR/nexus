@@ -1,7 +1,13 @@
 "use client";
 
 import { CheckCircle2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { Progress } from "@/components/ui/progress";
 import { calculateCoveragePercentage } from "@/lib/helpers/meeting-analytics";
 import type { MeetingLog, Phase, Sprint } from "@/lib/types";
@@ -30,28 +36,27 @@ export default function CoverageCard({
   const coverage = calculateCoveragePercentage(logs, sprints, phases);
 
   return (
-    <Card className="py-4">
-      <CardContent>
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <dt className="font-medium text-muted-foreground text-sm">
-              Coverage
-            </dt>
-            <dd className="mt-2 font-bold text-3xl text-foreground">
-              {coverage.percentage}%
-            </dd>
-            <div className="mt-3 space-y-2">
-              <Progress className="h-2" value={coverage.percentage} />
-              <p className="text-muted-foreground text-xs">
-                {coverage.covered} of {coverage.total} sprints/phases documented
-              </p>
-            </div>
-          </div>
-          <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
-            <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
-          </div>
+    <Frame>
+      <FrameHeader className="flex-row items-center gap-2">
+        <div className="rounded-md bg-linear-120 from-emerald-500 to-emerald-400 p-2 shadow-sm dark:from-emerald-800 dark:to-emerald-700">
+          <CheckCircle2 className="size-4 text-white" />
         </div>
-      </CardContent>
-    </Card>
+        <div className="space-y-0">
+          <FrameTitle className="text-sm">Coverage</FrameTitle>
+          <FrameDescription className="line-clamp-1 text-xs">
+            sprints/phases
+          </FrameDescription>
+        </div>
+      </FrameHeader>
+      <FramePanel className="flex items-center gap-4">
+        <p className="font-bold font-sora text-3xl">{coverage.percentage}%</p>
+        <div className="w-full">
+          <Progress className="mb-2 h-2" value={coverage.percentage} />
+          <FrameDescription className="line-clamp-1 text-xs">
+            {coverage.covered} of {coverage.total}
+          </FrameDescription>
+        </div>
+      </FramePanel>
+    </Frame>
   );
 }

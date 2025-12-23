@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Activity,
   CalendarDays,
   ClipboardList,
   FolderOpen,
@@ -62,6 +63,11 @@ const navItems: NavItem[] = [
         icon: Settings,
       },
       { title: "Backup", href: "/settings/backup", icon: Server },
+      {
+        title: "Activity Logs",
+        href: "/settings/activity-logs",
+        icon: Activity,
+      },
     ],
   },
 ] as const;

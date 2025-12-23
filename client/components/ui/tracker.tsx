@@ -12,10 +12,11 @@ export interface TrackerBlockProps {
 
 interface TrackerProps extends React.HTMLAttributes<HTMLDivElement> {
   data: TrackerBlockProps[];
+  showTooltip?: boolean;
 }
 
 const Tracker = React.forwardRef<HTMLDivElement, TrackerProps>(
-  ({ data = [], className, ...props }, forwardedRef) => {
+  ({ data = [], className, showTooltip = false, ...props }, forwardedRef) => {
     return (
       <div
         ref={forwardedRef}
@@ -23,19 +24,29 @@ const Tracker = React.forwardRef<HTMLDivElement, TrackerProps>(
         {...props}
       >
         {data.map((block) => (
-          <Tooltip key={block.key}>
-            <TooltipTrigger asChild>
-              <div
-                className={cn(
-                  "h-full max-w-4 flex-1 transition-all hover:opacity-80 cursor-pointer",
-                  block.color || "bg-gray-400"
-                )}
-              />
-            </TooltipTrigger>
-            <TooltipContent side="top" className="text-xs">
-              {block.tooltip}
-            </TooltipContent>
-          </Tooltip>
+          showTooltip && block.tooltip ? (
+            <Tooltip key={block.key}>
+              <TooltipTrigger asChild>
+                <div
+                  className={cn(
+                    "h-full w-full flex-1 transition-all hover:opacity-80 cursor-pointer",
+                    block.color || "bg-accent"
+                  )}
+                />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="text-xs">
+                {block.tooltip}
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <div
+              key={block.key}
+              className={cn(
+                "h-full w-full flex-1 transition-all hover:opacity-80",
+                block.color || "bg-accent"
+              )}
+            />
+          )
         ))}
       </div>
     );

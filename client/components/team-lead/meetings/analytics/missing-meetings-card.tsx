@@ -1,7 +1,13 @@
 "use client";
 
 import { AlertCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Frame,
+  FrameDescription,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { calculateMissingMeetings } from "@/lib/helpers/meeting-analytics";
 import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 
@@ -31,23 +37,27 @@ export default function MissingMeetingsCard({
   const isAlert = missing.count > 0;
 
   return (
-    <Card
-      className={`py-4 ${isAlert ? "border-red-200 dark:border-red-800" : ""}`}
-    >
-      <CardContent>
-        <div className="flex items-start justify-between">
-          <div>
-            <dt className="font-medium text-muted-foreground text-sm">
-              Missing Meetings
-            </dt>
-            <dd
-              className={`mt-2 font-bold text-3xl ${
-                isAlert ? "text-red-600 dark:text-red-400" : "text-foreground"
-              }`}
-            >
-              {missing.count}
-            </dd>
-            <p className="mt-2 text-muted-foreground text-xs">
+    <Frame>
+      <FrameHeader className="flex-row items-center gap-2">
+        <div
+          className={`rounded-md p-2 shadow-sm ${
+            isAlert
+              ? "bg-linear-120 from-red-500 to-red-400 dark:from-red-800 dark:to-red-700"
+              : "bg-linear-120 from-gray-500 to-gray-400 dark:from-gray-800 dark:to-gray-700"
+          }`}
+        >
+          <AlertCircle className="size-4 text-white" />
+        </div>
+        <div className="space-y-0">
+          <FrameTitle className="text-sm">Missing</FrameTitle>
+          <FrameDescription className="text-xs">Meetings</FrameDescription>
+        </div>
+      </FrameHeader>
+      <FramePanel>
+        <div className="flex items-end gap-2">
+          <p className="font-bold font-sora text-3xl">{missing.count}</p>
+          <p className="grid text-muted-foreground text-xs">
+            <span>
               {missing.sprints.length > 0 && (
                 <>
                   {missing.sprints.length} sprint
@@ -55,32 +65,19 @@ export default function MissingMeetingsCard({
                   {missing.phases.length > 0 && " and "}
                 </>
               )}
+            </span>
+            <span>
               {missing.phases.length > 0 && (
                 <>
                   {missing.phases.length} phase
                   {missing.phases.length !== 1 ? "s" : ""}
                 </>
               )}
-              {missing.count > 0 && " without meetings"}
-            </p>
-          </div>
-          <div
-            className={`rounded-lg p-3 ${
-              isAlert
-                ? "bg-red-100 dark:bg-red-900"
-                : "bg-gray-100 dark:bg-gray-800"
-            }`}
-          >
-            <AlertCircle
-              className={`h-6 w-6 ${
-                isAlert
-                  ? "text-red-600 dark:text-red-400"
-                  : "text-gray-600 dark:text-gray-400"
-              }`}
-            />
-          </div>
+            </span>
+            <span>{missing.count > 0 && " without meetings"}</span>
+          </p>
         </div>
-      </CardContent>
-    </Card>
+      </FramePanel>
+    </Frame>
   );
 }

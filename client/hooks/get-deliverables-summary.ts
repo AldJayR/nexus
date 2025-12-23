@@ -1,6 +1,6 @@
 import type { Deliverable } from "@/lib/types";
 import { DeliverableStatus } from "@/lib/types";
-import { isDeliverableOverdue } from "./deliverables-utils";
+import { isDeliverableOverdue } from "@/lib/types/deliverables-utils";
 
 export type DeliverablesSummary = {
   total: number;
