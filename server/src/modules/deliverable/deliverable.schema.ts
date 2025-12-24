@@ -28,6 +28,10 @@ export const deliverableResponseSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable().optional(),
+  _count: z.object({
+    evidence: z.number(),
+    comments: z.number(),
+  }).optional().describe('Count of related entities'),
 });
 
 export const deliverableQuerySchema = z.object({

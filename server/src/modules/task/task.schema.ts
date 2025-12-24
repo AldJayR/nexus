@@ -22,7 +22,7 @@ export const updateTaskSchema = z.object({
 
 export const updateTaskStatusSchema = z.object({
   status: z.nativeEnum(TaskStatus).describe('New status for the task'),
-  comment: z.string().optional().describe('Reason for the status change (required if status is BLOCKED)'), 
+  comment: z.string().optional().describe('Reason for the status change (required if status is BLOCKED)'),
 }).refine((data) => {
   if (data.status === TaskStatus.BLOCKED && !data.comment) {
     return false;
@@ -44,6 +44,20 @@ export const taskResponseSchema = z.object({
   createdAt: z.date().describe('Task creation timestamp'),
   updatedAt: z.date().describe('Last task update timestamp'),
   deletedAt: z.date().nullable().optional().describe('Timestamp when the task was soft deleted, or null if active'),
+  assignee: z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    email: z.string().email(),
+  }).nullable().optional().describe('Assigned user details'),
+  comments: z.array(z.object({
+    id: z.string().uuid(),
+    content: z.string(),
+    authorId: z.string().uuid(),
+    createdAt: z.date(),
+  })).optional().describe('Comments on the task'),
+  _count: z.object({
+    comments: z.number(),
+  }).optional().describe('Count of related entities'),
 }).describe('Response object containing task details');
 
 export const taskQuerySchema = z.object({

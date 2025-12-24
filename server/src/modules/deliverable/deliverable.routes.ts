@@ -40,7 +40,7 @@ export async function deliverableRoutes(app: FastifyInstance) {
       schema: {
         params: z.object({ id: z.string() }),
         response: {
-          200: deliverableResponseSchema, // TODO: Add evidence to schema if needed
+          200: deliverableResponseSchema,
         },
       },
     }, getDeliverableByIdHandler as any);

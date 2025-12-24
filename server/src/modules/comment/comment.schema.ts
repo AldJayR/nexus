@@ -23,6 +23,10 @@ export const commentResponseSchema = z.object({
   deliverableId: z.string().uuid().nullable().describe('ID of the associated deliverable (if any)'),
   createdAt: z.date().describe('Comment creation timestamp'),
   updatedAt: z.date().describe('Last comment update timestamp'),
+  author: z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+  }).optional().describe('Author details'),
 }).describe('Response object containing comment details');
 
 export const commentQuerySchema = z.object({

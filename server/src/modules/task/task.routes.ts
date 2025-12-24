@@ -42,7 +42,7 @@ export async function taskRoutes(app: FastifyInstance) {
       schema: {
         params: z.object({ id: z.string() }),
         response: {
-          200: taskResponseSchema, // TODO: Add comments/assignee to schema if needed
+          200: taskResponseSchema,
         },
       },
     }, getTaskByIdHandler as any);

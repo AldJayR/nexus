@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma } from '../generated/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
+import logger from './logger.js';
 
 // Singleton Prisma Client with connection pooling
 let prisma: PrismaClient;
@@ -16,15 +17,15 @@ export function getPrismaClient(): PrismaClient {
 
     prisma = new PrismaClient({
       adapter,
-      log: process.env.NODE_ENV === 'development' 
+      log: process.env.NODE_ENV === 'development'
         ? ['query', 'info', 'warn', 'error']
         : ['error'],
       errorFormat: 'pretty',
     });
 
     // Handle connection errors
-    prisma.$on('error' as never, (e: any) => {
-      console.error('Prisma Client Error:', e);
+    prisma.$on('error' as never, (e: unknown) => {
+      logger.error({ error: e }, 'Prisma Client Error');
     });
   }
 
@@ -44,12 +45,12 @@ export function createPostgresPool(): Pool {
   });
 
   pool.on('error', (err) => {
-    console.error('Unexpected error on idle PostgreSQL client', err);
+    logger.error({ error: err }, 'Unexpected error on idle PostgreSQL client');
     process.exit(-1);
   });
 
   pool.on('connect', () => {
-    console.log('✅ PostgreSQL pool connected');
+    logger.info('PostgreSQL pool connected');
   });
 
   return pool;
@@ -61,7 +62,7 @@ export function createPostgresPool(): Pool {
 export async function disconnectDatabase() {
   if (prisma) {
     await prisma.$disconnect();
-    console.log('✅ Prisma Client disconnected');
+    logger.info('Prisma Client disconnected');
   }
 }
 
@@ -74,7 +75,7 @@ export async function checkDatabaseHealth(): Promise<boolean> {
     await client.$queryRaw`SELECT 1`;
     return true;
   } catch (error) {
-    console.error('Database health check failed:', error);
+    logger.error({ error }, 'Database health check failed');
     return false;
   }
 }
@@ -84,7 +85,7 @@ export async function checkDatabaseHealth(): Promise<boolean> {
  */
 export class DatabaseError extends Error {
   public statusCode: number;
-  
+
   constructor(message: string, public originalError?: unknown, statusCode = 500) {
     super(message);
     this.name = 'DatabaseError';
@@ -177,7 +178,7 @@ export async function withTransaction<T>(
       return await callback(tx);
     });
   } catch (error) {
-    console.error('Transaction failed:', error);
+    logger.error({ error }, 'Transaction failed');
     throw new DatabaseError('Transaction failed', error);
   }
 }

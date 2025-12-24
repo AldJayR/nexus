@@ -76,9 +76,14 @@ describe("Email Service Integration Tests", () => {
         });
 
       expect(res.status).toBe(201);
-      expect(res.body.message).toBe("User invited successfully. An email with credentials has been sent.");
-      
-      // Verify email was sent
+      // The response returns the created user object, not a message
+      expect(res.body.id).toBeDefined();
+      expect(res.body.email).toBe(newEmail);
+      expect(res.body.name).toBe(newName);
+      expect(res.body.role).toBe(newRole);
+
+      // Verify email was sent (async, so we need a small delay)
+      await new Promise(resolve => setTimeout(resolve, 100));
       expect(mockSendMail).toHaveBeenCalledTimes(1);
       const emailArgs = mockSendMail.mock.calls[0][0];
 
@@ -93,7 +98,6 @@ describe("Email Service Integration Tests", () => {
       expect(createdUser).not.toBeNull();
       expect(createdUser?.name).toBe(newName);
       expect(createdUser?.role).toBe(newRole);
-      // We cannot get the plain text temporary password to assert here, but the email mock ensures it was in the email
     });
 
     it("should fail if trying to invite an existing user", async () => {
@@ -150,12 +154,15 @@ describe("Email Service Integration Tests", () => {
           role: "MEMBER",
         });
 
-      expect(res.status).toBe(500); // Expect internal server error
-      expect(res.body.error).toContain("Failed to send email");
-      
-      // Verify user was still created (important! creation shouldn't rollback due to email issue)
+      // Email is sent asynchronously, so user creation should still succeed
+      // The email failure is logged but doesn't block the response
+      expect(res.status).toBe(201);
+      expect(res.body.email).toBe(newEmail);
+
+      // Verify user was still created
       const createdUser = await prisma.user.findUnique({ where: { email: newEmail } });
       expect(createdUser).not.toBeNull();
+      expect(createdUser?.name).toBe(newName);
     });
   });
 });

@@ -37,7 +37,7 @@ export async function commentRoutes(app: FastifyInstance) {
       schema: {
         params: z.object({ id: z.string() }),
         response: {
-          200: commentResponseSchema, // TODO: Add author info to schema if needed
+          200: commentResponseSchema,
         },
       },
     }, getCommentByIdHandler);

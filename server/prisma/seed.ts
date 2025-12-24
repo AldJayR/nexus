@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { PrismaClient, Role, PhaseType, DeliverableStatus, DeliverableStage } from '../src/generated/client'
+import { PrismaClient, Role, PhaseType, DeliverableStatus, DeliverableStage } from '../src/generated/client.js'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import bcrypt from 'bcryptjs'
@@ -15,7 +15,7 @@ async function main() {
 
   // 1. Create the First Admin (Team Lead) - Idempotent
   const hashedPassword = await bcrypt.hash('admin123', 10)
-  
+
   const admin = await prisma.user.upsert({
     where: { email: 'admin@nexus.local' },
     update: {},
@@ -30,7 +30,7 @@ async function main() {
 
   // 2. Create Project (Singleton Check)
   const existingProject = await prisma.project.findFirst()
-  
+
   if (existingProject) {
     console.log(`📦 Project already exists: ${existingProject.name}`)
     return
@@ -44,8 +44,8 @@ async function main() {
       startDate: new Date(),
       phases: {
         create: [
-          { 
-            type: PhaseType.WATERFALL, 
+          {
+            type: PhaseType.WATERFALL,
             name: 'Planning & Design',
             deliverables: {
               create: [
@@ -55,8 +55,8 @@ async function main() {
               ]
             }
           },
-          { 
-            type: PhaseType.SCRUM, 
+          {
+            type: PhaseType.SCRUM,
             name: 'Development',
             deliverables: {
               create: [
@@ -65,8 +65,8 @@ async function main() {
               ]
             }
           },
-          { 
-            type: PhaseType.FALL, 
+          {
+            type: PhaseType.FALL,
             name: 'Deployment & Closing',
             deliverables: {
               create: [

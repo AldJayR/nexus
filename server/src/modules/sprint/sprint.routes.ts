@@ -40,7 +40,7 @@ export async function sprintRoutes(app: FastifyInstance) {
       schema: {
         params: z.object({ id: z.string() }),
         response: {
-          200: sprintResponseSchema, // TODO: Add tasks to schema if needed
+          200: sprintResponseSchema,
         },
       },
     }, getSprintByIdHandler as any);

@@ -20,6 +20,9 @@ export const sprintResponseSchema = z.object({
   createdAt: z.date().describe('Sprint creation timestamp'),
   updatedAt: z.date().describe('Last sprint update timestamp'),
   deletedAt: z.date().nullable().optional().describe('Timestamp when the sprint was soft deleted, or null if active'),
+  _count: z.object({
+    tasks: z.number(),
+  }).optional().describe('Count of related tasks'),
 }).describe('Response object containing sprint details');
 
 export const sprintProgressSchema = z.object({
