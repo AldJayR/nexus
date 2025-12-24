@@ -22,18 +22,20 @@ describe("Comment Integration Tests", () => {
     app = await buildApp();
     await app.ready();
     request = supertest(app.server);
-  });
+  }, 30000);
 
   afterAll(async () => {
-    await app.close();
+    if (app) await app.close();
   });
 
   beforeEach(async () => {
     await clearDatabase();
 
     // Create a Team Lead
-    const teamLead = await prisma.user.create({
-      data: {
+    const teamLead = await prisma.user.upsert({
+      where: { email: "lead@example.com" },
+      update: {},
+      create: {
         email: "lead@example.com",
         passwordHash: await hashPassword("password123"),
         name: "Team Lead",
@@ -49,8 +51,10 @@ describe("Comment Integration Tests", () => {
     teamLeadToken = leadLogin.body.token;
 
     // Create a Member
-    const member = await prisma.user.create({
-      data: {
+    const member = await prisma.user.upsert({
+      where: { email: "member@example.com" },
+      update: {},
+      create: {
         email: "member@example.com",
         passwordHash: await hashPassword("password123"),
         name: "Member",
@@ -93,7 +97,7 @@ describe("Comment Integration Tests", () => {
       },
     });
     taskId = task.id;
-  });
+  }, 30000);
 
   describe("POST /api/v1/comments", () => {
     it("should create a comment on a task", async () => {
@@ -120,6 +124,30 @@ describe("Comment Integration Tests", () => {
         });
 
       expect(res.status).toBe(400);
+    });
+
+    it("should notify mentioned users with @name", async () => {
+      // Use Team Lead's name in the mention
+      const res = await request
+        .post("/api/v1/comments")
+        .set("Authorization", `Bearer ${memberToken}`)
+        .send({
+          taskId,
+          content: 'Hey @"Team Lead" can you review this?',
+        });
+
+      expect(res.status).toBe(201);
+
+      // Verify notification was created for Team Lead
+      const notifications = await prisma.notification.findMany({
+        where: {
+          message: { contains: "mentioned you" },
+        },
+      });
+
+      expect(notifications.length).toBeGreaterThan(0);
+      expect(notifications[0].message).toContain("Member");
+      expect(notifications[0].message).toContain("mentioned you");
     });
   });
 

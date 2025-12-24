@@ -1,10 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { 
-  getDashboardOverview, 
-  getPhaseAnalytics, 
-  getSprintAnalytics, 
+import {
+  getDashboardOverview,
+  getPhaseAnalytics,
+  getSprintAnalytics,
   getTeamContributions,
-  getTimelineData
+  getTimelineData,
+  getGanttData
 } from "./analytics.service.js";
 
 export async function getDashboardOverviewHandler(request: FastifyRequest, reply: FastifyReply) {
@@ -29,5 +30,10 @@ export async function getTeamContributionsHandler(request: FastifyRequest, reply
 
 export async function getTimelineDataHandler(request: FastifyRequest, reply: FastifyReply) {
   const data = await getTimelineData();
+  return reply.code(200).send(data);
+}
+
+export async function getGanttDataHandler(request: FastifyRequest, reply: FastifyReply) {
+  const data = await getGanttData();
   return reply.code(200).send(data);
 }

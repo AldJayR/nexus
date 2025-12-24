@@ -9,9 +9,9 @@ export async function getDashboardOverview() {
   });
 
   const completedTasks = await prisma.task.count({
-    where: { 
+    where: {
       status: TaskStatus.DONE,
-      deletedAt: null 
+      deletedAt: null
     },
   });
 
@@ -66,7 +66,7 @@ export async function getPhaseAnalytics() {
   return phases.map(phase => {
     const total = phase.deliverables.length;
     const completed = phase.deliverables.filter(d => d.status === DeliverableStatus.COMPLETED).length;
-    
+
     let status = 'Upcoming';
     if (phase.startDate && phase.endDate) {
       if (now > phase.endDate) status = 'Completed';
@@ -180,5 +180,133 @@ export async function getTimelineData() {
     if (!a.startDate) return 1;
     if (!b.startDate) return -1;
     return a.startDate.getTime() - b.startDate.getTime();
+  });
+}
+
+/**
+ * Gantt View Data
+ * Returns phases, sprints, and tasks with planned vs actual dates and delay indicators
+ */
+export async function getGanttData() {
+  const now = new Date();
+
+  // Get phases with their date ranges
+  const phases = await prisma.phase.findMany({
+    include: {
+      deliverables: {
+        where: { deletedAt: null }
+      }
+    },
+    orderBy: { startDate: 'asc' }
+  });
+
+  // Get sprints
+  const sprints = await prisma.sprint.findMany({
+    where: { deletedAt: null },
+    orderBy: { number: 'asc' }
+  });
+
+  // Get tasks with assignee info
+  const tasks = await prisma.task.findMany({
+    where: { deletedAt: null },
+    include: {
+      assignee: {
+        select: { name: true }
+      },
+      sprint: {
+        select: { endDate: true }
+      },
+      phase: {
+        select: { endDate: true }
+      }
+    },
+    orderBy: { createdAt: 'asc' }
+  });
+
+  const ganttItems = [];
+
+  // Add phases
+  for (const phase of phases) {
+    const total = phase.deliverables.length;
+    const completed = phase.deliverables.filter(d => d.status === 'COMPLETED').length;
+    const isDelayed = phase.endDate ? now > phase.endDate && completed < total : false;
+    const delayDays = isDelayed && phase.endDate
+      ? Math.ceil((now.getTime() - phase.endDate.getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+
+    ganttItems.push({
+      id: phase.id,
+      type: 'Phase' as const,
+      name: phase.name,
+      startDate: phase.startDate,
+      endDate: phase.endDate,
+      completedAt: completed === total && total > 0 ? now : null,
+      status: completed === total && total > 0 ? 'Completed' : (phase.startDate && now >= phase.startDate ? 'Active' : 'Upcoming'),
+      progress: total > 0 ? Math.round((completed / total) * 100) : 0,
+      assignee: null,
+      parentId: null,
+      isDelayed,
+      delayDays,
+    });
+  }
+
+  // Add sprints
+  for (const sprint of sprints) {
+    const sprintTasks = tasks.filter(t => t.sprintId === sprint.id);
+    const total = sprintTasks.length;
+    const completed = sprintTasks.filter(t => t.status === 'DONE').length;
+    const isDelayed = now > sprint.endDate && completed < total;
+    const delayDays = isDelayed
+      ? Math.ceil((now.getTime() - sprint.endDate.getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+
+    ganttItems.push({
+      id: sprint.id,
+      type: 'Sprint' as const,
+      name: sprint.goal || `Sprint ${sprint.number}`,
+      startDate: sprint.startDate,
+      endDate: sprint.endDate,
+      completedAt: completed === total && total > 0 ? sprint.endDate : null,
+      status: now > sprint.endDate ? 'Completed' : (now >= sprint.startDate ? 'Active' : 'Future'),
+      progress: total > 0 ? Math.round((completed / total) * 100) : 0,
+      assignee: null,
+      parentId: null,
+      isDelayed,
+      delayDays,
+    });
+  }
+
+  // Add tasks
+  for (const task of tasks) {
+    const deadline = task.sprint?.endDate || task.phase?.endDate || null;
+    const isDone = task.status === 'DONE';
+    const isDelayed = !isDone && deadline ? now > deadline : false;
+    const delayDays = isDelayed && deadline
+      ? Math.ceil((now.getTime() - deadline.getTime()) / (1000 * 60 * 60 * 24))
+      : null;
+
+    ganttItems.push({
+      id: task.id,
+      type: 'Task' as const,
+      name: task.title,
+      startDate: task.createdAt,
+      endDate: deadline,
+      completedAt: isDone ? task.updatedAt : null,
+      status: task.status,
+      progress: isDone ? 100 : (task.status === 'IN_PROGRESS' ? 50 : 0),
+      assignee: task.assignee?.name || null,
+      parentId: task.sprintId || task.phaseId || null,
+      isDelayed,
+      delayDays,
+    });
+  }
+
+  // Sort by start date, then by type (phases first, then sprints, then tasks)
+  const typeOrder = { Phase: 0, Sprint: 1, Task: 2 };
+  return ganttItems.sort((a, b) => {
+    const startA = a.startDate?.getTime() || 0;
+    const startB = b.startDate?.getTime() || 0;
+    if (startA !== startB) return startA - startB;
+    return typeOrder[a.type] - typeOrder[b.type];
   });
 }

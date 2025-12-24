@@ -292,6 +292,39 @@ describe("Task Integration Tests", () => {
 
       expect(res.status).toBe(400);
     });
+
+    it("should notify Team Leads when task is blocked", async () => {
+      const task = await prisma.task.create({
+        data: {
+          sprintId,
+          title: "Blocked Task",
+          status: TaskStatus.IN_PROGRESS,
+          assigneeId: memberId,
+        },
+      });
+
+      const res = await request
+        .patch(`/api/v1/tasks/${task.id}/status`)
+        .set("Authorization", `Bearer ${memberToken}`)
+        .send({
+          status: TaskStatus.BLOCKED,
+          comment: "Waiting for API response",
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe(TaskStatus.BLOCKED);
+
+      // Verify notification was created for Team Lead
+      const notifications = await prisma.notification.findMany({
+        where: {
+          message: { contains: "blocked" },
+        },
+      });
+
+      expect(notifications.length).toBeGreaterThan(0);
+      expect(notifications[0].message).toContain("Blocked Task");
+      expect(notifications[0].message).toContain("Waiting for API response");
+    });
   });
 
   describe("DELETE /api/v1/tasks/:id", () => {

@@ -1,11 +1,12 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { 
-  getDashboardOverviewHandler, 
-  getPhaseAnalyticsHandler, 
-  getSprintAnalyticsHandler, 
+import {
+  getDashboardOverviewHandler,
+  getPhaseAnalyticsHandler,
+  getSprintAnalyticsHandler,
   getTeamContributionsHandler,
-  getTimelineDataHandler
+  getTimelineDataHandler,
+  getGanttDataHandler
 } from "./analytics.controller.js";
 import { requireRole } from "../../utils/rbac.js";
 import { Role } from "../../generated/client.js";
@@ -51,5 +52,13 @@ export async function analyticsRoutes(app: FastifyInstance) {
       preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
     },
     getTimelineDataHandler as any
+  );
+
+  server.get(
+    "/gantt",
+    {
+      preHandler: [requireRole([Role.MEMBER, Role.TEAM_LEAD, Role.ADVISER])],
+    },
+    getGanttDataHandler as any
   );
 }

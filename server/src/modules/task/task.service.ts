@@ -205,6 +205,34 @@ export async function updateTaskStatus(id: string, userId: string, input: Update
     });
   }
 
+  // Blocker notification: notify all Team Leads when a task is blocked
+  if (input.status === "BLOCKED") {
+    const teamLeads = await prisma.user.findMany({
+      where: {
+        role: "TEAM_LEAD",
+        deletedAt: null,
+      },
+      select: { id: true },
+    });
+
+    // Get the user who blocked it for the message
+    const blocker = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true },
+    });
+
+    for (const lead of teamLeads) {
+      // Don't notify the person who blocked it if they are a Team Lead
+      if (lead.id !== userId) {
+        await createNotification({
+          userId: lead.id,
+          message: `🚫 Task "${task.title}" was blocked by ${blocker?.name || 'a team member'}${input.comment ? `: "${input.comment}"` : ''}`,
+          link: `/tasks/${task.id}`,
+        });
+      }
+    }
+  }
+
   return result;
 }
 

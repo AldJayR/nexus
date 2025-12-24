@@ -59,3 +59,21 @@ export const timelineItemSchema = z.object({
 });
 
 export const timelineResponseSchema = z.array(timelineItemSchema);
+
+// Gantt View Schema
+export const ganttItemSchema = z.object({
+  id: z.string(),
+  type: z.enum(["Phase", "Sprint", "Task"]),
+  name: z.string(),
+  startDate: z.date().nullable(),
+  endDate: z.date().nullable(),
+  completedAt: z.date().nullable(), // Actual completion date
+  status: z.string(),
+  progress: z.number(),
+  assignee: z.string().nullable(),
+  parentId: z.string().nullable(), // Sprint or Phase ID for tasks
+  isDelayed: z.boolean(), // Visual delay indicator
+  delayDays: z.number().nullable(), // Days overdue
+});
+
+export const ganttResponseSchema = z.array(ganttItemSchema);

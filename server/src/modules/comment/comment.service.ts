@@ -91,7 +91,7 @@ export async function createComment(userId: string, input: CreateCommentInput) {
     });
   }
 
-  // Send notification
+  // Send notification to assignee
   if (recipientId) {
     await createNotification({
       userId: recipientId,
@@ -100,7 +100,62 @@ export async function createComment(userId: string, input: CreateCommentInput) {
     });
   }
 
+  // Parse @mentions and send notifications
+  const mentionedUserIds = await parseMentions(input.content, userId);
+  const author = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true },
+  });
+
+  for (const mentionedUserId of mentionedUserIds) {
+    // Don't notify if already notified as assignee
+    if (mentionedUserId !== recipientId) {
+      await createNotification({
+        userId: mentionedUserId,
+        message: `📣 ${author?.name || 'Someone'} mentioned you in a comment on ${entityType} "${entityTitle}"`,
+        link: `/${entityType.toLowerCase()}s/${entityId}`,
+      });
+    }
+  }
+
   return comment;
+}
+
+/**
+ * Parse @mentions from comment content and return user IDs
+ * Supports @"Full Name" and @username formats
+ */
+async function parseMentions(content: string, authorId: string): Promise<string[]> {
+  // Match @"Full Name" or @SingleName patterns
+  const mentionPattern = /@"([^"]+)"|@(\w+)/g;
+  const matches = content.matchAll(mentionPattern);
+  const names: string[] = [];
+
+  for (const match of matches) {
+    // match[1] is the quoted name, match[2] is the unquoted name
+    const name = match[1] || match[2];
+    if (name) {
+      names.push(name);
+    }
+  }
+
+  if (names.length === 0) {
+    return [];
+  }
+
+  // Find users by name (case-insensitive)
+  const users = await prisma.user.findMany({
+    where: {
+      OR: names.map(name => ({
+        name: { equals: name, mode: 'insensitive' as const },
+      })),
+      deletedAt: null,
+    },
+    select: { id: true },
+  });
+
+  // Filter out the author
+  return users.map(u => u.id).filter(id => id !== authorId);
 }
 
 export async function updateComment(id: string, userId: string, input: UpdateCommentInput) {
