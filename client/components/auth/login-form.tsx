@@ -9,13 +9,6 @@ import { z } from "zod";
 import { type LoginActionResponse, loginAction } from "@/actions/login";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Field,
   FieldError,
   FieldGroup,
@@ -23,6 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { FrameDescription, FramePanel, FrameTitle } from "../ui/frame";
 
 const loginSchema = z.object({
   email: z.email("Enter a valid email address."),
@@ -105,14 +99,14 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <FramePanel>
+        <div className="space-y-0 mb-4">
+          <FrameTitle className="text-xl">Welcome!</FrameTitle>
+          <FrameDescription>
+            Sign in to your account to get started
+          </FrameDescription>
+        </div>
+        <div>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
               <Controller
@@ -165,8 +159,8 @@ export function LoginForm({
               </Field>
             </FieldGroup>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </FramePanel>
     </div>
   );
 }
