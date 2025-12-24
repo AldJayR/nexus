@@ -134,6 +134,17 @@ The dashboard must display:
 *   **Delivery:** The system must send an email to the new user containing their Login URL, Email, and Temporary Password.
 *   **Security:** The generated password must be hashed immediately and stored securely in the database. It must **never** be stored in plain text.
 
+### 5.13 Global Search
+*   Users must be able to search across multiple entities from a single search bar.
+*   **Searchable Entities:**
+    *   **Tasks:** Search by title and description.
+    *   **Deliverables:** Search by title and description.
+    *   **Comments:** Search by content.
+    *   **Meeting Logs:** Search by title.
+*   **Authentication:** Search endpoint must require authentication.
+*   **Validation:** Empty search queries must be rejected with a 400 error.
+*   Results must be returned grouped by entity type.
+
 ## 6. Non-Functional Requirements
 
 ### 6.1 Usability
