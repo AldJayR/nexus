@@ -5,8 +5,9 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { CheckCircle2, Clock } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,42 +68,20 @@ export function PendingApprovalsList({ items }: PendingApprovalsListProps) {
         </Button>
       </FrameHeader>
       <FramePanel>
-        <div className="divide-y divide-border">
-          {items.slice(0, 5).map((item) => (
-            <Link
-              className="group flex items-start gap-4 p-4 transition-colors hover:bg-muted/50"
-              href="/deliverables"
-              key={item.id}
-            >
-              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-chart-4/10">
-                <CheckCircle2 className="h-4 w-4 text-chart-4" />
-              </div>
-
-              <div className="flex-1 space-y-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-1">
-                    <p className="font-medium text-sm leading-tight group-hover:text-primary">
-                      {item.title}
-                    </p>
-                    <Badge className="text-[10px]" variant="outline">
-                      Deliverable
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                    <Clock className="h-3 w-3" />
-                    {formatDistanceToNow(new Date(item.updatedAt), {
-                      addSuffix: true,
-                    })}
-                  </div>
-                </div>
-
-                <p className="text-muted-foreground text-xs leading-relaxed">
-                  {item.reason}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {items.slice(0, 5).map((item) => (
+          <React.Fragment key={item.id}>
+            <div className="mb-4 flex items-start justify-between gap-2">
+              <p className="font-medium text-sm leading-tight group-hover:text-primary">
+                {item.title}
+              </p>
+              <span className="text-muted-foreground text-xs">
+                {formatDistanceToNow(new Date(item.updatedAt), {
+                  addSuffix: true,
+                })}
+              </span>
+            </div>
+          </React.Fragment>
+        ))}
 
         {items.length > 5 && (
           <div className="border-border border-t p-3 text-center">

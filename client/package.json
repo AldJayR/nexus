@@ -11,7 +11,7 @@
     "test:integration": "vitest -c vitest.integration.config.ts",
     "check": "ultracite check",
     "fix": "ultracite fix",
-    "fix:unsafe": "ultracite fix --unsafe"
+    "fix:unsafe": "ultracite fix --unsafe true"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

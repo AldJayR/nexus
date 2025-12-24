@@ -48,6 +48,7 @@ export type FilterSectionConfig = {
  */
 export type SearchFilterConfig = {
   enabled: boolean;
+  columnId: string; // Column to apply the filter to (e.g., "title", "name")
   placeholder?: string;
   ariaLabel?: string;
 };

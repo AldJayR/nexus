@@ -13,7 +13,7 @@ export type MeetingsTableRow = MeetingLog & {
   contextLabel: string;
 };
 
-const multiColumnFilterFn: FilterFn<MeetingsTableRow> = (
+export const multiColumnFilterFn: FilterFn<MeetingsTableRow> = (
   row,
   _columnId,
   filterValue

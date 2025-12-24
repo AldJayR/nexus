@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { Table } from "@tanstack/react-table";
 import { GenericTableFilters } from "@/components/shared/table";
 import type { MeetingsTableRow } from "./columns";
@@ -20,17 +21,20 @@ export function MeetingsFilters({
   uniqueScopeValues,
   scopeCounts,
 }: MeetingsFiltersProps) {
-  // Update filter config with dynamic counts
-  const config = {
-    ...meetingsTableFiltersConfig,
-    filters: meetingsTableFiltersConfig.filters.map((filter) => ({
-      ...filter,
-      options: filter.options.map((option) => ({
-        ...option,
-        count: scopeCounts.get(option.value),
+  // Memoize filter config to prevent breaking React.memo optimization
+  const config = useMemo(
+    () => ({
+      ...meetingsTableFiltersConfig,
+      filters: meetingsTableFiltersConfig.filters.map((filter) => ({
+        ...filter,
+        options: filter.options.map((option) => ({
+          ...option,
+          count: scopeCounts.get(option.value),
+        })),
       })),
-    })),
-  };
+    }),
+    [scopeCounts]
+  );
 
   return (
     <GenericTableFilters config={config} id="meetings-table" table={table} />

@@ -3,7 +3,6 @@
 import {
   type ColumnFiltersState,
   getCoreRowModel,
-  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -18,7 +17,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react";
-import { useId, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { deleteMeetingLog } from "@/actions/meetings";
 import {
@@ -66,10 +65,9 @@ export function MeetingsTable({
   const [sorting, setSorting] = useState<SortingState>([
     { id: "date", desc: true },
   ]);
-  const [globalFilter, setGlobalFilter] = useState("");
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
-  const withLoading = async (ids: string[], callback: () => Promise<void>) => {
+  const withLoading = useCallback(async (ids: string[], callback: () => Promise<void>) => {
     setDeletingIds((prev) => {
       const next = new Set(prev);
       for (const id of ids) {
@@ -88,7 +86,24 @@ export function MeetingsTable({
         return next;
       });
     }
-  };
+  }, []);
+
+  const handleAction = useCallback(
+    async (actionId: string, row: MeetingLog) => {
+      if (actionId === "delete") {
+        try {
+          await withLoading([row.id], async () => {
+            await deleteMeetingLog(row.id);
+          });
+          toast.success("Meeting minutes deleted");
+          setData((prev) => prev.filter((l) => l.id !== row.id));
+        } catch {
+          toast.error("Failed to delete meeting minutes");
+        }
+      }
+    },
+    [withLoading]
+  );
 
   const { columns, toRows } = useMemo(
     () =>
@@ -96,21 +111,9 @@ export function MeetingsTable({
         phases,
         sprints,
         loadingIds: deletingIds,
-        onAction: async (actionId, row) => {
-          if (actionId === "delete") {
-            try {
-              await withLoading([row.id], async () => {
-                await deleteMeetingLog(row.id);
-              });
-              toast.success("Meeting minutes deleted");
-              setData((prev) => prev.filter((l) => l.id !== row.id));
-            } catch {
-              toast.error("Failed to delete meeting minutes");
-            }
-          }
-        },
+        onAction: handleAction,
       }),
-    [deletingIds, phases, sprints, withLoading]
+    [deletingIds, phases, sprints, handleAction]
   );
 
   const tableData: MeetingsTableRow[] = useMemo(
@@ -123,40 +126,53 @@ export function MeetingsTable({
     data: tableData,
     enableSortingRemoval: false,
     getCoreRowModel: getCoreRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     state: {
       columnFilters,
       columnVisibility,
-      globalFilter,
       pagination,
       sorting,
     },
   });
 
-  const uniqueScopeValues = useMemo(() => {
-    const column = table.getColumn("scope");
-    if (!column) {
-      return [];
-    }
-    const values = Array.from(column.getFacetedUniqueValues().keys());
-    return values.sort();
-  }, [table]);
-
+  // Calculate scope counts directly from filtered data instead of using expensive faceting
+  // Using columnFilters and data as dependencies instead of table.getFilteredRowModel().rows
+  // to ensure stable memoization
   const scopeCounts = useMemo(() => {
-    const column = table.getColumn("scope");
-    if (!column) {
-      return new Map<string, number>();
+    const counts = new Map<string, number>();
+    
+    // Get current filter state
+    const scopeFilter = columnFilters.find(f => f.id === "scope")?.value as string[] | undefined;
+    
+    // Filter data based on current filters
+    let filteredData = data;
+    
+    // Apply scope filter if active
+    if (scopeFilter && scopeFilter.length > 0) {
+      filteredData = data.filter(log => {
+        const scope = log.sprintId ? "Sprint" : log.phaseId ? "Phase" : "Unassigned";
+        return scopeFilter.includes(scope);
+      });
     }
-    return column.getFacetedUniqueValues() as Map<string, number>;
-  }, [table]);
+    
+    // Count scopes
+    for (const log of filteredData) {
+      const scope = log.sprintId ? "Sprint" : log.phaseId ? "Phase" : "Unassigned";
+      counts.set(scope, (counts.get(scope) || 0) + 1);
+    }
+    
+    return counts;
+  }, [data, columnFilters]);
+
+  const uniqueScopeValues = useMemo(() => {
+    return Array.from(scopeCounts.keys()).sort();
+  }, [scopeCounts]);
 
   return (
     <div className="space-y-8">

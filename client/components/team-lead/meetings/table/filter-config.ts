@@ -9,6 +9,7 @@ export const meetingsTableFiltersConfig: TableFiltersConfig<MeetingsTableRow> =
   {
     search: {
       enabled: true,
+      columnId: "title",
       placeholder: "Search by title, uploader, sprint, phase...",
       ariaLabel: "Filter meeting minutes",
     },
@@ -21,7 +22,6 @@ export const meetingsTableFiltersConfig: TableFiltersConfig<MeetingsTableRow> =
         options: [
           { value: "Sprint", label: "Sprint" },
           { value: "Phase", label: "Phase" },
-          { value: "Unassigned", label: "Unassigned" },
         ],
       },
     ],

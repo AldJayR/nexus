@@ -6,7 +6,7 @@ import {
   FilterIcon,
   ListFilterIcon,
 } from "lucide-react";
-import { useId, useRef } from "react";
+import { memo, useCallback, useId, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -25,6 +25,49 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { GenericTableFiltersProps } from "./types";
+
+/**
+ * Memoized filter option item
+ * Prevents re-rendering when sibling options change
+ */
+type FilterOptionItemProps = {
+  filterId: string;
+  filterConfig: GenericTableFiltersProps<any>["config"]["filters"][0];
+  optionIndex: number;
+  isChecked: boolean;
+  onToggle: (checked: boolean) => void;
+};
+
+const FilterOptionItem = memo(function FilterOptionItem({
+  filterId,
+  filterConfig,
+  optionIndex,
+  isChecked,
+  onToggle,
+}: FilterOptionItemProps) {
+  const option = filterConfig.options[optionIndex];
+  return (
+    <div className="flex items-center gap-2">
+      <Checkbox
+        aria-label={`Filter by ${option.label || option.value}`}
+        checked={isChecked}
+        id={`${filterId}-${filterConfig.id}-${optionIndex}`}
+        onCheckedChange={(checked) => onToggle(checked === true)}
+      />
+      <Label
+        className="flex grow cursor-pointer justify-between gap-2 font-normal"
+        htmlFor={`${filterId}-${filterConfig.id}-${optionIndex}`}
+      >
+        {option.label || option.value}{" "}
+        {option.count !== undefined && (
+          <span className="ms-2 text-muted-foreground text-xs">
+            ({option.count})
+          </span>
+        )}
+      </Label>
+    </div>
+  );
+});
 
 /**
  * Generic Table Filters Component
@@ -46,14 +89,16 @@ import type { GenericTableFiltersProps } from "./types";
  * />
  * ```
  */
-export function GenericTableFilters<T>({
+function GenericTableFiltersComponent<T>({
   table,
   config,
 }: GenericTableFiltersProps<T>) {
   const filterId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const searchValue = (table.getState().globalFilter ?? "") as string;
+  const searchValue = config.search.enabled
+    ? ((table.getColumn(config.search.columnId)?.getFilterValue() ?? "") as string)
+    : "";
 
   // Build filter state from first filter config (handles main filter logic)
   const primaryFilter = config.filters[0];
@@ -64,18 +109,17 @@ export function GenericTableFilters<T>({
     : [];
   const primaryFilterCount = primaryFilterValue.length;
 
-  const handleToggleFilter = (
-    checked: boolean,
-    value: string,
-    columnId: string
-  ) => {
-    const current =
-      (table.getColumn(columnId)?.getFilterValue() as string[]) ?? [];
-    const next = checked
-      ? [...current, value]
-      : current.filter((s) => s !== value);
-    table.getColumn(columnId)?.setFilterValue(next.length ? next : undefined);
-  };
+  const handleToggleFilter = useCallback(
+    (checked: boolean, value: string, columnId: string) => {
+      const current =
+        (table.getColumn(columnId)?.getFilterValue() as string[]) ?? [];
+      const next = checked
+        ? [...current, value]
+        : current.filter((s) => s !== value);
+      table.getColumn(columnId)?.setFilterValue(next.length ? next : undefined);
+    },
+    [table]
+  );
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
@@ -87,7 +131,9 @@ export function GenericTableFilters<T>({
               aria-label={config.search.ariaLabel || "Filter table"}
               className={`peer min-w-80 ps-9 ${searchValue ? "pe-9" : ""}`}
               id={`${filterId}-search`}
-              onChange={(e) => table.setGlobalFilter(e.target.value)}
+              onChange={(e) =>
+                table.getColumn(config.search.columnId)?.setFilterValue(e.target.value)
+              }
               placeholder={config.search.placeholder || "Search..."}
               ref={inputRef}
               type="text"
@@ -101,7 +147,7 @@ export function GenericTableFilters<T>({
                 aria-label="Clear search filter"
                 className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => {
-                  table.setGlobalFilter("");
+                  table.getColumn(config.search.columnId)?.setFilterValue("");
                   inputRef.current?.focus();
                 }}
                 type="button"
@@ -150,35 +196,24 @@ export function GenericTableFilters<T>({
                 </div>
                 <fieldset className="space-y-3">
                   {filterConfig.options.map((option, optionIndex) => (
-                    <div className="flex items-center gap-2" key={option.value}>
-                      <Checkbox
-                        aria-label={`Filter by ${option.label || option.value}`}
-                        checked={
-                          filterIndex === 0
-                            ? primaryFilterValue.includes(option.value)
-                            : false
-                        }
-                        id={`${filterId}-${filterConfig.id}-${optionIndex}`}
-                        onCheckedChange={(checked) =>
-                          handleToggleFilter(
-                            checked === true,
-                            option.value,
-                            filterConfig.columnId
-                          )
-                        }
-                      />
-                      <Label
-                        className="flex grow cursor-pointer justify-between gap-2 font-normal"
-                        htmlFor={`${filterId}-${filterConfig.id}-${optionIndex}`}
-                      >
-                        {option.label || option.value}{" "}
-                        {option.count !== undefined && (
-                          <span className="ms-2 text-muted-foreground text-xs">
-                            ({option.count})
-                          </span>
-                        )}
-                      </Label>
-                    </div>
+                    <FilterOptionItem
+                      key={option.value}
+                      filterId={filterId}
+                      filterConfig={filterConfig}
+                      optionIndex={optionIndex}
+                      isChecked={
+                        filterIndex === 0
+                          ? primaryFilterValue.includes(option.value)
+                          : false
+                      }
+                      onToggle={(checked) =>
+                        handleToggleFilter(
+                          checked,
+                          option.value,
+                          filterConfig.columnId
+                        )
+                      }
+                    />
                   ))}
                 </fieldset>
               </div>
@@ -200,8 +235,7 @@ export function GenericTableFilters<T>({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="sr-only">Toggle columns</DropdownMenuLabel>
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
@@ -228,3 +262,5 @@ export function GenericTableFilters<T>({
     </div>
   );
 }
+
+export const GenericTableFilters = memo(GenericTableFiltersComponent) as typeof GenericTableFiltersComponent;

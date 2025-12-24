@@ -13,25 +13,21 @@ import { cn } from "@/lib/utils";
 type ProjectHealthCardProps = {
   completion: ProjectCompletion;
   targetPercentage?: number;
-  targetDate?: string;
 };
 
 export function ProjectHealthCard({
   completion,
   targetPercentage,
-  targetDate,
 }: ProjectHealthCardProps) {
-  const trend =
-    targetPercentage && completion.overallPercentage >= targetPercentage
-      ? "up"
-      : "down";
+  const trend = completion.isOnTrack ? "up" : "down";
 
-  const statusText =
-    trend === "up"
-      ? "On Track"
-      : targetPercentage
-        ? "Behind Target"
-        : "In Progress";
+  const determineStatusText = (): string => {
+    if (completion.isOnTrack) {
+      return "On Track";
+    }
+    return targetPercentage ? "Behind Target" : "In Progress";
+  };
+  const statusText = determineStatusText();
 
   // Generate tracker blocks for each deliverable
   const trackerData = [
@@ -73,14 +69,14 @@ export function ProjectHealthCard({
   ];
 
   return (
-    <FramePanel className="p-6">
-      <div className="flex flex-col gap-4 font-sora sm:flex-row sm:items-center sm:justify-between">
+    <FramePanel className="space-y-2 p-6 sm:space-y-0">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-end gap-2">
-          <div className="font-bold text-5xl tabular-nums">
+          <div className="font-bold font-sora text-5xl tabular-nums">
             {completion.overallPercentage}
             <span className="text-3xl text-muted-foreground">%</span>
           </div>
-          {targetPercentage && (
+          {targetPercentage ? (
             <div
               className={cn(
                 "flex items-center gap-1 text-sm",
@@ -95,9 +91,9 @@ export function ProjectHealthCard({
               {Math.abs(completion.overallPercentage - targetPercentage)}% from
               target
             </div>
-          )}
+          ) : null}
         </div>
-        <div className="space-y-1">
+        <div className="space-y-0">
           <p
             className={cn(
               "font-semibold text-base",
@@ -106,15 +102,18 @@ export function ProjectHealthCard({
           >
             {statusText}
           </p>
-          {targetDate && (
-            <p className="text-sm">
+          {completion.activePhaseEndDate ? (
+            <p className="mt-2 text-sm">
               Target: {targetPercentage}% by{" "}
-              {new Date(targetDate).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
+              {new Date(completion.activePhaseEndDate).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                }
+              )}
             </p>
-          )}
+          ) : null}
         </div>
       </div>
       <div>

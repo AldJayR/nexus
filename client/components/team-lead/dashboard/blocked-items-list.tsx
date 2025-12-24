@@ -5,7 +5,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { AlertCircle, Clock, User } from "lucide-react";
+import { AlertCircle, User } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ export function BlockedItemsList({ items }: BlockedItemsListProps) {
             <div className="rounded-md bg-linear-120 from-red-500 to-red-400 p-2 shadow-sm dark:from-red-800 dark:to-red-700">
               <AlertCircle className="size-4 text-white" />
             </div>
-            <FrameTitle className="text-sm">Blocked Items</FrameTitle>
+            <FrameTitle className="text-sm">Blocked Tasks</FrameTitle>
           </div>
         </FrameHeader>
         <FramePanel>
@@ -39,7 +39,7 @@ export function BlockedItemsList({ items }: BlockedItemsListProps) {
               <AlertCircle className="h-6 w-6 text-chart-2" />
             </div>
             <p className="mt-4 font-medium text-muted-foreground text-sm">
-              No blocked items
+              No blocked Tasks
             </p>
             <p className="text-muted-foreground text-xs">
               All tasks and deliverables are progressing smoothly
@@ -58,8 +58,8 @@ export function BlockedItemsList({ items }: BlockedItemsListProps) {
             <AlertCircle className="size-4 text-white" />
           </div>
           <div className="flex items-center gap-2">
-            <FrameTitle className="text-sm">Blocked Items</FrameTitle>
-            <Badge variant="destructive">{items.length}</Badge>
+            <FrameTitle className="text-sm">Blocked Tasks</FrameTitle>
+            <Badge variant="outline">{items.length}</Badge>
           </div>
         </div>
         <Button asChild size="sm" variant="outline">
@@ -67,51 +67,34 @@ export function BlockedItemsList({ items }: BlockedItemsListProps) {
         </Button>
       </FrameHeader>
       <FramePanel>
-        <div className="divide-y divide-border">
-          {items.slice(0, 5).map((item) => (
-            <Link
-              className="group flex items-start gap-4 p-4 transition-colors hover:bg-muted/50"
-              href={item.type === "task" ? "/sprints" : "/deliverables"}
-              key={item.id}
-            >
-              <div className="flex-1 space-y-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="space-y-1">
-                    <p className="font-medium text-sm leading-tight group-hover:text-primary">
-                      {item.title}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        className="text-[10px]"
-                        variant={item.type === "task" ? "secondary" : "outline"}
-                      >
-                        {item.type === "task" ? "Task" : "Deliverable"}
-                      </Badge>
-                      {item.assignee && (
-                        <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                          <User className="h-3 w-3" />
-                          {item.assignee.name}
-                        </div>
-                      )}
-                    </div>
+        {items.slice(0, 5).map((item) => (
+          <div className="mb-2" key={item.id}>
+            <div className="flex items-start justify-between gap-2">
+              <div className="space-y-1">
+                <p className="font-medium text-sm leading-tight group-hover:text-primary">
+                  {item.title}
+                </p>
+                {item.assignee ? (
+                  <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                    <User size={16} />
+                    {item.assignee.name}
                   </div>
-                  <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                    <Clock className="h-3 w-3" />
-                    {formatDistanceToNow(new Date(item.updatedAt), {
-                      addSuffix: true,
-                    })}
-                  </div>
-                </div>
-
-                {item.reason && (
-                  <p className="text-muted-foreground text-xs leading-relaxed">
-                    {item.reason}
-                  </p>
-                )}
+                ) : null}
               </div>
-            </Link>
-          ))}
-        </div>
+              <span className="text-muted-foreground text-xs">
+                {formatDistanceToNow(new Date(item.updatedAt), {
+                  addSuffix: true,
+                })}
+              </span>
+            </div>
+
+            {item.reason ? (
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                {item.reason}
+              </p>
+            ) : null}
+          </div>
+        ))}
 
         {items.length > 5 && (
           <div className="border-border border-t p-3 text-center">

@@ -5,13 +5,13 @@
 "use client";
 
 import { Droplet, RefreshCw, Rocket } from "lucide-react";
+import { CategoryBar } from "@/components/ui/category-bar";
 import {
   Frame,
   FrameHeader,
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { Progress } from "@/components/ui/progress";
 import { StatusBadge } from "@/components/ui/status";
 import type { PhaseProgress } from "@/lib/helpers/dashboard-computations";
 import type { DeliverableStatus, TaskStatus } from "@/lib/types";
@@ -23,15 +23,22 @@ const PHASE_ICONS = {
   FALL: Rocket,
 } as const;
 
-// Map phase status to enum status for StatusBadge
+// Map phase status to deliverable status enum, with actual work as fallback
 function mapPhaseStatusToEnum(
-  status: "Completed" | "Active" | "Pending" | "At Risk"
+  status: "Completed" | "Active" | "Pending" | "At Risk",
+  completionPercentage: number,
+  inProgressCount: number
 ): DeliverableStatus | TaskStatus {
+  // Check actual work first
+  if (completionPercentage === 100) {
+    return "COMPLETED";
+  }
+  if (completionPercentage > 0 || inProgressCount > 0) {
+    return "IN_PROGRESS";
+  }
+
+  // Then check status
   switch (status) {
-    case "Completed":
-      return "COMPLETED";
-    case "Active":
-      return "IN_PROGRESS";
     case "At Risk":
       return "BLOCKED";
     default:
@@ -68,17 +75,39 @@ export function PhaseProgressCards({ phases }: PhaseProgressCardsProps) {
               )}
             >
               <div className="flex items-center justify-between">
-                <StatusBadge status={mapPhaseStatusToEnum(phase.status)} />
+                <StatusBadge
+                  status={mapPhaseStatusToEnum(
+                    phase.status,
+                    phase.completionPercentage,
+                    phase.inProgressDeliverables
+                  )}
+                />
                 <span className="font-bold font-sora text-xl tabular-nums">
                   {phase.completionPercentage}%
                 </span>
               </div>
 
               <div className="space-y-2">
-                <Progress value={phase.completionPercentage} />
+                <CategoryBar
+                  className="h-2"
+                  colors={["emerald", "blue", "violet", "gray"]}
+                  showLabels={false}
+                  values={[
+                    phase.completedDeliverables,
+                    phase.inProgressDeliverables,
+                    phase.reviewDeliverables,
+                    phase.notStartedDeliverables,
+                  ]}
+                />
                 <p className="flex justify-between font-sora text-muted-foreground text-xs">
-                  {phase.completedDeliverables} / {phase.totalDeliverables}{" "}
-                  completed
+                  <span>
+                    {phase.completedDeliverables} completed,{" "}
+                    {phase.inProgressDeliverables} in progress
+                  </span>
+                  <span>
+                    {phase.completedDeliverables + phase.inProgressDeliverables}{" "}
+                    / {phase.totalDeliverables}
+                  </span>
                 </p>
               </div>
             </FramePanel>

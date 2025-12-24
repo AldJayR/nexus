@@ -106,12 +106,19 @@ export type ProjectCompletion = {
   completedDeliverables: number;
   inProgressDeliverables: number;
   reviewDeliverables: number;
+  completedPhaseCount: number;
+  activePhaseCompletion: number;
+  isOnTrack: boolean;
+  statusReason: string;
+  activePhaseEndDate?: string | null;
 };
 
 export function computeProjectCompletion(
-  deliverables: Deliverable[]
+  deliverables: Deliverable[],
+  phases: Phase[]
 ): ProjectCompletion {
   const activeDeliverables = deliverables.filter((d) => !d.deletedAt);
+  const now = new Date();
 
   const statusCounts = activeDeliverables.reduce(
     (acc, d) => {
@@ -128,12 +135,78 @@ export function computeProjectCompletion(
 
   const overallPercentage = total > 0 ? (completed / total) * 100 : 0;
 
+  // Count deliverables from completed phases
+  const completedPhases = phases.filter((p) => {
+    if (!p.endDate) return false;
+    const phaseEnd = new Date(p.endDate);
+    const phaseDeliverables = activeDeliverables.filter(
+      (d) => d.phaseId === p.id && d.status === "COMPLETED"
+    );
+    const totalPhaseDeliverables = activeDeliverables.filter(
+      (d) => d.phaseId === p.id
+    );
+    return (
+      phaseEnd < now &&
+      totalPhaseDeliverables.length > 0 &&
+      phaseDeliverables.length === totalPhaseDeliverables.length
+    );
+  });
+
+  // Calculate active phase completion
+  const activePhases = phases.filter((p) => {
+    if (!p.startDate || !p.endDate) return false;
+    const start = new Date(p.startDate);
+    const end = new Date(p.endDate);
+    return now >= start && now <= end;
+  });
+
+  let activePhaseCompletion = 0;
+  if (activePhases.length > 0) {
+    const activePhaseDeliverables = activeDeliverables.filter((d) =>
+      activePhases.some((p) => p.id === d.phaseId)
+    );
+    const activeCompleted = activePhaseDeliverables.filter(
+      (d) => d.status === "COMPLETED"
+    ).length;
+    if (activePhaseDeliverables.length > 0) {
+      activePhaseCompletion = Math.round(
+        (activeCompleted / activePhaseDeliverables.length) * 100
+      );
+    }
+  }
+
+  // Determine on-track status
+  let isOnTrack = false;
+  let statusReason = "";
+
+  if (completedPhases.length > 0) {
+    // If any phase is completed, we're on track
+    isOnTrack = true;
+    statusReason = `${completedPhases.length} phase(s) completed`;
+  } else if (activePhases.length > 0 && activePhaseCompletion >= 50) {
+    // Active phase with 50%+ progress is on track
+    isOnTrack = true;
+    statusReason = `Active phase ${activePhaseCompletion}% complete`;
+  } else if (overallPercentage >= 33) {
+    // Low progress, but some momentum
+    isOnTrack = false;
+    statusReason = "Needs acceleration";
+  } else {
+    isOnTrack = false;
+    statusReason = "Significant delay";
+  }
+
   return {
     overallPercentage: Math.round(overallPercentage),
     totalDeliverables: total,
     completedDeliverables: completed,
     inProgressDeliverables: inProgress,
     reviewDeliverables: review,
+    completedPhaseCount: completedPhases.length,
+    activePhaseCompletion,
+    isOnTrack,
+    statusReason,
+    activePhaseEndDate: activePhases.length > 0 ? activePhases[0].endDate || null : null,
   };
 }
 

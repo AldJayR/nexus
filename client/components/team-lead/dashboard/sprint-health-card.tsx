@@ -5,14 +5,8 @@
 "use client";
 
 import { AlertTriangle, Calendar, Target } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { Badge } from "@/components/ui/badge";
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { CategoryBar } from "@/components/ui/category-bar";
 import {
   Frame,
   FrameDescription,
@@ -20,60 +14,14 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
-import { Progress } from "@/components/ui/progress";
 import { Tracker } from "@/components/ui/tracker";
 import type { SprintHealth } from "@/lib/helpers/dashboard-computations";
 import type { Task } from "@/lib/types";
-import { cn } from "@/lib/utils";
-
-type SprintHealthChartProps = {
-  data: Array<{
-    name: string;
-    value: number;
-    fill: string;
-  }>;
-  config: ChartConfig;
-};
 
 type SprintHealthCardProps = {
   sprint: SprintHealth;
   tasks?: Task[];
-  chartData?: Array<{ name: string; value: number; fill: string }>;
 };
-
-const chartConfig = {
-  value: {
-    label: "Tasks",
-  },
-  week1: {
-    label: "Week 1",
-    color: "var(--chart-1)",
-  },
-  week2: {
-    label: "Week 2",
-    color: "var(--chart-2)",
-  },
-  week3: {
-    label: "Week 3",
-    color: "var(--chart-3)",
-  },
-  week4: {
-    label: "Week 4",
-    color: "var(--chart-4)",
-  },
-  week5: {
-    label: "Week 5",
-    color: "var(--chart-5)",
-  },
-  week6: {
-    label: "Week 6",
-    color: "var(--chart-1)",
-  },
-  week7: {
-    label: "Week 7",
-    color: "var(--chart-1)",
-  },
-} satisfies ChartConfig;
 
 export function SprintHealthCard({
   sprint,
@@ -103,7 +51,7 @@ export function SprintHealthCard({
   });
 
   return (
-    <Frame className="relative h-fit transition-all">
+    <Frame className="relative h-full transition-all">
       <FrameHeader className="flex-row items-start justify-between">
         <div className="flex items-center gap-2">
           <div className="rounded-md bg-linear-120 from-primary to-primary/60 p-2 shadow-sm">
@@ -118,22 +66,37 @@ export function SprintHealthCard({
             </FrameDescription>
           </div>
         </div>
-        <Badge
-          variant={
-            isOverdue ? "destructive" : isNearEnd ? "secondary" : "outline"
-          }
-        >
-          {isOverdue
-            ? `${Math.abs(sprint.daysRemaining)}d overdue`
-            : isNearEnd
-              ? `${sprint.daysRemaining}d left`
-              : `${sprint.daysRemaining}d remaining`}
-        </Badge>
+        {(() => {
+          const getBadgeVariant = ():
+            | "destructive"
+            | "secondary"
+            | "outline" => {
+            if (isOverdue) {
+              return "destructive";
+            }
+            if (isNearEnd) {
+              return "secondary";
+            }
+            return "outline";
+          };
+
+          const getBadgeText = (): string => {
+            if (isOverdue) {
+              return `${Math.abs(sprint.daysRemaining)}d overdue`;
+            }
+            if (isNearEnd) {
+              return `${sprint.daysRemaining}d left`;
+            }
+            return `${sprint.daysRemaining}d remaining`;
+          };
+
+          return <Badge variant={getBadgeVariant()}>{getBadgeText()}</Badge>;
+        })()}
       </FrameHeader>
 
       <FramePanel className="space-y-6">
         {/* Blocked Tasks Alert */}
-        {hasBlockedTasks && (
+        {hasBlockedTasks ? (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/50 bg-destructive/10 p-3">
             <AlertTriangle className="size-4 text-destructive" />
             <p className="text-sm">
@@ -146,7 +109,7 @@ export function SprintHealthCard({
               </span>
             </p>
           </div>
-        )}
+        ) : null}
 
         {/* Task Tracker Visualization */}
         <div className="space-y-2">
@@ -167,20 +130,25 @@ export function SprintHealthCard({
               {sprint.completionPercentage}%
             </span>
           </div>
-          <Progress
-            // className="h-3"
-            className={cn(
-              "transition-all duration-500",
-              sprint.completionPercentage >= 75
-                ? "bg-emerald-500"
-                : sprint.completionPercentage >= 50
-                  ? "bg-primary"
-                  : sprint.completionPercentage >= 25
-                    ? "bg-chart-5"
-                    : "bg-primary/20"
-            )}
-            value={sprint.completionPercentage}
+          <CategoryBar
+            className="h-2"
+            colors={["emerald", "blue", "destructive", "gray"]}
+            showLabels={false}
+            values={[
+              sprint.doneTasks,
+              sprint.inProgressTasks,
+              sprint.blockedTasks,
+              sprint.todoTasks,
+            ]}
           />
+          <p className="flex justify-between font-sora text-muted-foreground text-xs">
+            <span>
+              {sprint.doneTasks} done, {sprint.inProgressTasks} in progress
+            </span>
+            <span>
+              {sprint.doneTasks + sprint.inProgressTasks} / {sprint.totalTasks}
+            </span>
+          </p>
         </div>
 
         {/* Sprint Timeline */}
@@ -203,27 +171,5 @@ export function SprintHealthCard({
         </div>
       </FramePanel>
     </Frame>
-  );
-}
-
-function _SprintHealthChart({ data }: SprintHealthChartProps) {
-  return (
-    <ChartContainer config={chartConfig}>
-      <BarChart data={data} height={150}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          axisLine={false}
-          dataKey="name"
-          tick={{ fontSize: 12 }}
-          tickLine={false}
-          tickMargin={10}
-        />
-        <ChartTooltip
-          content={<ChartTooltipContent hideLabel />}
-          cursor={false}
-        />
-        <Bar dataKey="value" fill="hsl(var(--chart-1))" radius={4} />
-      </BarChart>
-    </ChartContainer>
   );
 }

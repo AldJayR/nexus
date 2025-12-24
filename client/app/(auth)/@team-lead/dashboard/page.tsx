@@ -18,7 +18,7 @@ import {
   TeamContributionsSkeleton,
 } from "@/components/team-lead/dashboard/skeletons";
 import { SprintHealthCard } from "@/components/team-lead/dashboard/sprint-health-card";
-import { TeamContributionsTable } from "@/components/team-lead/dashboard/team-contributions-table";
+import { TeamContributions } from "@/components/team-lead/dashboard/team-contributions";
 import { activityLogApi } from "@/lib/api/activity-log";
 import { deliverableApi } from "@/lib/api/deliverable";
 import { phaseApi } from "@/lib/api/phase";
@@ -34,6 +34,7 @@ import {
   getBlockedTasks,
   getPendingApprovals,
 } from "@/lib/helpers/dashboard-computations";
+import { Separator } from "@/components/ui/separator";
 
 export const metadata = {
   title: "Dashboard",
@@ -42,15 +43,15 @@ export const metadata = {
 
 async function ProjectHealthSection() {
   try {
-    const deliverables = await deliverableApi.listDeliverables();
-    const completion = computeProjectCompletion(deliverables);
+    const [deliverables, phases] = await Promise.all([
+      deliverableApi.listDeliverables(),
+      phaseApi.listPhases(),
+    ]);
+    const completion = computeProjectCompletion(deliverables, phases);
 
     return (
       <ProjectHealthCard
         completion={completion}
-        targetDate={new Date(
-          Date.now() + 7 * 24 * 60 * 60 * 1000
-        ).toISOString()}
         targetPercentage={70}
       />
     );
@@ -65,6 +66,10 @@ async function ProjectHealthSection() {
           completedDeliverables: 0,
           inProgressDeliverables: 0,
           reviewDeliverables: 0,
+          completedPhaseCount: 0,
+          activePhaseCompletion: 0,
+          isOnTrack: false,
+          statusReason: "",
         }}
       />
     );
@@ -113,52 +118,7 @@ async function SprintHealthSection() {
       (task) => task.sprintId === currentSprint.id
     );
 
-    // Fetch real sprint progress data for burndown chart
-    let chartData: Array<{ name: string; value: number; fill: string }> = [];
-    try {
-      const _progress = await sprintApi.getSprintProgress(currentSprint.id);
-      // If the API returns historical data, map it to chart format
-      // For now, create a simple representation of current progress
-      const startTasks = sprintHealth.totalTasks;
-      const completedTasks = sprintHealth.doneTasks;
-      const remainingTasks = startTasks - completedTasks;
-
-      chartData = [
-        {
-          name: "Remaining",
-          value: remainingTasks,
-          fill: "var(--color-week1)",
-        },
-      ];
-    } catch (error) {
-      console.error("Failed to fetch sprint progress:", error);
-      // Fallback: show current task counts as a simple chart
-      chartData = [
-        {
-          name: "To Do",
-          value: sprintHealth.todoTasks,
-          fill: "var(--color-week1)",
-        },
-        {
-          name: "In Progress",
-          value: sprintHealth.inProgressTasks,
-          fill: "var(--color-week2)",
-        },
-        {
-          name: "Done",
-          value: sprintHealth.doneTasks,
-          fill: "var(--color-week3)",
-        },
-      ];
-    }
-
-    return (
-      <SprintHealthCard
-        chartData={chartData}
-        sprint={sprintHealth}
-        tasks={sprintTasks}
-      />
-    );
+    return <SprintHealthCard sprint={sprintHealth} tasks={sprintTasks} />;
   } catch (error) {
     console.error("Failed to fetch sprint health:", error);
     return (
@@ -212,9 +172,10 @@ async function PendingApprovalsSection() {
 
 async function TeamContributionsSection() {
   try {
-    const [users, tasks] = await Promise.all([
+    const [users, tasks, activityLogs] = await Promise.all([
       userApi.listUsers(),
       taskApi.listTasks(),
+      activityLogApi.listActivityLogs(),
     ]);
 
     const activeUsers = users.filter((u) => !u.deletedAt);
@@ -223,7 +184,26 @@ async function TeamContributionsSection() {
       activeUsers.map(async (user) => {
         try {
           const contribution = await userApi.getUserContributions(user.id);
-          return computeTeamMemberSummary(user, contribution, tasks);
+
+          // Get the most recent activity for this user
+          const userActivities = activityLogs.filter(
+            (log) => log.userId === user.id
+          );
+          const lastActivityDate =
+            userActivities.length > 0
+              ? userActivities.sort(
+                  (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )[0].createdAt
+              : undefined;
+
+          return computeTeamMemberSummary(
+            user,
+            contribution,
+            tasks,
+            lastActivityDate
+          );
         } catch (error) {
           console.error(
             `Failed to fetch contributions for user ${user.id}:`,
@@ -244,10 +224,10 @@ async function TeamContributionsSection() {
       })
     );
 
-    return <TeamContributionsTable members={memberSummaries} />;
+    return <TeamContributions members={memberSummaries} />;
   } catch (error) {
     console.error("Failed to fetch team contributions:", error);
-    return <TeamContributionsTable members={[]} />;
+    return <TeamContributions members={[]} />;
   }
 }
 
@@ -291,6 +271,7 @@ export default function DashboardPage() {
 
         <Suspense fallback={<PhaseCardsSkeleton />}>
           <PhaseProgressSection />
+          <Separator />
         </Suspense>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -301,15 +282,16 @@ export default function DashboardPage() {
           <Suspense fallback={<ActivityLogsSkeleton />}>
             <ActivityLogsSection />
           </Suspense>
+
+          <Suspense fallback={<BlockedItemsSkeleton />}>
+            <BlockedItemsSection />
+          </Suspense>
+
+          <Suspense fallback={<BlockedItemsSkeleton />}>
+            <PendingApprovalsSection />
+          </Suspense>
+          <Separator />
         </div>
-
-        <Suspense fallback={<BlockedItemsSkeleton />}>
-          <BlockedItemsSection />
-        </Suspense>
-
-        <Suspense fallback={<BlockedItemsSkeleton />}>
-          <PendingApprovalsSection />
-        </Suspense>
 
         <Suspense fallback={<TeamContributionsSkeleton />}>
           <TeamContributionsSection />

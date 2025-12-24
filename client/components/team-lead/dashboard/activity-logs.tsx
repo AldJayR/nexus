@@ -5,14 +5,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import {
-  AlertCircle,
-  CheckCircle2,
-  Clock,
-  FileUp,
-  Logs,
-  MessageSquare,
-} from "lucide-react";
+import { Clock, Logs } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,62 +24,19 @@ type ActivityFeedProps = {
   limit?: number;
 };
 
-const ACTION_CONFIG: Record<
-  string,
-  {
-    icon: typeof CheckCircle2;
-    bg: string;
-    color: string;
-    label: string;
-  }
-> = {
-  DELIVERABLE_APPROVED: {
-    icon: CheckCircle2,
-    bg: "bg-chart-2/10",
-    color: "text-chart-2",
-    label: "Approved",
-  },
-  DELIVERABLE_REJECTED: {
-    icon: AlertCircle,
-    bg: "bg-destructive/10",
-    color: "text-destructive",
-    label: "Changes Requested",
-  },
-  EVIDENCE_UPLOADED: {
-    icon: FileUp,
-    bg: "bg-primary/10",
-    color: "text-primary",
-    label: "Evidence Uploaded",
-  },
-  TASK_BLOCKED: {
-    icon: AlertCircle,
-    bg: "bg-destructive/10",
-    color: "text-destructive",
-    label: "Task Blocked",
-  },
-  TASK_COMPLETED: {
-    icon: CheckCircle2,
-    bg: "bg-chart-2/10",
-    color: "text-chart-2",
-    label: "Task Completed",
-  },
-  COMMENT_ADDED: {
-    icon: MessageSquare,
-    bg: "bg-chart-5/10",
-    color: "text-chart-5",
-    label: "Comment Added",
-  },
+const ACTION_LABELS: Record<string, string> = {
+  DELIVERABLE_APPROVED: "Approved",
+  DELIVERABLE_REJECTED: "Changes Requested",
+  EVIDENCE_UPLOADED: "Evidence Uploaded",
+  TASK_BLOCKED: "Task Blocked",
+  TASK_COMPLETED: "Task Completed",
+  COMMENT_ADDED: "Comment Added",
 };
 
-const DEFAULT_CONFIG = {
-  icon: Clock,
-  bg: "bg-muted",
-  color: "text-muted-foreground",
-  label: "Activity",
-};
+const DEFAULT_LABEL = "Activity";
 
 export function ActivityLogs({ activities, limit = 3 }: ActivityFeedProps) {
-  const displayedActivities = activities.slice(-limit).reverse();
+  const displayedActivities = activities.slice(0, limit);
 
   if (displayedActivities.length === 0) {
     return (
@@ -124,9 +74,7 @@ export function ActivityLogs({ activities, limit = 3 }: ActivityFeedProps) {
       </FrameHeader>
       <FramePanel>
         {displayedActivities.map((activity) => {
-          const config = ACTION_CONFIG[activity.action] || DEFAULT_CONFIG;
-
-          // Format action name using title case helper
+          const label = ACTION_LABELS[activity.action] ?? DEFAULT_LABEL;
           const actionLabel = formatTitleCase(activity.action);
 
           return (
@@ -136,7 +84,7 @@ export function ActivityLogs({ activities, limit = 3 }: ActivityFeedProps) {
             >
               <p className="font-medium text-sm leading-tight *:text-muted-foreground *:text-xs">
                 {actionLabel}{" "}
-                {activity.user && <span>by {activity.user.name}</span>}{" "}
+                {activity.user ? <span>by {activity.user.name}</span> : null}{" "}
                 <span>
                   {formatDistanceToNow(new Date(activity.createdAt), {
                     addSuffix: true,
@@ -144,7 +92,7 @@ export function ActivityLogs({ activities, limit = 3 }: ActivityFeedProps) {
                 </span>
               </p>
               <Badge className="shrink-0 text-[10px]" variant="outline">
-                {config.label}
+                {label}
               </Badge>
             </div>
           );
