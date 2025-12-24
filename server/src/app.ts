@@ -21,6 +21,7 @@ import { analyticsRoutes } from './modules/analytics/analytics.routes.js';
 import { notificationRoutes } from './modules/notification/notification.routes.js';
 import { activityLogRoutes } from './modules/activity-log/activity-log.routes.js';
 import { backupRoutes } from './modules/backup/backup.routes.js';
+import { searchRoutes } from './modules/search/search.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = fastify({
@@ -171,6 +172,9 @@ export async function buildApp(): Promise<FastifyInstance> {
 
     // Backup Routes
     api.register(backupRoutes, { prefix: '/backup' });
+
+    // Search Routes
+    api.register(searchRoutes, { prefix: '/search' });
   }, { prefix: '/api/v1' });
 
   return app;

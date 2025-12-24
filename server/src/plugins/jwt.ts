@@ -30,7 +30,7 @@ export default fp(async (fastify) => {
         });
       }
     } catch (err) {
-      reply.send(err);
+      return reply.code(401).send(err);
     }
   });
 });
