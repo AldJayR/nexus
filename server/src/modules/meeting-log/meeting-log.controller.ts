@@ -5,17 +5,24 @@ import { createMeetingLogSchema } from "./meeting-log.schema.js";
 export async function createMeetingLogHandler(request: FastifyRequest, reply: FastifyReply) {
   const parts = request.parts();
   let fields: Record<string, any> = {};
-  let filePart;
+  let fileData: { buffer: Buffer; mimetype: string; filename: string } | null = null;
 
   for await (const part of parts) {
     if (part.type === 'file') {
-      filePart = part;
+      // IMPORTANT: Consume the stream immediately to prevent timeout
+      // Multipart streams must be consumed during iteration, not after
+      const buffer = await part.toBuffer();
+      fileData = {
+        buffer,
+        mimetype: part.mimetype,
+        filename: part.filename,
+      };
     } else {
       fields[part.fieldname] = part.value;
     }
   }
 
-  if (!filePart) {
+  if (!fileData) {
     return reply.status(400).send({ message: "File is required" });
   }
 
@@ -27,7 +34,7 @@ export async function createMeetingLogHandler(request: FastifyRequest, reply: Fa
   const meetingLog = await createMeetingLog({
     ...result.data,
     uploaderId: request.user!.id,
-    file: filePart,
+    file: fileData,
   });
 
   return reply.code(201).send(meetingLog);

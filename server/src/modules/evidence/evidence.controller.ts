@@ -6,17 +6,24 @@ export async function createEvidenceHandler(request: FastifyRequest, reply: Fast
   // Multipart handling
   const parts = request.parts();
   let fields: Record<string, any> = {};
-  let filePart;
+  let fileData: { buffer: Buffer; mimetype: string; filename: string } | null = null;
 
   for await (const part of parts) {
     if (part.type === 'file') {
-      filePart = part;
+      // IMPORTANT: Consume the stream immediately to prevent timeout
+      // Multipart streams must be consumed during iteration, not after
+      const buffer = await part.toBuffer();
+      fileData = {
+        buffer,
+        mimetype: part.mimetype,
+        filename: part.filename,
+      };
     } else {
       fields[part.fieldname] = part.value;
     }
   }
 
-  if (!filePart) {
+  if (!fileData) {
     return reply.status(400).send({ message: "File is required" });
   }
 
@@ -29,7 +36,7 @@ export async function createEvidenceHandler(request: FastifyRequest, reply: Fast
   const evidence = await createEvidence({
     deliverableId: result.data.deliverableId,
     uploaderId: request.user!.id,
-    file: filePart,
+    file: fileData,
   });
 
   return reply.code(201).send(evidence);

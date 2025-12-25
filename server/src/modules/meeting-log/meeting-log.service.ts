@@ -1,6 +1,5 @@
 import { getPrismaClient, NotFoundError } from "../../utils/database.js";
-import { fileService } from "../../services/file.service.js";
-import { MultipartFile } from "@fastify/multipart";
+import { fileService, BufferedFile } from "../../services/file.service.js";
 import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
@@ -11,7 +10,7 @@ interface CreateMeetingLogInput {
   uploaderId: string;
   title: string;
   date: string;
-  file: MultipartFile;
+  file: BufferedFile;
 }
 
 export async function createMeetingLog(input: CreateMeetingLogInput) {
@@ -110,7 +109,7 @@ export async function deleteMeetingLog(id: string, userId: string) {
   const urlParts = meetingLog.fileUrl.split('/');
   const filenameWithExt = urlParts[urlParts.length - 1];
   const publicId = `nexus_uploads/${filenameWithExt.split('.')[0]}`;
-  
+
   await fileService.deleteFile(publicId);
 
   // 2. Delete from DB

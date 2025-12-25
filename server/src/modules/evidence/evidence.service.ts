@@ -1,6 +1,5 @@
 import { getPrismaClient, NotFoundError } from "../../utils/database.js";
-import { fileService } from "../../services/file.service.js";
-import { MultipartFile } from "@fastify/multipart";
+import { fileService, BufferedFile } from "../../services/file.service.js";
 import { createActivityLog } from "../activity-log/activity-log.service.js";
 
 const prisma = getPrismaClient();
@@ -8,7 +7,7 @@ const prisma = getPrismaClient();
 interface CreateEvidenceInput {
   deliverableId: string;
   uploaderId: string;
-  file: MultipartFile;
+  file: BufferedFile;
 }
 
 export async function createEvidence(input: CreateEvidenceInput) {
@@ -50,7 +49,7 @@ export async function createEvidence(input: CreateEvidenceInput) {
 
 export async function getEvidenceByDeliverable(deliverableId: string) {
   return prisma.evidence.findMany({
-    where: { 
+    where: {
       deliverableId,
       deletedAt: null
     },
