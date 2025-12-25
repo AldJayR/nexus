@@ -11,6 +11,12 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
+import {
+  CircleXIcon,
+  Columns3Icon,
+  ListFilterIcon,
+  PlusIcon,
+} from "lucide-react";
 import { useId, useRef, useState } from "react";
 import { deleteUser, restoreUser } from "@/actions/team-members";
 import {
@@ -35,9 +41,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import type { User } from "@/lib/types/models";
-import { CircleXIcon, Columns3Icon, ListFilterIcon, PlusIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { createColumns } from "./columns";
 import { InviteMemberModal } from "./invite-modal";
 
@@ -70,40 +75,44 @@ function TeamMembersFilters({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-      <div className="relative">
-        <Input
-          aria-label="Filter by name, email, or role"
-          className={cn("peer min-w-60 ps-9", searchValue && "pe-9")}
-          id={`${filterId}-input`}
-          onChange={(e) => {
-            setSearchValue(e.target.value);
-            table.getColumn("name")?.setFilterValue(e.target.value);
-          }}
-          placeholder="Search by name, email, or role..."
-          ref={inputRef}
-          type="text"
-          value={searchValue}
-        />
-        <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
-          <ListFilterIcon aria-hidden="true" size={16} />
+        <div className="relative">
+          <Input
+            aria-label="Filter by name, email, or role"
+            className={cn("peer min-w-60 ps-9", searchValue && "pe-9")}
+            id={`${filterId}-input`}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+              table.getColumn("name")?.setFilterValue(e.target.value);
+            }}
+            placeholder="Search by name, email, or role..."
+            ref={inputRef}
+            type="text"
+            value={searchValue}
+          />
+          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+            <ListFilterIcon aria-hidden="true" size={16} />
+          </div>
+          {searchValue && (
+            <button
+              aria-label="Clear filter"
+              className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={handleClear}
+              type="button"
+            >
+              <CircleXIcon aria-hidden="true" size={16} />
+            </button>
+          )}
         </div>
-        {searchValue && (
-          <button
-            aria-label="Clear filter"
-            className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-            onClick={handleClear}
-            type="button"
-          >
-            <CircleXIcon aria-hidden="true" size={16} />
-          </button>
-        )}
-      </div>
 
         {/* Column Visibility Toggle */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
-              <Columns3Icon aria-hidden="true" className="-ms-1 opacity-60" size={16} />
+              <Columns3Icon
+                aria-hidden="true"
+                className="-ms-1 opacity-60"
+                size={16}
+              />
               View
             </Button>
           </DropdownMenuTrigger>
@@ -135,7 +144,6 @@ function TeamMembersFilters({
     </div>
   );
 }
-
 
 export function TeamMembersTable({ data, currentUser }: TeamMembersTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

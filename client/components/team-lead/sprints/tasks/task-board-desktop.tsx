@@ -82,8 +82,8 @@ export function TaskBoardDesktop({
                     const card = (
                       <TaskCard
                         assignee={assignee}
-                        onTaskClick={onTaskClick}
                         onBlockClick={onEditReason}
+                        onTaskClick={onTaskClick}
                         task={task}
                       />
                     );
@@ -129,8 +129,8 @@ export function TaskBoardDesktop({
           return (
             <TaskCard
               assignee={assignee}
-              onTaskClick={onTaskClick}
               onBlockClick={onEditReason}
+              onTaskClick={onTaskClick}
               task={task}
             />
           );

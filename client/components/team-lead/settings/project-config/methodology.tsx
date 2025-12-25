@@ -173,7 +173,7 @@ export default function Methodology({ phases }: MethodologyProps) {
   return (
     <div>
       <Frame stackedPanels>
-        <FrameHeader>
+        <FrameHeader className="p-4">
           <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
             <div className="space-y-2">
               <FrameTitle>Methodology</FrameTitle>

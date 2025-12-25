@@ -89,7 +89,7 @@ export default function RepositorySettings({
 
   return (
     <Frame id="repository-connection">
-      <FrameHeader>
+      <FrameHeader className="p-4">
         <FrameTitle>Repository Connection</FrameTitle>
         <FrameDescription>
           Link your GitHub or GitLab repository for automated tracking.

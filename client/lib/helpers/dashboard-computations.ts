@@ -137,7 +137,9 @@ export function computeProjectCompletion(
 
   // Count deliverables from completed phases
   const completedPhases = phases.filter((p) => {
-    if (!p.endDate) return false;
+    if (!p.endDate) {
+      return false;
+    }
     const phaseEnd = new Date(p.endDate);
     const phaseDeliverables = activeDeliverables.filter(
       (d) => d.phaseId === p.id && d.status === "COMPLETED"
@@ -154,7 +156,9 @@ export function computeProjectCompletion(
 
   // Calculate active phase completion
   const activePhases = phases.filter((p) => {
-    if (!p.startDate || !p.endDate) return false;
+    if (!(p.startDate && p.endDate)) {
+      return false;
+    }
     const start = new Date(p.startDate);
     const end = new Date(p.endDate);
     return now >= start && now <= end;
@@ -206,7 +210,8 @@ export function computeProjectCompletion(
     activePhaseCompletion,
     isOnTrack,
     statusReason,
-    activePhaseEndDate: activePhases.length > 0 ? activePhases[0].endDate || null : null,
+    activePhaseEndDate:
+      activePhases.length > 0 ? activePhases[0].endDate || null : null,
   };
 }
 

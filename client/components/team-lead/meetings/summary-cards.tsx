@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+import FrameSkeleton from "@/components/shared/frame-skeleton";
 import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 import {
   CoverageCard,
@@ -7,8 +9,6 @@ import {
   OnTimeCard,
   TotalMeetingsCard,
 } from "./analytics";
-import { Suspense } from "react";
-import FrameSkeleton from "@/components/shared/frame-skeleton";
 
 type SummaryCardsRowProps = {
   logs: MeetingLog[];

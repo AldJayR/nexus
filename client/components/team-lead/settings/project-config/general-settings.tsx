@@ -113,7 +113,7 @@ export default function GeneralSettings({ project }: GeneralSettingsProps) {
 
   return (
     <Frame id="general-settings">
-      <FrameHeader>
+      <FrameHeader className="p-4">
         <FrameTitle>General Settings</FrameTitle>
         <FrameDescription>
           Basic identification details for your capstone project.

@@ -1,7 +1,6 @@
 import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
 import {
   FrameDescription,
   FramePanel,
@@ -86,7 +85,7 @@ export function PhaseSection({
                     <Progress className="h-2" value={percent} />
                   </div>
 
-                  <div className="[&_svg]:text-muted-foreground flex items-center gap-2 text-sm">
+                  <div className="flex items-center gap-2 text-sm [&_svg]:text-muted-foreground">
                     <Calendar size={16} />
                     <span className="font-medium">
                       {formatDateRange(sprint.startDate, sprint.endDate)}

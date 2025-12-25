@@ -20,7 +20,6 @@ export function TaskCard({
 }: TaskCardProps) {
   return (
     <div
-      onClick={() => onTaskClick(task)}
       className={`group space-y-2 rounded-md border p-3 transition-all ${
         task.status === "BLOCKED"
           ? `border-destructive/70 bg-card/20 ${
@@ -30,6 +29,7 @@ export function TaskCard({
             ? "cursor-pointer"
             : "cursor-move"
       }`}
+      onClick={() => onTaskClick(task)}
     >
       <div className="flex justify-between gap-2">
         <div className="space-y-1">
@@ -40,7 +40,7 @@ export function TaskCard({
             </p>
           ) : null}
         </div>
-        <GripVertical className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground hidden md:block" />
+        <GripVertical className="hidden size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground md:block" />
       </div>
 
       {assignee ? (

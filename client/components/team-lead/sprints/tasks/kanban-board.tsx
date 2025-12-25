@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { updateTaskStatusAction, getTaskDetailAction } from "@/actions/tasks";
+import { getTaskDetailAction, updateTaskStatusAction } from "@/actions/tasks";
 import type { KanbanMoveEvent } from "@/components/ui/kanban";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { Task, TaskStatus, User } from "@/lib/types";
@@ -62,8 +62,10 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
   const [blockingFromStatus, setBlockingFromStatus] =
     useState<TaskStatus | null>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [selectedTaskDetail, setSelectedTaskDetail] = useState<Task | null>(null);
-  const [isLoadingTaskDetail, setIsLoadingTaskDetail] = useState(false);
+  const [selectedTaskDetail, setSelectedTaskDetail] = useState<Task | null>(
+    null
+  );
+  const [_isLoadingTaskDetail, setIsLoadingTaskDetail] = useState(false);
   const [columnsValue, setColumnsValue] = useState<TaskColumns>(() =>
     buildTaskColumns(tasks)
   );
@@ -218,7 +220,7 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
     setIsLoadingTaskDetail(true);
     try {
       const detailedTask = await getTaskDetailAction(task.id);
-      
+
       setSelectedTaskDetail(detailedTask);
     } catch (error) {
       console.error("Failed to fetch task details:", error);
@@ -237,8 +239,8 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
             columnsValue={columnsValue}
             isPending={isPending}
             onEditReason={handleEditReason}
-            onTaskClick={handleTaskClick}
             onStatusChange={handleStatusChange}
+            onTaskClick={handleTaskClick}
             userMap={userMap}
           />
         ) : (
@@ -248,8 +250,8 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
             isPending={isPending}
             onEditReason={handleEditReason}
             onMove={handleMove}
-            onValueChange={handleValueChange}
             onTaskClick={handleTaskClick}
+            onValueChange={handleValueChange}
             userMap={userMap}
           />
         )}
@@ -303,20 +305,20 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
 
       {selectedTask && selectedTaskDetail && (
         <TaskDetailDialog
-          open={Boolean(selectedTask)}
           onOpenChange={(open) => {
             if (!open) {
               setSelectedTask(null);
               setSelectedTaskDetail(null);
             }
           }}
+          open={Boolean(selectedTask)}
+          sprintId={sprintId}
           task={{
             ...selectedTaskDetail,
             assignee: selectedTaskDetail.assigneeId
               ? users.find((u) => u.id === selectedTaskDetail.assigneeId)
               : null,
           }}
-          sprintId={sprintId}
           teamMembers={users}
         />
       )}

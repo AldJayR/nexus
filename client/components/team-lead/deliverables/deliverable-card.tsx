@@ -1,7 +1,11 @@
 "use client";
 
 import { Calendar, Paperclip } from "lucide-react";
-import { FrameDescription, FramePanel, FrameTitle } from "@/components/ui/frame";
+import {
+  FrameDescription,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { StatusBadge } from "@/components/ui/status";
 import { formatDate } from "@/lib/helpers/format-date";
 import type { Deliverable, Phase } from "@/lib/types";
@@ -70,9 +74,7 @@ export function DeliverableCard({
               <Calendar size={16} />
               <span>
                 Due{" "}
-                <span
-                  className={cn(overdue ? "font-semibold" : null)}
-                >
+                <span className={cn(overdue ? "font-semibold" : null)}>
                   {formatDate(deliverable.dueDate)}
                 </span>
               </span>

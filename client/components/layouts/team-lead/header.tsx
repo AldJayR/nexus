@@ -17,6 +17,7 @@ const ROUTE_TITLES: Record<string, string> = {
   "/settings/team-members": "Team Members",
   "/settings/project-config": "Project Configuration",
   "/settings/backup": "Backup & Export",
+  "/settings/activity-logs": "Activity Logs",
 };
 
 function getPageTitle(pathname: string): string | undefined {

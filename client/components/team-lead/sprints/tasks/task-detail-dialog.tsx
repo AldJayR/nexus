@@ -104,7 +104,8 @@ export function TaskDetailDialog({
 
   const currentStatus = form.watch("status");
   const isBlockReasonVisible = currentStatus === "BLOCKED";
-  const isMovingToBlocked = task.status !== "BLOCKED" && currentStatus === "BLOCKED";
+  const isMovingToBlocked =
+    task.status !== "BLOCKED" && currentStatus === "BLOCKED";
 
   const onSubmit = (values: z.infer<typeof taskDetailSchema>) => {
     startTransition(async () => {
@@ -114,7 +115,8 @@ export function TaskDetailDialog({
         values.description !== (task.description || "") ||
         values.assigneeId !== (task.assigneeId || "");
 
-      const previousBlockReason = task.status === "BLOCKED" ? task.lastComment?.content || "" : "";
+      const previousBlockReason =
+        task.status === "BLOCKED" ? task.lastComment?.content || "" : "";
       const blockReasonChanged = values.blockReason !== previousBlockReason;
 
       const results: Array<{ success: boolean; error?: string }> = [];

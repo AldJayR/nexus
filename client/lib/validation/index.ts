@@ -38,8 +38,8 @@ export {
   type TaskDetailInput,
   taskDetailSchema,
   type UpdateTaskStatusInput,
-  updateTaskStatusSchema,
   updateTaskSchema,
+  updateTaskStatusSchema,
 } from "./tasks";
 export {
   type BulkMemberActionsInput,

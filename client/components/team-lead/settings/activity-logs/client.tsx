@@ -1,9 +1,9 @@
 "use client";
 
 import {
+  type ColumnDef,
   type ColumnFiltersState,
   getCoreRowModel,
-  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -12,6 +12,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
+import { formatDistanceToNow } from "date-fns";
 import {
   ChevronFirstIcon,
   ChevronLastIcon,
@@ -22,13 +23,12 @@ import {
   FilterIcon,
   ListFilterIcon,
 } from "lucide-react";
-import { useCallback, useId, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
-import { deleteMeetingLog } from "@/actions/meetings";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   GenericTableBody,
   GenericTableHeader,
 } from "@/components/shared/table";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -57,50 +57,165 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/status";
 import { Table } from "@/components/ui/table";
-import type { MeetingLog, Phase, Sprint } from "@/lib/types";
+import { formatTitleCase } from "@/lib/helpers/format-title-case";
+import type { ActivityLog } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { UploadMinutesButton } from "../upload-button";
-import { createMeetingColumns, type MeetingsTableRow } from ".";
 
-type MeetingsTableProps = {
-  initialLogs: MeetingLog[];
-  sprints: Sprint[];
-  phases: Phase[];
+type DetailsCellProps = {
+  details: string | null;
 };
 
-/**
- * Inline Meetings Table Filters
- * Handles search, scope filtering, and column visibility
- */
-function MeetingsFilters({
+function DetailsCell({ details }: DetailsCellProps) {
+  if (!details) {
+    return <span className="text-muted-foreground text-sm">—</span>;
+  }
+
+  let parsedData: Record<string, unknown> | null = null;
+  let parseError = false;
+
+  try {
+    parsedData = JSON.parse(details);
+  } catch {
+    parseError = true;
+  }
+
+  // If not JSON or parsing failed, show truncated text
+  if (parseError || !parsedData) {
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            className="max-w-md truncate text-left text-muted-foreground text-sm underline decoration-dotted underline-offset-4 hover:text-foreground"
+            type="button"
+          >
+            {details.slice(0, 50)}
+            {details.length > 50 ? "..." : ""}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-96">
+          <div className="space-y-2">
+            <p className="font-medium text-sm">Raw Details</p>
+            <pre className="max-h-96 overflow-auto rounded-md bg-muted p-3 text-xs">
+              {details}
+            </pre>
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  // Show parsed JSON in a popover
+  const entries = Object.entries(parsedData);
+  const preview = entries
+    .slice(0, 2)
+    .map(([key, value]) => `${key}: ${String(value)}`)
+    .join(", ");
+
+  const STATUS_VALUES = [
+    "COMPLETED",
+    "DONE",
+    "IN_PROGRESS",
+    "REVIEW",
+    "BLOCKED",
+    "TODO",
+    "NOT_STARTED",
+    "WATERFALL",
+    "SCRUM",
+    "FALL",
+  ];
+
+  const isStatus = (value: unknown): boolean =>
+    typeof value === "string" && STATUS_VALUES.includes(value);
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className="max-w-md truncate text-left text-muted-foreground text-sm underline decoration-dotted underline-offset-4 hover:text-foreground"
+          type="button"
+        >
+          {preview}
+          {entries.length > 2 ? "..." : ""}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-96">
+        <div className="space-y-3">
+          <p className="font-medium text-sm">Activity Details</p>
+          <div className="space-y-2 rounded-md bg-muted p-3">
+            {entries.map(([key, value]) => (
+              <div className="space-y-1" key={key}>
+                <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                  {formatTitleCase(key)}
+                </p>
+                {isStatus(value) ? (
+                  <StatusBadge status={value as any} />
+                ) : (
+                  <p className="break-words text-sm">
+                    {typeof value === "object" && value !== null
+                      ? JSON.stringify(value, null, 2)
+                      : String(value)}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+const getActionColor = (action: string): string => {
+  // Positive actions (green)
+  if (action.includes("APPROVED") || action.includes("COMPLETED")) {
+    return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
+  }
+  // Negative actions (red)
+  if (action.includes("REJECTED") || action.includes("DELETED")) {
+    return "bg-red-500/10 text-red-700 dark:text-red-400";
+  }
+  // Blocked/warning actions (orange)
+  if (action.includes("BLOCKED") || action.includes("PENDING")) {
+    return "bg-orange-500/10 text-orange-700 dark:text-orange-400";
+  }
+  // Upload/create actions (blue)
+  if (action.includes("UPLOAD") || action.includes("CREATED")) {
+    return "bg-blue-500/10 text-blue-700 dark:text-blue-400";
+  }
+  // Default (gray)
+  return "bg-gray-500/10 text-gray-700 dark:text-gray-400";
+};
+
+type ActivityLogsClientProps = {
+  activities: ActivityLog[];
+};
+
+function ActivityLogsFilters({
   table,
-  scopeCounts,
-  uniqueScopeValues,
-  sprints,
-  phases,
+  actionTypes,
+  actionCounts,
 }: {
-  table: ReturnType<typeof useReactTable<MeetingsTableRow>>;
-  scopeCounts: Map<string, number>;
-  uniqueScopeValues: string[];
-  sprints: Sprint[];
-  phases: Phase[];
+  table: ReturnType<typeof useReactTable<ActivityLog>>;
+  actionTypes: string[];
+  actionCounts: Map<string, number>;
 }) {
   const filterId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const searchValue = (table.getColumn("title")?.getFilterValue() ??
+  const searchValue = (table.getColumn("action")?.getFilterValue() ??
     "") as string;
-  const selectedScopes = (table.getColumn("scope")?.getFilterValue() ??
+  const selectedActions = (table.getColumn("action")?.getFilterValue() ??
     []) as string[];
 
-  const handleScopeChange = (checked: boolean, value: string) => {
-    const newScopes = checked
-      ? [...selectedScopes, value]
-      : selectedScopes.filter((s) => s !== value);
+  const handleActionChange = (checked: boolean, value: string) => {
+    const newActions = checked
+      ? [...selectedActions, value]
+      : selectedActions.filter((s) => s !== value);
     table
-      .getColumn("scope")
-      ?.setFilterValue(newScopes.length ? newScopes : undefined);
+      .getColumn("action")
+      ?.setFilterValue(newActions.length ? newActions : undefined);
   };
 
   return (
@@ -109,16 +224,16 @@ function MeetingsFilters({
         {/* Search Filter */}
         <div className="relative">
           <Input
-            aria-label="Filter meeting minutes"
+            aria-label="Filter activity logs"
             className={cn("peer min-w-80 ps-9", searchValue && "pe-9")}
             id={`${filterId}-search`}
             onChange={(e) =>
-              table.getColumn("title")?.setFilterValue(e.target.value)
+              table.getColumn("user")?.setFilterValue(e.target.value)
             }
-            placeholder="Search by title, uploader, sprint, phase..."
+            placeholder="Search by user or action..."
             ref={inputRef}
             type="text"
-            value={searchValue}
+            value={(table.getColumn("user")?.getFilterValue() ?? "") as string}
           />
           <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
             <ListFilterIcon aria-hidden="true" size={16} />
@@ -128,7 +243,7 @@ function MeetingsFilters({
               aria-label="Clear search filter"
               className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
               onClick={() => {
-                table.getColumn("title")?.setFilterValue("");
+                table.getColumn("user")?.setFilterValue("");
                 inputRef.current?.focus();
               }}
               type="button"
@@ -138,7 +253,7 @@ function MeetingsFilters({
           )}
         </div>
 
-        {/* Scope Filter Popover */}
+        {/* Action Filter Popover */}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline">
@@ -147,37 +262,37 @@ function MeetingsFilters({
                 className="-ms-1 opacity-60"
                 size={16}
               />
-              Scope
-              {selectedScopes.length > 0 && (
+              Action Type
+              {selectedActions.length > 0 && (
                 <span className="-me-1 inline-flex h-5 max-h-full items-center rounded border bg-background px-1 font-[inherit] font-medium text-[0.625rem] text-muted-foreground/70">
-                  {selectedScopes.length}
+                  {selectedActions.length}
                 </span>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-auto min-w-36 p-3">
+          <PopoverContent align="start" className="w-auto min-w-48 p-3">
             <div className="space-y-3">
               <div className="font-medium text-muted-foreground text-xs">
-                Scope
+                Action Type
               </div>
               <div className="space-y-3">
-                {uniqueScopeValues.map((value, i) => (
-                  <div className="flex items-center gap-2" key={value}>
+                {actionTypes.map((action, i) => (
+                  <div className="flex items-center gap-2" key={action}>
                     <Checkbox
-                      checked={selectedScopes.includes(value)}
-                      id={`${filterId}-scope-${i}`}
+                      checked={selectedActions.includes(action)}
+                      id={`${filterId}-action-${i}`}
                       onCheckedChange={(checked: boolean) =>
-                        handleScopeChange(checked, value)
+                        handleActionChange(checked, action)
                       }
                     />
                     <Label
                       className="flex grow cursor-pointer justify-between gap-2 font-normal"
-                      htmlFor={`${filterId}-scope-${i}`}
+                      htmlFor={`${filterId}-action-${i}`}
                     >
-                      {value}
-                      {scopeCounts.get(value) !== undefined && (
+                      {formatTitleCase(action)}
+                      {actionCounts.get(action) !== undefined && (
                         <span className="ms-2 text-muted-foreground text-xs">
-                          ({scopeCounts.get(value)})
+                          ({actionCounts.get(action)})
                         </span>
                       )}
                     </Label>
@@ -219,94 +334,134 @@ function MeetingsFilters({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-      {/* Upload Minutes Button */}
-      <UploadMinutesButton phases={phases} sprints={sprints} />
     </div>
   );
 }
 
-export function MeetingsTable({
-  initialLogs,
-  phases,
-  sprints,
-}: MeetingsTableProps) {
-  const id = useId();
-  const [data, setData] = useState<MeetingLog[]>(initialLogs);
+export function ActivityLogsClient({ activities }: ActivityLogsClientProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 20,
   });
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "date", desc: true },
+    { id: "createdAt", desc: true },
   ]);
-  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
-  const withLoading = useCallback(
-    async (ids: string[], callback: () => Promise<void>) => {
-      setDeletingIds((prev) => {
-        const next = new Set(prev);
-        for (const id of ids) {
-          next.add(id);
-        }
-        return next;
-      });
-      try {
-        await callback();
-      } finally {
-        setDeletingIds((prev) => {
-          const next = new Set(prev);
-          for (const id of ids) {
-            next.delete(id);
+  const columns = useMemo<ColumnDef<ActivityLog>[]>(
+    () => [
+      {
+        id: "action",
+        accessorKey: "action",
+        size: 200,
+        enableHiding: false,
+        filterFn: (row, _columnId, filterValue) => {
+          const selected = (filterValue ?? []) as string[];
+          if (!selected.length) {
+            return true;
           }
-          return next;
-        });
-      }
-    },
+          return selected.includes(row.original.action);
+        },
+        header: "Action",
+        cell: ({ row }) => {
+          const action = row.original.action;
+          const colorClass = getActionColor(action);
+
+          return (
+            <Badge
+              className={cn("font-medium", colorClass)}
+              variant="secondary"
+            >
+              {formatTitleCase(action)}
+            </Badge>
+          );
+        },
+      },
+      {
+        id: "user",
+        accessorFn: (row) => row.user?.name ?? "System",
+        size: 200,
+        filterFn: (row, _columnId, filterValue) => {
+          const searchTerm = (filterValue ?? "")
+            .toString()
+            .toLowerCase()
+            .trim();
+          if (!searchTerm) {
+            return true;
+          }
+
+          const searchableContent = [
+            row.original.user?.name,
+            row.original.user?.email,
+            row.original.action,
+            row.original.entityType,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+          return searchableContent.includes(searchTerm);
+        },
+        header: "User",
+        cell: ({ row }) => {
+          const user = row.original.user;
+          if (!user) {
+            return (
+              <span className="text-muted-foreground text-sm">System</span>
+            );
+          }
+          return (
+            <div className="space-y-0">
+              <p className="font-medium text-sm">{user.name}</p>
+              <span className="text-muted-foreground text-xs">
+                {user.email}
+              </span>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "entityType",
+        size: 150,
+        header: "Entity Type",
+        cell: ({ row }) => (
+          <div className="text-sm">
+            {formatTitleCase(row.getValue("entityType"))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "details",
+        size: 300,
+        header: "Details",
+        cell: ({ row }) => {
+          const details = row.getValue("details") as string | null;
+          return <DetailsCell details={details} />;
+        },
+      },
+      {
+        accessorKey: "createdAt",
+        size: 180,
+        header: "Timestamp",
+        cell: ({ row }) => {
+          const date = new Date(row.getValue("createdAt"));
+          return (
+            <div className="text-sm">
+              {formatDistanceToNow(date, { addSuffix: true })}
+            </div>
+          );
+        },
+      },
+    ],
     []
   );
 
-  const handleAction = useCallback(
-    async (actionId: string, row: MeetingLog) => {
-      if (actionId === "delete") {
-        try {
-          await withLoading([row.id], async () => {
-            await deleteMeetingLog(row.id);
-          });
-          toast.success("Meeting minutes deleted");
-          setData((prev) => prev.filter((l) => l.id !== row.id));
-        } catch {
-          toast.error("Failed to delete meeting minutes");
-        }
-      }
-    },
-    [withLoading]
-  );
-
-  const { columns, toRows } = useMemo(
-    () =>
-      createMeetingColumns({
-        phases,
-        sprints,
-        loadingIds: deletingIds,
-        onAction: handleAction,
-      }),
-    [deletingIds, phases, sprints, handleAction]
-  );
-
-  const tableData: MeetingsTableRow[] = useMemo(
-    () => toRows(data),
-    [data, toRows]
-  );
-
   const table = useReactTable({
+    data: activities,
     columns,
-    data: tableData,
     enableSortingRemoval: false,
     getCoreRowModel: getCoreRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -322,39 +477,32 @@ export function MeetingsTable({
     },
   });
 
-  // Use TanStack Table's faceting feature for automatic count computation
-  const scopeCounts = useMemo(() => {
-    const scopeColumn = table.getColumn("scope");
-    if (!scopeColumn) {
-      return new Map<string, number>();
-    }
-    return scopeColumn.getFacetedUniqueValues();
-  }, [table]);
+  const actionTypes = useMemo(() => {
+    const types = new Set(activities.map((a) => a.action));
+    return Array.from(types).sort();
+  }, [activities]);
 
-  const uniqueScopeValues = useMemo(() => {
-    const scopeColumn = table.getColumn("scope");
-    if (!scopeColumn) {
-      return [];
+  const actionCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const activity of activities) {
+      counts.set(activity.action, (counts.get(activity.action) || 0) + 1);
     }
-    const values = Array.from(scopeColumn.getFacetedUniqueValues().keys());
-    return values.sort();
-  }, [table]);
+    return counts;
+  }, [activities]);
 
   return (
     <div className="space-y-8">
-      <MeetingsFilters
-        phases={phases}
-        scopeCounts={scopeCounts}
-        sprints={sprints}
+      <ActivityLogsFilters
+        actionCounts={actionCounts}
+        actionTypes={actionTypes}
         table={table}
-        uniqueScopeValues={uniqueScopeValues}
       />
 
       <div className="overflow-hidden rounded-md border bg-background">
-        <Table className="table-fixed">
+        <Table>
           <GenericTableHeader table={table} />
           <GenericTableBody
-            emptyMessage="No meeting minutes found."
+            emptyMessage="No activity logs found"
             table={table}
           />
         </Table>
@@ -362,16 +510,14 @@ export function MeetingsTable({
 
       <div className="flex items-center justify-between gap-8">
         <div className="flex items-center gap-3">
-          <Label className="max-sm:sr-only" htmlFor={id}>
-            Rows per page
-          </Label>
+          <Label className="max-sm:sr-only">Rows per page</Label>
           <Select
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
             value={table.getState().pagination.pageSize.toString()}
           >
-            <SelectTrigger className="w-fit whitespace-nowrap" id={id}>
+            <SelectTrigger className="w-fit whitespace-nowrap">
               <SelectValue placeholder="Select number of results" />
             </SelectTrigger>
             <SelectContent className="[&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2 [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8">
@@ -409,6 +555,7 @@ export function MeetingsTable({
             </span>
           </p>
         </div>
+        {/* Pagination Controls */}
         <div>
           <Pagination>
             <PaginationContent>

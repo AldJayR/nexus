@@ -7,8 +7,8 @@ import { taskApi } from "@/lib/api/task";
 import type { Task } from "@/lib/types";
 import {
   createSprintTaskSchema,
-  updateTaskStatusSchema,
   updateTaskSchema,
+  updateTaskStatusSchema,
 } from "@/lib/validation";
 
 export async function createSprintTaskAction(input: unknown) {

@@ -1,11 +1,11 @@
 import { ActivityLogs } from "@/components/team-lead/dashboard/activity-logs";
 import { BlockedItemsList } from "@/components/team-lead/dashboard/blocked-items-list";
 import { PendingApprovalsList } from "@/components/team-lead/dashboard/pending-approvals-list";
-import { TeamContributions } from "@/components/team-lead/dashboard/team-contributions";
-import { ProjectHealthCard } from "@/components/team-lead/dashboard/project-health-card";
 import { PhaseProgressCardsDisplay } from "@/components/team-lead/dashboard/phase-progress-cards";
-import { Separator } from "@/components/ui/separator";
+import { ProjectHealthCard } from "@/components/team-lead/dashboard/project-health-card";
 import { SprintHealthCard } from "@/components/team-lead/dashboard/sprint-health-card";
+import { TeamContributions } from "@/components/team-lead/dashboard/team-contributions";
+import { Separator } from "@/components/ui/separator";
 
 export const metadata = {
   title: "Dashboard",
