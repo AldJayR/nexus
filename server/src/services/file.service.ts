@@ -29,6 +29,7 @@ export class FileService {
         {
           folder: 'nexus_uploads',
           resource_type: 'auto', // Auto-detect image vs raw (pdf)
+          timeout: 300000, // 5 minutes timeout for large file uploads
         },
         (error, result) => {
           if (error) return reject(error);
