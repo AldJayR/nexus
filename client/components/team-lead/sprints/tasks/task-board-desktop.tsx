@@ -29,6 +29,7 @@ export type TaskBoardDesktopProps = {
   onMove: (move: KanbanMoveEvent) => void;
   onValueChange: (value: Record<string, Task[]>) => void;
   onEditReason: (task: Task) => void;
+  onTaskClick: (task: Task) => void;
 };
 
 export function TaskBoardDesktop({
@@ -39,6 +40,7 @@ export function TaskBoardDesktop({
   onMove,
   onValueChange,
   onEditReason,
+  onTaskClick,
 }: TaskBoardDesktopProps) {
   return (
     <Kanban
@@ -80,6 +82,7 @@ export function TaskBoardDesktop({
                     const card = (
                       <TaskCard
                         assignee={assignee}
+                        onTaskClick={onTaskClick}
                         onBlockClick={onEditReason}
                         task={task}
                       />
@@ -126,6 +129,7 @@ export function TaskBoardDesktop({
           return (
             <TaskCard
               assignee={assignee}
+              onTaskClick={onTaskClick}
               onBlockClick={onEditReason}
               task={task}
             />

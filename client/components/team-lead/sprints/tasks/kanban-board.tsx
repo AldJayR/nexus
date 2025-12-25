@@ -3,13 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { updateTaskStatusAction } from "@/actions/tasks";
+import { updateTaskStatusAction, getTaskDetailAction } from "@/actions/tasks";
 import type { KanbanMoveEvent } from "@/components/ui/kanban";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { Task, TaskStatus, User } from "@/lib/types";
 import { BlockReasonDialog } from "./block-reason-dialog";
 import { TaskBoardDesktop } from "./task-board-desktop";
 import { TaskBoardMobile } from "./task-board-mobile";
+import { TaskDetailDialog } from "./task-detail-dialog";
 
 type TaskColumns = Record<TaskStatus, Task[]>;
 
@@ -60,6 +61,9 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
   const [blockingTask, setBlockingTask] = useState<Task | null>(null);
   const [blockingFromStatus, setBlockingFromStatus] =
     useState<TaskStatus | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTaskDetail, setSelectedTaskDetail] = useState<Task | null>(null);
+  const [isLoadingTaskDetail, setIsLoadingTaskDetail] = useState(false);
   const [columnsValue, setColumnsValue] = useState<TaskColumns>(() =>
     buildTaskColumns(tasks)
   );
@@ -209,28 +213,47 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
     setBlockingFromStatus(task.status);
   };
 
+  const handleTaskClick = async (task: Task) => {
+    setSelectedTask(task);
+    setIsLoadingTaskDetail(true);
+    try {
+      const detailedTask = await getTaskDetailAction(task.id);
+      
+      setSelectedTaskDetail(detailedTask);
+    } catch (error) {
+      console.error("Failed to fetch task details:", error);
+      setSelectedTaskDetail(task);
+    } finally {
+      setIsLoadingTaskDetail(false);
+    }
+  };
+
   return (
     <>
-      {isMobile ? (
-        <TaskBoardMobile
-          columns={columns.map(({ status, label }) => ({ status, label }))}
-          columnsValue={columnsValue}
-          isPending={isPending}
-          onEditReason={handleEditReason}
-          onStatusChange={handleStatusChange}
-          userMap={userMap}
-        />
-      ) : (
-        <TaskBoardDesktop
-          columns={columns}
-          columnsValue={columnsValue}
-          isPending={isPending}
-          onEditReason={handleEditReason}
-          onMove={handleMove}
-          onValueChange={handleValueChange}
-          userMap={userMap}
-        />
-      )}
+      <div suppressHydrationWarning>
+        {isMobile ? (
+          <TaskBoardMobile
+            columns={columns.map(({ status, label }) => ({ status, label }))}
+            columnsValue={columnsValue}
+            isPending={isPending}
+            onEditReason={handleEditReason}
+            onTaskClick={handleTaskClick}
+            onStatusChange={handleStatusChange}
+            userMap={userMap}
+          />
+        ) : (
+          <TaskBoardDesktop
+            columns={columns}
+            columnsValue={columnsValue}
+            isPending={isPending}
+            onEditReason={handleEditReason}
+            onMove={handleMove}
+            onValueChange={handleValueChange}
+            onTaskClick={handleTaskClick}
+            userMap={userMap}
+          />
+        )}
+      </div>
 
       <BlockReasonDialog
         onOpenChange={(open) => {
@@ -277,6 +300,26 @@ export function KanbanBoard({ tasks, users, sprintId }: KanbanBoardProps) {
         sprintId={sprintId}
         task={blockingTask}
       />
+
+      {selectedTask && selectedTaskDetail && (
+        <TaskDetailDialog
+          open={Boolean(selectedTask)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSelectedTask(null);
+              setSelectedTaskDetail(null);
+            }
+          }}
+          task={{
+            ...selectedTaskDetail,
+            assignee: selectedTaskDetail.assigneeId
+              ? users.find((u) => u.id === selectedTaskDetail.assigneeId)
+              : null,
+          }}
+          sprintId={sprintId}
+          teamMembers={users}
+        />
+      )}
     </>
   );
 }

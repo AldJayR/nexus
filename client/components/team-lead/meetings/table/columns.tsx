@@ -137,11 +137,11 @@ export function createMeetingColumns(context: ColumnsContext): {
           return <span className="text-muted-foreground text-sm">Unknown</span>;
         }
         return (
-          <div className="leading-tight">
-            <div className="font-medium text-sm">{uploader.name}</div>
-            <div className="text-muted-foreground text-xs">
+          <div className="space-y-0">
+            <p className="font-medium text-sm">{uploader.name}</p>
+            <span className="text-muted-foreground text-xs">
               {uploader.email}
-            </div>
+            </span>
           </div>
         );
       },

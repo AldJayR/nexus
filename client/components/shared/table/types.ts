@@ -23,64 +23,6 @@ export type GenericRowActionsProps<T> = {
 };
 
 /**
- * Single filter option
- */
-export type FilterOption = {
-  value: string;
-  label?: string;
-  count?: number;
-};
-
-/**
- * Filter section configuration
- */
-export type FilterSectionConfig = {
-  id: string;
-  columnId: string;
-  label: string;
-  options: FilterOption[];
-  type: "checkbox" | "radio";
-  showDividerAfter?: boolean;
-};
-
-/**
- * Search filter configuration
- */
-export type SearchFilterConfig = {
-  enabled: boolean;
-  columnId: string; // Column to apply the filter to (e.g., "title", "name")
-  placeholder?: string;
-  ariaLabel?: string;
-};
-
-/**
- * Column visibility toggle configuration
- */
-export type ColumnVisibilityConfig = {
-  enabled: boolean;
-  label?: string;
-};
-
-/**
- * Complete filter configuration
- */
-export type TableFiltersConfig<_T> = {
-  search: SearchFilterConfig;
-  filters: FilterSectionConfig[];
-  columnVisibility: ColumnVisibilityConfig;
-  additionalActions?: React.ReactNode; // For things like upload button
-};
-
-/**
- * Table filters props
- */
-export type GenericTableFiltersProps<T> = {
-  table: Table<T>;
-  config: TableFiltersConfig<T>;
-  id: string;
-};
-
-/**
  * Table header props
  */
 export type GenericTableHeaderProps<T> = {

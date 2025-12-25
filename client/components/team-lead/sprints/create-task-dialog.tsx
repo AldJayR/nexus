@@ -95,7 +95,7 @@ export function CreateTaskDialog({ sprintId, users }: CreateTaskDialogProps) {
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <Button onClick={() => setOpen(true)} size="sm">
+      <Button onClick={() => setOpen(true)}>
         <PlusIcon size={16} />
         Add Task
       </Button>

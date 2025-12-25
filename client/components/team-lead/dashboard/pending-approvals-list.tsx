@@ -1,9 +1,7 @@
 /**
  * Pending Approvals List
- * Shows deliverables awaiting team lead approval
+ * Server component that fetches pending approvals and displays them
  */
-"use client";
-
 import { formatDistanceToNow } from "date-fns";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
@@ -16,13 +14,15 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
+import { deliverableApi } from "@/lib/api/deliverable";
 import type { PendingApproval } from "@/lib/helpers/dashboard-computations";
+import { getPendingApprovals } from "@/lib/helpers/dashboard-computations";
 
 type PendingApprovalsListProps = {
   items: PendingApproval[];
 };
 
-export function PendingApprovalsList({ items }: PendingApprovalsListProps) {
+function PendingApprovalsListDisplay({ items }: PendingApprovalsListProps) {
   if (items.length === 0) {
     return (
       <Frame>
@@ -95,4 +95,14 @@ export function PendingApprovalsList({ items }: PendingApprovalsListProps) {
       </FramePanel>
     </Frame>
   );
+}
+
+export async function PendingApprovalsList() {
+  const deliverables = await deliverableApi.listDeliverables();
+  const pendingApprovals = getPendingApprovals(deliverables);
+  const sortedApprovals = [...pendingApprovals].sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
+  return <PendingApprovalsListDisplay items={sortedApprovals} />;
 }

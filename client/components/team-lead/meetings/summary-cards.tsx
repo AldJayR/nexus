@@ -7,6 +7,8 @@ import {
   OnTimeCard,
   TotalMeetingsCard,
 } from "./analytics";
+import { Suspense } from "react";
+import FrameSkeleton from "@/components/shared/frame-skeleton";
 
 type SummaryCardsRowProps = {
   logs: MeetingLog[];
@@ -34,10 +36,18 @@ export default function SummaryCardsRow({
 }: SummaryCardsRowProps) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <TotalMeetingsCard logs={logs} />
-      <CoverageCard logs={logs} phases={phases} sprints={sprints} />
-      <OnTimeCard logs={logs} phases={phases} sprints={sprints} />
-      <MissingMeetingsCard logs={logs} phases={phases} sprints={sprints} />
+      <Suspense fallback={<FrameSkeleton />}>
+        <TotalMeetingsCard logs={logs} />
+      </Suspense>
+      <Suspense fallback={<FrameSkeleton />}>
+        <CoverageCard logs={logs} phases={phases} sprints={sprints} />
+      </Suspense>
+      <Suspense fallback={<FrameSkeleton />}>
+        <OnTimeCard logs={logs} phases={phases} sprints={sprints} />
+      </Suspense>
+      <Suspense fallback={<FrameSkeleton />}>
+        <MissingMeetingsCard logs={logs} phases={phases} sprints={sprints} />
+      </Suspense>
     </div>
   );
 }

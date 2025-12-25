@@ -1,10 +1,5 @@
-/**
- * Sprint Health Card
- * Displays current sprint metrics with burndown visualization
- */
-"use client";
-
 import { AlertTriangle, Calendar, Target } from "lucide-react";
+import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { CategoryBar } from "@/components/ui/category-bar";
 import {
@@ -15,25 +10,28 @@ import {
   FrameTitle,
 } from "@/components/ui/frame";
 import { Tracker } from "@/components/ui/tracker";
-import type { SprintHealth } from "@/lib/helpers/dashboard-computations";
-import type { Task } from "@/lib/types";
+import { sprintApi } from "@/lib/api/sprint";
+import { taskApi } from "@/lib/api/task";
+import {
+  computeSprintHealth,
+  findCurrentSprint,
+} from "@/lib/helpers/dashboard-computations";
+import { SprintHealthSkeleton } from "./skeletons";
 
-type SprintHealthCardProps = {
-  sprint: SprintHealth;
-  tasks?: Task[];
-};
+function SprintHealthNormal({
+  sprintHealth,
+  sprintTasks,
+}: {
+  sprintHealth: Awaited<ReturnType<typeof computeSprintHealth>>;
+  sprintTasks: Awaited<ReturnType<typeof taskApi.listTasks>>;
+}) {
+  const isOverdue = sprintHealth.daysRemaining < 0;
+  const isNearEnd =
+    sprintHealth.daysRemaining <= 3 && sprintHealth.daysRemaining >= 0;
+  const hasBlockedTasks = sprintHealth.blockedTasks > 0;
 
-export function SprintHealthCard({
-  sprint,
-  tasks = [],
-}: SprintHealthCardProps) {
-  const isOverdue = sprint.daysRemaining < 0;
-  const isNearEnd = sprint.daysRemaining <= 3 && sprint.daysRemaining >= 0;
-  const hasBlockedTasks = sprint.blockedTasks > 0;
-
-  // Generate tracker data from actual tasks with titles in tooltips
-  const trackerData = tasks.map((task) => {
-    let color = "bg-accent"; // default: todo
+  const trackerData = sprintTasks.map((task) => {
+    let color = "bg-accent";
     if (task.status === "DONE") {
       color = "bg-emerald-500";
     } else if (task.status === "IN_PROGRESS") {
@@ -50,6 +48,26 @@ export function SprintHealthCard({
     };
   });
 
+  const getBadgeVariant = () => {
+    if (isOverdue) {
+      return "destructive" as const;
+    }
+    if (isNearEnd) {
+      return "secondary" as const;
+    }
+    return "outline" as const;
+  };
+
+  const getBadgeText = (): string => {
+    if (isOverdue) {
+      return `${Math.abs(sprintHealth.daysRemaining)}d overdue`;
+    }
+    if (isNearEnd) {
+      return `${sprintHealth.daysRemaining}d left`;
+    }
+    return `${sprintHealth.daysRemaining}d remaining`;
+  };
+
   return (
     <Frame className="relative h-full transition-all">
       <FrameHeader className="flex-row items-start justify-between">
@@ -59,50 +77,24 @@ export function SprintHealthCard({
           </div>
           <div className="space-y-0">
             <FrameTitle className="text-sm">
-              Sprint <span className="font-sora">{sprint.number}</span>
+              Sprint <span className="font-sora">{sprintHealth.number}</span>
             </FrameTitle>
             <FrameDescription className="line-clamp-1 text-xs">
-              {sprint.goal || "No goal set"}
+              {sprintHealth.goal || "No goal set"}
             </FrameDescription>
           </div>
         </div>
-        {(() => {
-          const getBadgeVariant = ():
-            | "destructive"
-            | "secondary"
-            | "outline" => {
-            if (isOverdue) {
-              return "destructive";
-            }
-            if (isNearEnd) {
-              return "secondary";
-            }
-            return "outline";
-          };
-
-          const getBadgeText = (): string => {
-            if (isOverdue) {
-              return `${Math.abs(sprint.daysRemaining)}d overdue`;
-            }
-            if (isNearEnd) {
-              return `${sprint.daysRemaining}d left`;
-            }
-            return `${sprint.daysRemaining}d remaining`;
-          };
-
-          return <Badge variant={getBadgeVariant()}>{getBadgeText()}</Badge>;
-        })()}
+        <Badge variant={getBadgeVariant()}>{getBadgeText()}</Badge>
       </FrameHeader>
 
       <FramePanel className="space-y-6">
-        {/* Blocked Tasks Alert */}
         {hasBlockedTasks ? (
           <div className="flex items-center gap-2 rounded-lg border border-destructive/50 bg-destructive/10 p-3">
             <AlertTriangle className="size-4 text-destructive" />
             <p className="text-sm">
               <span className="font-semibold text-destructive">
-                {sprint.blockedTasks} blocked task
-                {sprint.blockedTasks !== 1 ? "s" : ""}
+                {sprintHealth.blockedTasks} blocked task
+                {sprintHealth.blockedTasks !== 1 ? "s" : ""}
               </span>{" "}
               <span className="text-muted-foreground">
                 require immediate attention
@@ -111,23 +103,21 @@ export function SprintHealthCard({
           </div>
         ) : null}
 
-        {/* Task Tracker Visualization */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Task Distribution</span>
             <span className="font-medium text-xs tabular-nums">
-              {sprint.totalTasks} total
+              {sprintHealth.totalTasks} total
             </span>
           </div>
           <Tracker className="h-4" data={trackerData} showTooltip />
         </div>
 
-        {/* Sprint Progress */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Sprint Progress</span>
             <span className="font-bold tabular-nums">
-              {sprint.completionPercentage}%
+              {sprintHealth.completionPercentage}%
             </span>
           </div>
           <CategoryBar
@@ -135,35 +125,30 @@ export function SprintHealthCard({
             colors={["emerald", "blue", "destructive", "gray"]}
             showLabels={false}
             values={[
-              sprint.doneTasks,
-              sprint.inProgressTasks,
-              sprint.blockedTasks,
-              sprint.todoTasks,
+              sprintHealth.doneTasks,
+              sprintHealth.inProgressTasks,
+              sprintHealth.blockedTasks,
+              sprintHealth.todoTasks,
             ]}
           />
-          <p className="flex justify-between font-sora text-muted-foreground text-xs">
-            <span>
-              {sprint.doneTasks} done, {sprint.inProgressTasks} in progress
-            </span>
-            <span>
-              {sprint.doneTasks + sprint.inProgressTasks} / {sprint.totalTasks}
-            </span>
+          <p className="font-sora text-muted-foreground text-xs">
+            {sprintHealth.doneTasks + sprintHealth.inProgressTasks} /{" "}
+            {sprintHealth.totalTasks}
           </p>
         </div>
 
-        {/* Sprint Timeline */}
         <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span className="text-xs">Sprint Period</span>
           </div>
           <span className="font-medium text-xs">
-            {new Date(sprint.startDate).toLocaleDateString("en-US", {
+            {new Date(sprintHealth.startDate).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
             })}{" "}
             -{" "}
-            {new Date(sprint.endDate).toLocaleDateString("en-US", {
+            {new Date(sprintHealth.endDate).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
             })}
@@ -172,4 +157,64 @@ export function SprintHealthCard({
       </FramePanel>
     </Frame>
   );
+}
+
+function SprintHealthEmpty() {
+  return (
+    <Frame>
+      <FramePanel>
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground text-sm">No active sprint</p>
+        </div>
+      </FramePanel>
+    </Frame>
+  );
+}
+
+function SprintHealthError() {
+  return (
+    <Frame>
+      <FramePanel>
+        <div className="py-12 text-center">
+          <p className="font-semibold text-destructive text-sm">
+            Unable to load sprint health
+          </p>
+          <p className="text-muted-foreground text-xs">
+            The dashboard will update once the service is reachable again.
+          </p>
+        </div>
+      </FramePanel>
+    </Frame>
+  );
+}
+
+export async function SprintHealthCard() {
+  try {
+    const [sprints, tasks] = await Promise.all([
+      sprintApi.listSprints(),
+      taskApi.listTasks(),
+    ]);
+
+    const currentSprint = findCurrentSprint(sprints);
+
+    if (!currentSprint) {
+      return <SprintHealthEmpty />;
+    }
+
+    const sprintHealth = computeSprintHealth(currentSprint, tasks);
+    const sprintTasks = tasks.filter(
+      (task) => task.sprintId === currentSprint.id
+    );
+
+    return (
+      <Suspense fallback={<SprintHealthSkeleton />}>
+        <SprintHealthNormal
+          sprintHealth={sprintHealth}
+          sprintTasks={sprintTasks}
+        />
+      </Suspense>
+    );
+  } catch (_error) {
+    return <SprintHealthError />;
+  }
 }

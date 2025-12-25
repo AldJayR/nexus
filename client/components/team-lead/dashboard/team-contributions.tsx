@@ -1,13 +1,34 @@
+/**
+ * Team Contributions
+ * Server component that fetches and displays team member contributions
+ */
+
 import { formatDistanceToNow } from "date-fns";
+import { Users } from "lucide-react";
+import { EmptyState } from "@/components/shared/empty-state";
 import { FramePanel } from "@/components/ui/frame";
+import { activityLogApi } from "@/lib/api/activity-log";
+import { taskApi } from "@/lib/api/task";
+import { userApi } from "@/lib/api/user";
 import type { TeamMemberSummary } from "@/lib/helpers/dashboard-computations";
+import { computeTeamMemberSummary } from "@/lib/helpers/dashboard-computations";
 import { ChartRadialText } from "./chart";
 
-type TeamContributionsProps = {
+type TeamContributionsDisplayProps = {
   members: TeamMemberSummary[];
 };
 
-export function TeamContributions({ members }: TeamContributionsProps) {
+function TeamContributionsDisplay({ members }: TeamContributionsDisplayProps) {
+  if (members.length === 0) {
+    return (
+      <EmptyState
+        description="Add team members to see their contributions"
+        icon={Users}
+        title="No team members"
+      />
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {members.map((member) => {
@@ -88,4 +109,41 @@ export function TeamContributions({ members }: TeamContributionsProps) {
       })}
     </div>
   );
+}
+
+export async function TeamContributions() {
+  const [users, tasks, activityLogs] = await Promise.all([
+    userApi.listUsers(),
+    taskApi.listTasks(),
+    activityLogApi.listActivityLogs(),
+  ]);
+
+  const activeUsers = users.filter((u) => !u.deletedAt);
+
+  const memberSummaries = await Promise.all(
+    activeUsers.map(async (user) => {
+      const contribution = await userApi.getUserContributions(user.id);
+
+      const userActivities = activityLogs.filter(
+        (log) => log.userId === user.id
+      );
+      const lastActivityDate =
+        userActivities.length > 0
+          ? userActivities.sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )[0].createdAt
+          : undefined;
+
+      return computeTeamMemberSummary(
+        user,
+        contribution,
+        tasks,
+        lastActivityDate
+      );
+    })
+  );
+
+  return <TeamContributionsDisplay members={memberSummaries} />;
 }

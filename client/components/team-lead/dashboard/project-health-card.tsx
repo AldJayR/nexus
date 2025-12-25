@@ -1,55 +1,44 @@
-/**
- * Project Health Card
- * Displays overall project completion with progress visualization
- */
-"use client";
-
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { Suspense } from "react";
 import { FramePanel } from "@/components/ui/frame";
 import { Tracker } from "@/components/ui/tracker";
-import type { ProjectCompletion } from "@/lib/helpers/dashboard-computations";
+import { deliverableApi } from "@/lib/api/deliverable";
+import { phaseApi } from "@/lib/api/phase";
+import { computeProjectCompletion } from "@/lib/helpers/dashboard-computations";
+import { formatMonthDay } from "@/lib/helpers/format-date";
 import { cn } from "@/lib/utils";
+import { ProjectHealthSkeleton } from "./skeletons";
 
-type ProjectHealthCardProps = {
-  completion: ProjectCompletion;
-  targetPercentage?: number;
-};
+const targetPercentage = 70;
 
-export function ProjectHealthCard({
+function ProjectHealthNormal({
   completion,
-  targetPercentage,
-}: ProjectHealthCardProps) {
+}: {
+  completion: Awaited<ReturnType<typeof computeProjectCompletion>>;
+}) {
   const trend = completion.isOnTrack ? "up" : "down";
+  const statusText = completion.isOnTrack
+    ? "On Track"
+    : targetPercentage
+      ? "Behind Target"
+      : "In Progress";
 
-  const determineStatusText = (): string => {
-    if (completion.isOnTrack) {
-      return "On Track";
-    }
-    return targetPercentage ? "Behind Target" : "In Progress";
-  };
-  const statusText = determineStatusText();
-
-  // Generate tracker blocks for each deliverable
   const trackerData = [
-    // Completed deliverables (chart-2 - green)
     ...Array.from({ length: completion.completedDeliverables }, (_, i) => ({
       key: `completed-${i}`,
       color: "bg-emerald-500",
       tooltip: "Completed",
     })),
-    // In progress deliverables (primary - blue)
     ...Array.from({ length: completion.inProgressDeliverables }, (_, i) => ({
       key: `progress-${i}`,
       color: "bg-primary",
       tooltip: "In Progress",
     })),
-    // In review deliverables (chart-5 - orange)
     ...Array.from({ length: completion.reviewDeliverables }, (_, i) => ({
       key: `review-${i}`,
       color: "bg-purple-500",
       tooltip: "In Review",
     })),
-    // Not started (muted)
     ...Array.from(
       {
         length: Math.max(
@@ -69,7 +58,7 @@ export function ProjectHealthCard({
   ];
 
   return (
-    <FramePanel className="space-y-2 p-6 sm:space-y-0">
+    <>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-end gap-2">
           <div className="font-bold font-sora text-5xl tabular-nums">
@@ -105,27 +94,94 @@ export function ProjectHealthCard({
           {completion.activePhaseEndDate ? (
             <p className="mt-2 text-sm">
               Target: {targetPercentage}% by{" "}
-              {new Date(completion.activePhaseEndDate).toLocaleDateString(
-                "en-US",
-                {
-                  month: "short",
-                  day: "numeric",
-                }
-              )}
+              {formatMonthDay(completion.activePhaseEndDate)}
             </p>
           ) : null}
         </div>
       </div>
-      <div>
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
-            <span className="font-medium">
-              {completion.totalDeliverables} deliverables
-            </span>
-          </div>
-          <Tracker className="h-4" data={trackerData} />
+      <div className="space-y-1">
+        <div className="flex items-center justify-between text-muted-foreground text-xs">
+          <span className="font-medium">
+            {completion.totalDeliverables} deliverables
+          </span>
+        </div>
+        <Tracker className="h-4" data={trackerData} />
+      </div>
+    </>
+  );
+}
+
+function ProjectHealthEmpty() {
+  return (
+    <>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p className="font-bold font-sora text-3xl">0%</p>
+        <div className="space-y-1 text-right text-sm">
+          <p className="font-semibold text-muted-foreground">
+            No deliverables yet
+          </p>
+          <p className="text-[13px] text-muted-foreground leading-snug">
+            Once you add deliverables and phases, progress will surface here.
+          </p>
         </div>
       </div>
-    </FramePanel>
+      <div className="space-y-2">
+        <div className="font-medium text-muted-foreground text-xs">
+          No deliverables yet
+        </div>
+        <div className="h-4 w-full bg-border" />
+      </div>
+    </>
   );
+}
+
+function ProjectHealthError() {
+  return (
+    <>
+      <div className="space-y-1">
+        <p className="font-bold font-sora text-3xl text-destructive">--%</p>
+        <p className="font-semibold text-destructive text-sm">
+          Unable to load project health
+        </p>
+        <p className="text-[13px] text-muted-foreground leading-snug">
+          Check your connection or try again later.
+        </p>
+      </div>
+      <div className="space-y-2">
+        <div className="font-medium text-destructive text-xs">
+          Data fetch failed, retry in a moment.
+        </div>
+        <div className="h-4 w-full rounded-full bg-border" />
+      </div>
+    </>
+  );
+}
+
+export async function ProjectHealthCard() {
+  try {
+    const [deliverables, phases] = await Promise.all([
+      deliverableApi.listDeliverables(),
+      phaseApi.listPhases(),
+    ]);
+    const completion = computeProjectCompletion(deliverables, phases);
+    const hasContent = completion.totalDeliverables > 0;
+
+    return (
+      <Suspense fallback={<ProjectHealthSkeleton />}>
+        <FramePanel className="space-y-2 bg-card p-6">
+          {hasContent ? (
+            <ProjectHealthNormal completion={completion} />
+          ) : (
+            <ProjectHealthEmpty />
+          )}
+        </FramePanel>
+      </Suspense>
+    );
+  } catch (_error) {
+    return (
+      <FramePanel className="space-y-2 bg-card p-6">
+        <ProjectHealthError />
+      </FramePanel>
+    );
+  }
 }

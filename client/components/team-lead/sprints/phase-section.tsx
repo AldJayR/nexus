@@ -14,7 +14,7 @@ import { formatDateRange } from "@/lib/helpers/format-date";
 import { getSprintStatus } from "@/lib/helpers/sprint";
 import type { Sprint, SprintProgress, TaskStatus } from "@/lib/types";
 
-function mapSprintStatusToTaskStatus(
+export function mapSprintStatusToTaskStatus(
   sprintStatus: "ACTIVE" | "PLANNED" | "COMPLETED"
 ): TaskStatus {
   switch (sprintStatus) {
@@ -57,44 +57,44 @@ export function PhaseSection({
             fallback={<Skeleton className="h-80 w-full" />}
             key={sprint.id}
           >
-            <FramePanel className="space-y-2">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-0">
-                  <FrameTitle>Sprint {sprint.number}</FrameTitle>
-                  <FrameDescription className="line-clamp-1">
-                    {sprint.goal || "No goal set"}
-                  </FrameDescription>
+            <Link href={`/sprints/${sprint.id}`}>
+              <FramePanel className="space-y-2 bg-card">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-0">
+                    <FrameTitle className="w-full truncate font-semibold text-base">
+                      Sprint {sprint.number}
+                    </FrameTitle>
+                    <FrameDescription className="line-clamp-1">
+                      {sprint.goal || "No goal set"}
+                    </FrameDescription>
+                  </div>
+                  <StatusBadge
+                    status={mapSprintStatusToTaskStatus(sprintStatus)}
+                  />
                 </div>
-                <StatusBadge
-                  status={mapSprintStatusToTaskStatus(sprintStatus)}
-                />
-              </div>
 
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Progress</span>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Progress</span>
+                      <span className="font-medium">
+                        {progress
+                          ? `${progress.completedTasks}/${progress.totalTasks}`
+                          : "0/0"}
+                      </span>
+                    </div>
+                    <Progress className="h-2" value={percent} />
+                  </div>
+
+                  <div className="[&_svg]:text-muted-foreground flex items-center gap-2 text-sm">
+                    <Calendar size={16} />
                     <span className="font-medium">
-                      {progress
-                        ? `${progress.completedTasks}/${progress.totalTasks}`
-                        : "0/0"}
+                      {formatDateRange(sprint.startDate, sprint.endDate)}
                     </span>
                   </div>
-                  <Progress className="h-2" value={percent} />
                 </div>
-
-                <div className="svg]:text-muted-foreground flex items-center gap-2 text-sm [&">
-                  <Calendar size={16} />
-                  <span className="font-medium">
-                    {formatDateRange(sprint.startDate, sprint.endDate)}
-                  </span>
-                </div>
-
-                <Button asChild className="w-full" variant="outline">
-                  <Link href={`/sprints/${sprint.id}`}>Open Sprint Board</Link>
-                </Button>
-              </div>
-            </FramePanel>
+              </FramePanel>
+            </Link>
           </Suspense>
         );
       })}

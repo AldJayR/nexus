@@ -2,12 +2,12 @@
 
 import { GripVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import type { Task, User } from "@/lib/types";
 
 export type TaskCardProps = {
   task: Task;
   assignee: User | undefined;
+  onTaskClick: (task: Task) => void;
   onBlockClick: (task: Task) => void;
   interaction?: "drag" | "tap";
 };
@@ -15,11 +15,12 @@ export type TaskCardProps = {
 export function TaskCard({
   task,
   assignee,
-  onBlockClick,
+  onTaskClick,
   interaction = "drag",
 }: TaskCardProps) {
   return (
     <div
+      onClick={() => onTaskClick(task)}
       className={`group space-y-2 rounded-md border p-3 transition-all ${
         task.status === "BLOCKED"
           ? `border-destructive/70 bg-card/20 ${
@@ -39,28 +40,14 @@ export function TaskCard({
             </p>
           ) : null}
         </div>
-        <GripVertical className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
+        <GripVertical className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground hidden md:block" />
       </div>
 
-      <div className="flex flex-col gap-2">
-        {assignee ? (
-          <Badge className="text-xs" variant="secondary">
-            {assignee.name}
-          </Badge>
-        ) : null}
-        {task.status === "BLOCKED" ? (
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              onBlockClick(task);
-            }}
-            type="button"
-            variant="ghost"
-          >
-            Edit Reason
-          </Button>
-        ) : null}
-      </div>
+      {assignee ? (
+        <Badge className="text-xs" variant="secondary">
+          {assignee.name}
+        </Badge>
+      ) : null}
     </div>
   );
 }

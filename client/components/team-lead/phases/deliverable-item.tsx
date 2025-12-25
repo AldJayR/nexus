@@ -105,7 +105,7 @@ export function DeliverableItem({
               </p>
               <div className="mt-1 flex items-center gap-2">
                 <StatusBadge status={item.status} />
-                {item.dueDate ? (
+                {item.dueDate && item.status !== "COMPLETED" ? (
                   <span
                     className={cn(
                       "text-muted-foreground text-xs",

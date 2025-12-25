@@ -13,20 +13,33 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
   console.log('🌱 Starting database seeding...')
 
-  // 1. Create the First Admin (Team Lead) - Idempotent
-  const hashedPassword = await bcrypt.hash('admin123', 10)
+  // // 1. Create the First Admin (Team Lead) - Idempotent
+  // const hashedPassword = await bcrypt.hash('admin123', 10)
 
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@nexus.local' },
+  // const admin = await prisma.user.upsert({
+  //   where: { email: 'admin@nexus.local' },
+  //   update: {},
+  //   create: {
+  //     email: 'admin@nexus.local',
+  //     name: 'Admin User',
+  //     passwordHash: hashedPassword,
+  //     role: Role.TEAM_LEAD
+  //   }
+  // })
+  // console.log(`👤 Admin user ready: ${admin.email}`)
+
+  const alicePasswordHash = await bcrypt.hash('password123', 10)
+  const alice = await prisma.user.upsert({
+    where: { email: 'alice.johnson@nexus.local' },
     update: {},
     create: {
-      email: 'admin@nexus.local',
-      name: 'Admin User',
-      passwordHash: hashedPassword,
+      email: 'alice.johnson@nexus.local',
+      name: 'Alice Johnson',
+      passwordHash: alicePasswordHash,
       role: Role.TEAM_LEAD
     }
   })
-  console.log(`👤 Admin user ready: ${admin.email}`)
+  console.log(`👤 Secondary lead ready: ${alice.email}`)
 
   // 2. Create Project (Singleton Check)
   const existingProject = await prisma.project.findFirst()

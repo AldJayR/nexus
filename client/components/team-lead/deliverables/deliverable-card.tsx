@@ -1,7 +1,7 @@
 "use client";
 
 import { Calendar, Paperclip } from "lucide-react";
-import { FramePanel } from "@/components/ui/frame";
+import { FrameDescription, FramePanel, FrameTitle } from "@/components/ui/frame";
 import { StatusBadge } from "@/components/ui/status";
 import { formatDate } from "@/lib/helpers/format-date";
 import type { Deliverable, Phase } from "@/lib/types";
@@ -29,7 +29,7 @@ export function DeliverableCard({
 
   return (
     <FramePanel
-      className="cursor-pointer space-y-4"
+      className="cursor-pointer space-y-4 bg-card"
       onClick={onCardClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -41,16 +41,16 @@ export function DeliverableCard({
       tabIndex={0}
     >
       <div className="space-y-0">
-        <h4 className="w-full truncate font-semibold text-base">
+        <FrameTitle className="w-full truncate font-semibold text-base">
           {deliverable.title}
-        </h4>
-        <p>
+        </FrameTitle>
+        <FrameDescription>
           {phase ? (
             <span className="truncate text-muted-foreground text-sm">
               {phase.name}
             </span>
           ) : null}
-        </p>
+        </FrameDescription>
       </div>
 
       <div className="space-y-4">
@@ -63,15 +63,15 @@ export function DeliverableCard({
           {deliverable.dueDate ? (
             <div
               className={cn(
-                "flex items-center gap-2 text-sm",
-                overdue ? "text-destructive" : "text-muted-foreground"
+                "flex items-center gap-2 text-sm [&_svg]:text-muted-foreground",
+                overdue ? "text-destructive" : null
               )}
             >
               <Calendar size={16} />
               <span>
                 Due{" "}
                 <span
-                  className={cn(overdue ? "font-semibold" : "text-foreground")}
+                  className={cn(overdue ? "font-semibold" : null)}
                 >
                   {formatDate(deliverable.dueDate)}
                 </span>

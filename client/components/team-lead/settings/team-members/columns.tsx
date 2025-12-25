@@ -1,6 +1,6 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, FilterFn } from "@tanstack/react-table";
 import {
   type ActionConfig,
   GenericRowActions,
@@ -13,6 +13,25 @@ const roleDisplay: Record<UserRole, string> = {
   [UserRole.MEMBER]: "Member",
   [UserRole.TEAM_LEAD]: "Team Lead",
   [UserRole.ADVISER]: "Adviser",
+};
+
+// Multi-column filter function that searches across name, email, and role
+const multiColumnFilterFn: FilterFn<User> = (row, _columnId, filterValue) => {
+  const searchTerm = (filterValue ?? "").toString().toLowerCase().trim();
+  if (!searchTerm) {
+    return true;
+  }
+
+  const searchableContent = [
+    row.original.name,
+    row.original.email,
+    roleDisplay[row.original.role],
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return searchableContent.includes(searchTerm);
 };
 
 type ColumnsContextType = {
@@ -31,6 +50,7 @@ export const createColumns = (
       <div className="font-medium">{row.getValue("name")}</div>
     ),
     enableHiding: false,
+    filterFn: multiColumnFilterFn,
     size: 180,
   },
   {

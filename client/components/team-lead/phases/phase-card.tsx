@@ -81,7 +81,7 @@ export function PhaseCard({
                 )}
               >
                 {formatDate(phase.startDate)} to {formatDate(phase.endDate)}{" "}
-                {progress === 100
+                {progress != 100
                   ? `(${calculateDaysBetween(phase.startDate, phase.endDate)} days)`
                   : null}
               </FrameDescription>
@@ -109,7 +109,7 @@ export function PhaseCard({
       </FrameHeader>
 
       {/* Card Content */}
-      <FramePanel className={cn(isActive ? "border-primary" : "border-border")}>
+      <FramePanel className={cn("h-fit p-2", isActive ? "border-primary" : "border-border")}>
         {/* Deliverables List */}
         {totalDeliverables === 0 ? (
           <p className="text-muted-foreground text-xs">No deliverables</p>
@@ -120,10 +120,10 @@ export function PhaseCard({
           />
         )}
       </FramePanel>
-      <FrameFooter>
+      <FrameFooter className="mt-auto">
         {/* Add Deliverable Button */}
         <Button
-          className="mt-auto w-full"
+          className="w-full"
           onClick={() => onAddDeliverable(phase.id)}
           variant={isActive ? "default" : "outline"}
         >

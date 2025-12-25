@@ -3,13 +3,7 @@
  * Replicates the structure of actual dashboard sections
  */
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Frame,
-  FrameHeader,
-  FramePanel,
-  FrameTitle,
-} from "@/components/ui/frame";
+import { Frame, FrameHeader, FramePanel } from "@/components/ui/frame";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProjectHealthSkeleton() {
@@ -53,22 +47,20 @@ export function PhaseCardsSkeleton() {
       {[1, 2, 3].map((i) => (
         <Frame key={i}>
           <FrameHeader className="flex-row items-center gap-2">
-            <Skeleton className="h-8 w-8 rounded-md" />
-            <FrameTitle className="line-clamp-1 text-sm">
-              <Skeleton className="h-5 w-32" />
-            </FrameTitle>
+            <Skeleton className="size-8 rounded-md" />
+            <Skeleton className="h-3 w-32" />
           </FrameHeader>
           <FramePanel className="space-y-2">
             {/* Status badge and percentage row */}
             <div className="flex items-center justify-between">
-              <Skeleton className="h-6 w-20" />
+              <Skeleton className="h-4 w-20" />
               <Skeleton className="h-7 w-16" />
             </div>
 
             {/* Progress bar and completed count */}
             <div className="space-y-2">
               <Skeleton className="h-2 w-full rounded-full" />
-              <Skeleton className="h-3 w-40" />
+              <Skeleton className="h-3 w-10" />
             </div>
           </FramePanel>
         </Frame>
@@ -79,27 +71,27 @@ export function PhaseCardsSkeleton() {
 
 export function SprintHealthSkeleton() {
   return (
-    <Frame className="h-fit">
+    <Frame>
       <FrameHeader className="flex-row items-start justify-between">
         <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="size-8 rounded-md" />
           <div className="space-y-1">
-            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-4 w-24" />
             <Skeleton className="h-3 w-40" />
           </div>
         </div>
-        <Skeleton className="h-6 w-28 shrink-0 rounded-full" />
+        <Skeleton className="h-4 w-28 shrink-0 rounded-full" />
       </FrameHeader>
 
       <FramePanel className="space-y-6">
         {/* Task Distribution */}
-        <div className="space-y-2">
+        <div className="mt-1 space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-4 w-26" />
             <Skeleton className="h-3 w-16" />
           </div>
           {/* Tracker blocks */}
-          <div className="flex gap-1">
+          <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <Skeleton className="h-4 flex-1 rounded-none" key={i} />
             ))}
@@ -107,12 +99,13 @@ export function SprintHealthSkeleton() {
         </div>
 
         {/* Sprint Progress */}
-        <div className="space-y-2">
+        <div className="mt-2 space-y-2">
           <div className="flex items-center justify-between text-sm">
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-5 w-12" />
           </div>
-          <Skeleton className="h-3 w-full rounded" />
+          <Skeleton className="h-2 w-full rounded" />
+          <Skeleton className="h-3 w-12" />
         </div>
 
         {/* Sprint Timeline */}
@@ -121,7 +114,7 @@ export function SprintHealthSkeleton() {
             <Skeleton className="h-4 w-4 rounded" />
             <Skeleton className="h-3 w-24" />
           </div>
-          <Skeleton className="h-3 w-32" />
+          <Skeleton className="h-4 w-32" />
         </div>
       </FramePanel>
     </Frame>
@@ -224,74 +217,33 @@ export function PendingApprovalsSkeleton() {
 
 export function TeamContributionsSkeleton() {
   return (
-    <Card>
-      <CardHeader className="border-border border-b">
-        <Skeleton className="h-6 w-40" />
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-border border-b bg-muted/50">
-              <tr>
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <th className="p-3 text-left" key={i}>
-                    <Skeleton className="h-3 w-20" />
-                  </th>
+    <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="absolute -bottom-6 left-0 z-20 h-full w-full bg-linear-to-t from-background to-transparent" />
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <FramePanel className="h-41 w-82 bg-card" key={i}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-4">
+              <div className="min-w-0 flex-1">
+                <Skeleton className="mb-1 h-4 w-32" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3].map((i) => (
+                  <div className="flex flex-col items-center" key={i}>
+                    <Skeleton className="mb-2 h-6 w-4" />
+                    <Skeleton className="h-3 w-12" />
+                  </div>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {[1, 2, 3].map((i, index) => (
-                <tr
-                  className={index < 2 ? "border-border border-b" : ""}
-                  key={i}
-                >
-                  <td className="p-3">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-8 w-8 rounded-full" />
-                      <div className="space-y-1">
-                        <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-3 w-24" />
-                      </div>
-                    </div>
-                  </td>
-                  {[1, 2, 3, 4].map((j) => (
-                    <td className="p-3" key={j}>
-                      <Skeleton className="h-4 w-8" />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-export function DashboardSkeleton() {
-  return (
-    <main className="min-w-0 flex-1 overflow-y-auto">
-      <div className="space-y-8">
-        <div className="flex flex-wrap gap-3">
-          <Skeleton className="h-10 w-32" />
-          <Skeleton className="h-10 w-28" />
-          <Skeleton className="h-10 w-28" />
-        </div>
-
-        <ProjectHealthSkeleton />
-        <PhaseCardsSkeleton />
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <SprintHealthSkeleton />
-          <ActivityLogsSkeleton />
-        </div>
-
-        <BlockedItemsSkeleton />
-        <PendingApprovalsSkeleton />
-        <TeamContributionsSkeleton />
-      </div>
-    </main>
+              </div>
+            </div>
+            <div className="shrink-0">
+              <Skeleton className="size-25 rounded-full bg-accent/60" />
+            </div>
+          </div>
+        </FramePanel>
+      ))}
+    </div>
   );
 }

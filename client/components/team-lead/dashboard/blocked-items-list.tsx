@@ -1,9 +1,7 @@
 /**
  * Blocked Items List
- * Shows tasks and deliverables that need attention
+ * Server component that fetches blocked tasks and displays them
  */
-"use client";
-
 import { formatDistanceToNow } from "date-fns";
 import { AlertCircle, User } from "lucide-react";
 import Link from "next/link";
@@ -15,13 +13,16 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
+import { taskApi } from "@/lib/api/task";
+import { userApi } from "@/lib/api/user";
 import type { BlockedItem } from "@/lib/helpers/dashboard-computations";
+import { getBlockedTasks } from "@/lib/helpers/dashboard-computations";
 
 type BlockedItemsListProps = {
   items: BlockedItem[];
 };
 
-export function BlockedItemsList({ items }: BlockedItemsListProps) {
+function BlockedItemsListDisplay({ items }: BlockedItemsListProps) {
   if (items.length === 0) {
     return (
       <Frame>
@@ -108,4 +109,18 @@ export function BlockedItemsList({ items }: BlockedItemsListProps) {
       </FramePanel>
     </Frame>
   );
+}
+
+export async function BlockedItemsList() {
+  const [tasks, users] = await Promise.all([
+    taskApi.listTasks(),
+    userApi.listUsers(),
+  ]);
+
+  const blockedTasks = getBlockedTasks(tasks, users);
+  const allBlockedItems = [...blockedTasks].sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
+  return <BlockedItemsListDisplay items={allBlockedItems} />;
 }

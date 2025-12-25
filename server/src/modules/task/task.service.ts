@@ -44,11 +44,13 @@ export async function getTasks(query: TaskQuery) {
   });
 
   // Transform tasks to extract lastComment from most recent comment
-  return tasks.map((task) => ({
-    ...task,
-    lastComment: task.comments[0] || null,
-    comments: undefined,
-  })) as any;
+  return tasks.map((task) => {
+    const { comments, ...taskWithoutComments } = task;
+    return {
+      ...taskWithoutComments,
+      lastComment: comments[0] || null,
+    };
+  });
 }
 
 export async function getTaskById(id: string) {
@@ -82,7 +84,16 @@ export async function getTaskById(id: string) {
     throw new NotFoundError("Task", id);
   }
 
-  return task;
+  // Transform task to extract lastComment from most recent comment
+  // Using destructuring to properly exclude comments array
+  const { comments, ...taskWithoutComments } = task;
+  
+  const transformedTask = {
+    ...taskWithoutComments,
+    lastComment: comments[0] || null,
+  };
+
+  return transformedTask;
 }
 
 export async function createTask(input: CreateTaskInput, creatorId: string) {

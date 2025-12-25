@@ -35,8 +35,11 @@ export { type CreateSprintInput, createSprintSchema } from "./sprints";
 export {
   type CreateSprintTaskInput,
   createSprintTaskSchema,
+  type TaskDetailInput,
+  taskDetailSchema,
   type UpdateTaskStatusInput,
   updateTaskStatusSchema,
+  updateTaskSchema,
 } from "./tasks";
 export {
   type BulkMemberActionsInput,
