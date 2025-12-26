@@ -1,8 +1,8 @@
-import { getCurrentUser } from "@/actions/user";
 import { AppHeader } from "@/components/layouts/team-lead/header";
-import { AppSidebar } from "@/components/layouts/team-lead/sidebar";
+import { AppSidebar } from "@/components/layouts/team-lead/team-lead-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getProject } from "@/lib/data/project";
+import { getCurrentUser } from "@/lib/data/user";
 
 export default async function TeamLeadLayout({
   children,

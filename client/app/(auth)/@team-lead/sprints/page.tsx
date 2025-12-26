@@ -1,8 +1,13 @@
+import { auth } from "@/auth";
 import { SprintsClient } from "@/components/team-lead/sprints/sprints-client";
 import { phaseApi } from "@/lib/api/phase";
 import { sprintApi } from "@/lib/api/sprint";
 
 export default async function Page() {
+  const session = await auth();
+  if (session?.user?.role !== "teamLead") {
+    return null;
+  }
   const [sprints, phases] = await Promise.all([
     sprintApi.listSprints(),
     phaseApi.listPhases(),

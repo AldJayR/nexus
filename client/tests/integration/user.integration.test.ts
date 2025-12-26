@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getCurrentUser } from "@/actions/user";
 import { authApi } from "@/lib/api/auth";
 import { userApi } from "@/lib/api/user";
+import { getCurrentUser } from "@/lib/data/user";
 import { clearAuth, loginAsAdmin } from "./helpers";
 
 const SKIP_ON_BACKEND_ERROR = (error: any) => {

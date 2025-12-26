@@ -2,20 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { userApi } from "@/lib/api";
-import type { User } from "@/lib/types/models";
-
-export async function getTeamMembers(): Promise<User[]> {
-  try {
-    const users = await userApi.listUsers();
-    return users;
-  } catch (error) {
-    console.error("Failed to fetch team members:", error);
-    throw new Error("Failed to fetch team members");
-  }
-}
+import { requireTeamLead } from "@/lib/helpers/rbac";
 
 export async function deleteTeamMembers(userIds: string[]): Promise<void> {
   try {
+    await requireTeamLead();
     await Promise.all(userIds.map((id) => userApi.deleteUser(id)));
     revalidatePath("/settings/team-members");
   } catch (error) {
@@ -26,6 +17,7 @@ export async function deleteTeamMembers(userIds: string[]): Promise<void> {
 
 export async function deleteUser(userId: string): Promise<void> {
   try {
+    await requireTeamLead();
     await userApi.deleteUser(userId);
     revalidatePath("/settings/team-members");
   } catch (error) {
@@ -36,6 +28,7 @@ export async function deleteUser(userId: string): Promise<void> {
 
 export async function restoreUser(userId: string): Promise<void> {
   try {
+    await requireTeamLead();
     await userApi.restoreUser(userId);
     revalidatePath("/settings/team-members");
   } catch (error) {

@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { ActivityLogs } from "@/components/team-lead/dashboard/activity-logs";
 import { BlockedItemsList } from "@/components/team-lead/dashboard/blocked-items-list";
 import { PendingApprovalsList } from "@/components/team-lead/dashboard/pending-approvals-list";
@@ -12,7 +13,15 @@ export const metadata = {
   description: "Team Lead project overview and metrics",
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+
+  // HARD GATE: Stop execution immediately if user is not Team Lead
+  // Prevents background API calls from failing with 403 errors
+  if (session?.user?.role !== "teamLead") {
+    return null;
+  }
+
   return (
     <main className="min-w-0 flex-1 overflow-y-auto">
       <div className="mx-auto max-w-screen-2xl space-y-8">

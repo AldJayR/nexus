@@ -1,11 +1,9 @@
 import { unauthorized } from "next/navigation";
 import type { ReactNode } from "react";
-import { type AppRole, auth } from "@/auth";
-
-type UserRole = AppRole;
+import { auth } from "@/auth";
 
 export default async function AuthLayout({
-  children: _children,
+  children,
   member,
   "team-lead": teamLead,
   adviser,
@@ -17,22 +15,36 @@ export default async function AuthLayout({
 }) {
   const session = await auth();
 
+  // 1. Session Protection - Redirect unauthorized users
   if (!session?.user) {
     unauthorized();
   }
 
-  const currentRole: UserRole = session.user.role;
+  const currentRole = session.user.role;
+
+  // 2. Select the correct slot based on Role
+  let roleSlot: ReactNode;
 
   switch (currentRole) {
     case "member":
-      return <>{member}</>;
+      roleSlot = member;
+      break;
     case "teamLead":
-      return <>{teamLead}</>;
+      roleSlot = teamLead;
+      break;
     case "adviser":
-      return <>{adviser}</>;
-    default: {
-      const _exhaustive: never = currentRole;
-      return _exhaustive;
-    }
+      roleSlot = adviser;
+      break;
+    default:
+      unauthorized();
   }
+
+  return (
+    <>
+      {/* 3. Render children so Next.js can manage route states and sub-routes */}
+      {children}
+      {/* 4. Render the role-specific dashboard/UI */}
+      {roleSlot}
+    </>
+  );
 }

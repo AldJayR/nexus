@@ -8,6 +8,7 @@
 import { meetingLogApi } from "@/lib/api/meeting-log";
 import { phaseApi } from "@/lib/api/phase";
 import { sprintApi } from "@/lib/api/sprint";
+import { requireUser } from "@/lib/helpers/rbac";
 import type { MeetingLog, Phase, Sprint } from "@/lib/types";
 
 export type MeetingsPageData = {
@@ -22,11 +23,13 @@ export type MeetingsPageData = {
  *
  * Aggregates meeting logs from all sprints and phases
  * totalExpected is the number of sprints (since meetings are linked to sprints)
+ * All authenticated roles can view
  *
  * @returns Object containing logs and totalExpected count
  * @throws Error if data fetching fails
  */
 export async function getMeetingsData(): Promise<MeetingsPageData> {
+  await requireUser();
   const [sprints, phases] = await Promise.all([
     sprintApi.listSprints(),
     phaseApi.listPhases(),

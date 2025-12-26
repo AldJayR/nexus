@@ -4,6 +4,7 @@ import type { AxiosError } from "axios";
 import { revalidatePath } from "next/cache";
 
 import { taskApi } from "@/lib/api/task";
+import { requireTeamLead, requireUser } from "@/lib/helpers/rbac";
 import type { Task } from "@/lib/types";
 import {
   createSprintTaskSchema,
@@ -13,6 +14,9 @@ import {
 
 export async function createSprintTaskAction(input: unknown) {
   try {
+    // Security: Team Lead only - creates tasks and assigns them
+    await requireTeamLead();
+
     const parsed = createSprintTaskSchema.parse(input);
 
     await taskApi.createTask({
@@ -32,6 +36,9 @@ export async function createSprintTaskAction(input: unknown) {
 
 export async function updateTaskStatusAction(input: unknown) {
   try {
+    // Security: Ensure user is authenticated
+    await requireUser();
+
     const parsed = updateTaskStatusSchema.parse(input);
     const comment = parsed.comment === "" ? undefined : parsed.comment;
 
@@ -61,6 +68,9 @@ export async function updateTaskStatusAction(input: unknown) {
 
 export async function updateTaskAction(input: unknown) {
   try {
+    // Security: Team Lead only - manages task assignments and details
+    await requireTeamLead();
+
     const parsed = updateTaskSchema.parse(input);
 
     await taskApi.updateTask(parsed.taskId, {
@@ -92,6 +102,9 @@ export async function getTaskDetailAction(
   taskId: string
 ): Promise<Task | null> {
   try {
+    // Security: Ensure user is authenticated
+    await requireUser();
+
     return await taskApi.getTaskById(taskId);
   } catch (error) {
     console.error("[getTaskDetailAction] Error:", error);

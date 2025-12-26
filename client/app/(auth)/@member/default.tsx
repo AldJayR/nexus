@@ -1,3 +1,1 @@
-export default function MemberSlot() {
-  return null;
-}
+export { default } from "./dashboard/page";

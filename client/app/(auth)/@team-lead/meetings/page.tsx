@@ -1,5 +1,6 @@
-import SummaryCardsRow from "@/components/team-lead/meetings/summary-cards";
-import { MeetingsTable } from "@/components/team-lead/meetings/table/body";
+import { auth } from "@/auth";
+import SummaryCardsRow from "@/components/shared/meetings/summary-cards";
+import { MeetingsTable } from "@/components/shared/meetings/table/body";
 import { getMeetingsData } from "@/lib/data/meetings";
 
 /**
@@ -10,6 +11,13 @@ import { getMeetingsData } from "@/lib/data/meetings";
  * Allows Team Lead to upload meeting minutes
  */
 export default async function TeamLeadMeetingsPage() {
+  const session = await auth();
+
+  // HARD GATE: Team Lead only
+  if (session?.user?.role !== "teamLead") {
+    return null;
+  }
+
   const { logs, sprints, phases } = await getMeetingsData();
 
   return (

@@ -5,13 +5,13 @@
  * particularly for approval workflows and feedback submission.
  *
  * Actions:
- * - approveDeliverableAction: Marks a deliverable as completed
- * - requestChangesDeliverableAction: Requests changes and adds feedback
+ * - approveDeliverableAction: Marks a deliverable as completed (Team Lead only)
+ * - requestChangesDeliverableAction: Requests changes and adds feedback (Team Lead only)
  *
  * Security:
- * - These are server actions that should be called from client components
- * - Authorization checks should be implemented at the API layer
+ * - Server-side RBAC validation via requireTeamLead()
  * - Input validation using Zod schemas
+ * - Authorization checks prevent unauthorized role access
  *
  * @module actions/deliverables
  */
@@ -22,6 +22,7 @@ import { z } from "zod";
 
 import { commentApi } from "@/lib/api/comment";
 import { deliverableApi } from "@/lib/api/deliverable";
+import { requireTeamLead } from "@/lib/helpers/rbac";
 import { DeliverableStatus } from "@/lib/types";
 
 /**
@@ -44,6 +45,11 @@ const requestChangesSchema = z.object({
 
 /**
  * Approves a deliverable, marking its status as COMPLETED
+ * Team Lead only operation
+ *
+ * Security:
+ * - Requires user to be a Team Lead (enforced via requireTeamLead)
+ * - Input validation on deliverable ID
  *
  * Side Effects:
  * - Updates deliverable status to COMPLETED
@@ -51,9 +57,13 @@ const requestChangesSchema = z.object({
  *
  * @param input - Object containing deliverableId (validated with schema)
  * @returns {success: true} on success, {success: false, error: string} on failure
+ * @throws {ForbiddenError} if user is not a Team Lead
  */
 export async function approveDeliverableAction(input: unknown) {
   try {
+    // Security: Team Lead only operation
+    await requireTeamLead();
+
     const { deliverableId } = approveSchema.parse(input);
 
     await deliverableApi.updateDeliverable(deliverableId, {
@@ -72,6 +82,11 @@ export async function approveDeliverableAction(input: unknown) {
 
 /**
  * Requests changes on a deliverable and adds feedback comment
+ * Team Lead only operation
+ *
+ * Security:
+ * - Requires user to be a Team Lead (enforced via requireTeamLead)
+ * - Input validation on deliverable ID and comment
  *
  * Side Effects:
  * - Reverts deliverable status to IN_PROGRESS
@@ -80,9 +95,13 @@ export async function approveDeliverableAction(input: unknown) {
  *
  * @param input - Object with deliverableId and comment (validated with schema)
  * @returns {success: true} on success, {success: false, error: string} on failure
+ * @throws {ForbiddenError} if user is not a Team Lead
  */
 export async function requestChangesDeliverableAction(input: unknown) {
   try {
+    // Security: Team Lead only operation
+    await requireTeamLead();
+
     const { deliverableId, comment } = requestChangesSchema.parse(input);
 
     await Promise.all([

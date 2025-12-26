@@ -15,6 +15,7 @@ import type { z } from "zod";
 import { deliverableApi } from "@/lib/api/deliverable";
 import { phaseApi } from "@/lib/api/phase";
 import { cleanDateInput, toISODateTime } from "@/lib/helpers/date";
+import { requireTeamLead } from "@/lib/helpers/rbac";
 import {
   createDeliverableSchema,
   updateDeliverableSchema,
@@ -25,6 +26,7 @@ export async function updatePhaseAction(
   input: z.infer<typeof updatePhaseSchema>
 ) {
   try {
+    await requireTeamLead();
     const { id, ...data } = updatePhaseSchema.parse(input);
 
     // Clean and transform dates to ISO datetime format for server
@@ -47,6 +49,7 @@ export async function createDeliverableAction(
   input: z.infer<typeof createDeliverableSchema>
 ) {
   try {
+    await requireTeamLead();
     const data = createDeliverableSchema.parse(input);
 
     // Clean and transform date to ISO datetime format for server
@@ -68,6 +71,7 @@ export async function updateDeliverableAction(
   input: z.infer<typeof updateDeliverableSchema>
 ) {
   try {
+    await requireTeamLead();
     const { id, ...data } = updateDeliverableSchema.parse(input);
 
     // Clean and transform date to ISO datetime format for server
@@ -87,6 +91,7 @@ export async function updateDeliverableAction(
 
 export async function deleteDeliverableAction(id: string) {
   try {
+    await requireTeamLead();
     await deliverableApi.deleteDeliverable(id);
     revalidatePath("/phases");
     return { success: true };

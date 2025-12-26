@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { authApi } from "@/lib/api/auth";
+import { requireTeamLead } from "@/lib/helpers/rbac";
 import type { ServerActionResponse } from "@/lib/types/auth";
 import type { User } from "@/lib/types/models";
 import { inviteMemberSchema } from "@/lib/validation/team-members";
@@ -11,6 +12,8 @@ export async function inviteMember(
   input: unknown
 ): Promise<ServerActionResponse<User>> {
   try {
+    await requireTeamLead();
+
     // Validate input using centralized schema
     const validated = inviteMemberSchema.parse(input);
 

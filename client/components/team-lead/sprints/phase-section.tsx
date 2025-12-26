@@ -1,6 +1,7 @@
-import { Calendar } from "lucide-react";
+import { Calendar, FolderXIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { EmptyState } from "@/components/shared/empty-state";
 import {
   FrameDescription,
   FramePanel,
@@ -41,7 +42,13 @@ export function PhaseSection({
   now,
 }: PhaseSectionProps) {
   if (sprints.length === 0) {
-    return null;
+    return (
+      <EmptyState
+        description="There are no sprints in this status yet."
+        icon={FolderXIcon}
+        title="No sprints available"
+      />
+    );
   }
 
   return (

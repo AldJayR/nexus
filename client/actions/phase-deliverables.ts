@@ -20,6 +20,7 @@ import { z } from "zod";
 import { createApiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { toDateOnly, toISODateTime } from "@/lib/helpers/date";
+import { requireTeamLead } from "@/lib/helpers/rbac";
 import type { ServerActionResponse } from "@/lib/types";
 import { methodologyPhaseSchema } from "@/lib/validation/project-config";
 
@@ -58,6 +59,19 @@ function deliverableKey(
 export async function savePhaseDeliverables(
   input: unknown
 ): Promise<ServerActionResponse<{ phaseId: string }>> {
+  // Security: Team Lead only - manages entire phase configuration
+  try {
+    await requireTeamLead();
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "You do not have permission to configure phases",
+    };
+  }
+
   // TODO: Fix activity log foreign key issue - userId from request.user doesn't exist in User table
   // Workaround: wrapped createActivityLog calls in try-catch to make logging non-critical
   // Future: Create system/default user or make userId optional in ActivityLog schema

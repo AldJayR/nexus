@@ -28,15 +28,17 @@ import {
   approveDeliverableAction,
   requestChangesDeliverableAction,
 } from "@/actions/deliverables";
+import {
+  DeliverableCard,
+  DeliverableDetails,
+  DeliverablesFilters,
+  DeliverablesSummaryCards,
+} from "@/components/shared/deliverables";
 import type { Deliverable, Evidence, Phase } from "@/lib/types";
 import type { PhaseFilter, StatusFilter } from "@/lib/types/deliverables-types";
 import { getDeliverablesSummary } from "../../../hooks/get-deliverables-summary";
 import { getFilteredDeliverables } from "../../../hooks/get-filtered-deliverables";
-import { DeliverableCard } from "./deliverable-card";
-import { DeliverableDetails } from "./deliverable-details";
-import { DeliverablesFilters } from "./filters";
 import { RequestChangesDialog } from "./request-changes-dialog";
-import { DeliverablesSummaryCards } from "./summary-cards";
 
 /**
  * Props for the DeliverablesClient component

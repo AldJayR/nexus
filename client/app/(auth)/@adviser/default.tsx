@@ -1,3 +1,1 @@
-export default function AdviserSlot() {
-  return null;
-}
+export { default } from "./dashboard/page";

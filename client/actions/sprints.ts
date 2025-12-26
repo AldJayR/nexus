@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 
 import { sprintApi } from "@/lib/api/sprint";
 import { cleanDateInput, toISODateTime } from "@/lib/helpers/date";
+import { requireTeamLead } from "@/lib/helpers/rbac";
 import { createSprintSchema } from "@/lib/validation";
 
 export async function createSprintAction(input: unknown) {
   try {
+    await requireTeamLead();
     const parsed = createSprintSchema.parse(input);
 
     // Dates are required by schema, so they're guaranteed to be non-empty strings

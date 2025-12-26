@@ -22,6 +22,7 @@ import { z } from "zod";
 
 import { meetingLogApi } from "@/lib/api/meeting-log";
 import { toISODateTime } from "@/lib/helpers/date";
+import { requireTeamLead, requireUser } from "@/lib/helpers/rbac";
 
 /**
  * Schema for uploading meeting minutes
@@ -72,6 +73,8 @@ export async function uploadMeetingLogAction(
   formData: FormData
 ) {
   try {
+    await requireUser();
+
     const raw = {
       scope: formData.get("scope"),
       entityId: formData.get("entityId"),
@@ -115,6 +118,7 @@ export async function uploadMeetingLogAction(
 
 export async function deleteMeetingLog(meetingLogId: string): Promise<void> {
   try {
+    await requireTeamLead();
     await meetingLogApi.deleteMeetingLog(meetingLogId);
     revalidatePath("/meetings");
   } catch (error) {
@@ -127,6 +131,7 @@ export async function deleteMeetingLogs(
   meetingLogIds: string[]
 ): Promise<void> {
   try {
+    await requireTeamLead();
     await Promise.all(
       meetingLogIds.map((id) => meetingLogApi.deleteMeetingLog(id))
     );

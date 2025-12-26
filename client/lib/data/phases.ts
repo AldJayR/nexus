@@ -1,11 +1,14 @@
 import { phaseApi } from "@/lib/api";
+import { requireUser } from "@/lib/helpers/rbac";
 import type { Phase, PhaseDetail } from "@/lib/types";
 
 /**
  * Fetches all phases with basic information
+ * All authenticated roles can view
  */
 export async function getPhases(): Promise<Phase[]> {
   try {
+    await requireUser();
     const response = await phaseApi.listPhases();
     return response;
   } catch (error) {
@@ -17,9 +20,11 @@ export async function getPhases(): Promise<Phase[]> {
 /**
  * Fetches all phases with detailed information including deliverables
  * Uses Promise.all for parallel fetching
+ * All authenticated roles can view
  */
 export async function getPhasesWithDetails(): Promise<PhaseDetail[]> {
   try {
+    await requireUser();
     const phases = await phaseApi.listPhases();
 
     const phasesWithDetails = await Promise.all(
@@ -48,9 +53,11 @@ export async function getPhasesWithDetails(): Promise<PhaseDetail[]> {
 
 /**
  * Fetches a single phase by ID with details
+ * All authenticated roles can view
  */
 export async function getPhaseById(id: string): Promise<PhaseDetail | null> {
   try {
+    await requireUser();
     const response = await phaseApi.getPhaseById(id);
     return response;
   } catch (error) {
