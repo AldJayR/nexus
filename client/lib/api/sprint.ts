@@ -22,6 +22,12 @@ export const sprintApi = {
     return response.data;
   },
 
+  listMySprints: async (): Promise<Sprint[]> => {
+    const client = await createApiClient();
+    const response = await client.get(API_ENDPOINTS.SPRINTS.LIST_MINE);
+    return response.data;
+  },
+
   getSprintById: async (id: string): Promise<Sprint> => {
     const client = await createApiClient();
     const response = await client.get(API_ENDPOINTS.SPRINTS.GET(id));

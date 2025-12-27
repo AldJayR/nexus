@@ -23,7 +23,6 @@ export function FilterChips({ selected, onFilterChange }: FilterChipsProps) {
           <Button
             key={item.key}
             onClick={() => onFilterChange(item.key)}
-            size="sm"
             variant={isSelected ? "default" : "outline"}
           >
             {item.label}

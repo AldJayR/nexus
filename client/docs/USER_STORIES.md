@@ -145,9 +145,7 @@ As a Team Lead, I want to create deliverables under each phase so that team memb
    - Deliverable name
    - Description (requirements)
    - Expected due date
-   - File type (PDF, Image, etc.)
-   - Is it mandatory?
-   - Who is responsible?
+   - File type (PDF)
 5. Save
 6. Deliverable appears under the phase with status "Not Started"
 
@@ -521,29 +519,30 @@ As a Team Lead, I want to see an activity log of who did what and when so I can 
 ## PART 9: MEETINGS & DOCUMENTATION
 
 ### US-019: Upload Meeting Minutes
-**Goal:** Team Lead can upload meeting minutes (PDF) linked to sprints.
+**Goal:** Team members can upload meeting minutes (PDF) linked to sprints or phases.
 
 **Scenario:**
-As a Team Lead, I want to upload a PDF file containing meeting minutes so there's a record of decisions and discussions.
+As a Team Lead or Team Member, I want to upload a PDF file containing meeting minutes so there's a record of decisions and discussions.
 
 **Actions:**
 1. Navigate to `/meetings` or `/sprints/[id]`
 2. Click "Upload Meeting Minutes"
 3. Dialog appears:
-   - File picker (PDF only)
+   - File picker (PDF)
    - Meeting date
    - Meeting title (e.g., "Sprint 2 Retrospective")
    - Optional description
-   - Assign to sprint (dropdown)
+   - Assign to sprint or phase (dropdown)
 4. Upload file
-5. File appears in meetings list or sprint detail
+5. File appears in meetings list or sprint/phase detail
 
 **Acceptance Criteria:**
-- Only PDF files accepted
+- PDF files accepted
 - File size limits enforced
-- Linked to specific sprint
+- Linked to specific sprint or phase
 - Can be downloaded/previewed
 - Metadata (date, title) is searchable
+- Team Members can upload (not just Team Lead)
 
 ---
 

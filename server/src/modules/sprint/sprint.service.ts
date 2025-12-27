@@ -16,6 +16,24 @@ export async function getSprints() {
   });
 }
 
+export async function getSprintsByUser(userId: string) {
+  // Get all sprints where the user has assigned tasks
+  return prisma.sprint.findMany({
+    where: {
+      deletedAt: null,
+      tasks: {
+        some: {
+          assigneeId: userId,
+          deletedAt: null,
+        },
+      },
+    },
+    orderBy: {
+      startDate: "desc",
+    },
+  });
+}
+
 export async function getSprintById(id: string) {
   const sprint = await prisma.sprint.findUnique({
     where: { id },

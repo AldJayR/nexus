@@ -12,7 +12,7 @@ export const createApiClient = async (): Promise<AxiosInstance> => {
 
   const client = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10_000,
+    timeout: 30_000,
     withCredentials: true, // Send httpOnly cookies with requests
     headers: {
       "Content-Type": "application/json",

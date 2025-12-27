@@ -230,8 +230,8 @@ export function TeamContributionsSkeleton() {
 
               {/* Stats Grid */}
               <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3].map((i) => (
-                  <div className="flex flex-col items-center" key={i}>
+                {[1, 2, 3].map((index) => (
+                  <div className="flex flex-col items-center" key={index}>
                     <Skeleton className="mb-2 h-6 w-4" />
                     <Skeleton className="h-3 w-12" />
                   </div>

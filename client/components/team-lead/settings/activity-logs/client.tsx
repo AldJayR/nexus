@@ -60,7 +60,7 @@ import {
 import { StatusBadge } from "@/components/ui/status";
 import { Table } from "@/components/ui/table";
 import { formatTitleCase } from "@/lib/helpers/format-title-case";
-import type { ActivityLog } from "@/lib/types";
+import type { ActivityLog, TaskStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type DetailsCellProps = {
@@ -150,9 +150,9 @@ function DetailsCell({ details }: DetailsCellProps) {
                   {formatTitleCase(key)}
                 </p>
                 {isStatus(value) ? (
-                  <StatusBadge status={value as any} />
+                  <StatusBadge status={value as TaskStatus} />
                 ) : (
-                  <p className="break-words text-sm">
+                  <p className="wrap-break-word text-sm">
                     {typeof value === "object" && value !== null
                       ? JSON.stringify(value, null, 2)
                       : String(value)}
@@ -238,7 +238,7 @@ function ActivityLogsFilters({
           <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
             <ListFilterIcon aria-hidden="true" size={16} />
           </div>
-          {searchValue && (
+          {!!searchValue && (
             <button
               aria-label="Clear search filter"
               className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"

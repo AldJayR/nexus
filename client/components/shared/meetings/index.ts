@@ -9,6 +9,8 @@
  * - Analytics Cards: Individual stat cards for meetings metrics
  */
 
-export * from "./analytics";
+import * as AnalyticsExports from "./analytics";
+
+export const Analytics = AnalyticsExports;
 export { default as SummaryCardsRow } from "./summary-cards";
 export { MeetingsTable } from "./table";

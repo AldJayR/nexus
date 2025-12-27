@@ -105,10 +105,16 @@ export function AdviserDeliverablesClient({
               evidenceCount={evidence.length}
               isPending={false}
               key={deliverable.id}
-              onApprove={() => {}}
+              onApprove={() => {
+                // Approval handled in detail dialog
+              }}
               onCardClick={() => setSelectedDeliverableId(deliverable.id)}
-              onRequestChanges={() => {}}
-              onViewEvidence={() => {}}
+              onRequestChanges={() => {
+                // Request changes handled in detail dialog
+              }}
+              onViewEvidence={() => {
+                // Evidence viewing handled via card click
+              }}
               phase={phase}
             />
           );
@@ -123,19 +129,23 @@ export function AdviserDeliverablesClient({
         </div>
       )}
 
-      {selectedDeliverable && (
+      {!!selectedDeliverable && (
         <DeliverableDetails
           deliverable={selectedDeliverable}
           evidence={selectedEvidence}
           evidenceCount={selectedEvidence.length}
           isPending={false}
-          onApprove={() => {}}
+          onApprove={() => {
+            // TODO: Implement approval action
+          }}
           onOpenChange={(open) => {
             if (!open) {
               setSelectedDeliverableId(null);
             }
           }}
-          onRequestChanges={() => {}}
+          onRequestChanges={() => {
+            // TODO: Implement request changes action
+          }}
           open={!!selectedDeliverable}
           phase={
             selectedDeliverable && phaseById[selectedDeliverable.phaseId]

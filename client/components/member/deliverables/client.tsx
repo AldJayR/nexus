@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import {
   DeliverableCard,
-  DeliverableDetails,
   DeliverablesFilters,
   DeliverablesSummaryCards,
 } from "@/components/shared/deliverables";
@@ -35,6 +34,7 @@ export type { MemberDeliverablesClientProps };
  * - Manage other members' deliverables
  *
  * Uses shared components for consistent UI across all roles.
+ * Navigates to /deliverables/[id] for detail view instead of using modal.
  */
 export function MemberDeliverablesClient({
   deliverables,
@@ -44,9 +44,6 @@ export function MemberDeliverablesClient({
   const [phaseFilter, setPhaseFilter] = useState<PhaseFilter>("ALL");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [query, setQuery] = useState("");
-  const [selectedDeliverableId, setSelectedDeliverableId] = useState<
-    string | null
-  >(null);
 
   const phaseById = useMemo(
     () => Object.fromEntries(phases.map((phase) => [phase.id, phase] as const)),
@@ -68,15 +65,6 @@ export function MemberDeliverablesClient({
       }),
     [deliverables, phaseFilter, query, statusFilter]
   );
-
-  const selectedDeliverable = selectedDeliverableId
-    ? deliverables.find((d) => d.id === selectedDeliverableId)
-    : null;
-
-  const selectedEvidence =
-    selectedDeliverable && selectedDeliverableId
-      ? evidenceByDeliverableId[selectedDeliverableId] || []
-      : [];
 
   return (
     <div className="space-y-6">
@@ -101,12 +89,7 @@ export function MemberDeliverablesClient({
             <DeliverableCard
               deliverable={deliverable}
               evidenceCount={evidence.length}
-              isPending={false}
               key={deliverable.id}
-              onApprove={() => {}}
-              onCardClick={() => setSelectedDeliverableId(deliverable.id)}
-              onRequestChanges={() => {}}
-              onViewEvidence={() => {}}
               phase={phase}
             />
           );
@@ -119,28 +102,6 @@ export function MemberDeliverablesClient({
             No deliverables found. Try adjusting your filters.
           </p>
         </div>
-      ) : null}
-
-      {selectedDeliverable ? (
-        <DeliverableDetails
-          deliverable={selectedDeliverable}
-          evidence={selectedEvidence}
-          evidenceCount={selectedEvidence.length}
-          isPending={false}
-          onApprove={() => {}}
-          onOpenChange={(open) => {
-            if (!open) {
-              setSelectedDeliverableId(null);
-            }
-          }}
-          onRequestChanges={() => {}}
-          open={!!selectedDeliverable}
-          phase={
-            selectedDeliverable && phaseById[selectedDeliverable.phaseId]
-              ? phaseById[selectedDeliverable.phaseId]
-              : undefined
-          }
-        />
       ) : null}
     </div>
   );

@@ -4,15 +4,10 @@
  * Interactive React component for managing deliverables in the team lead dashboard.
  * Provides features for:
  * - Viewing deliverables with filtering and sorting
- * - Approving completed evidence submissions
- * - Requesting changes with feedback
- * - Viewing evidence history and file uploads
+ * - Navigating to detail page for approving and requesting changes
+ * - Viewing evidence history
  *
- * State Management:
- * - phaseFilter: Filter deliverables by phase
- * - statusFilter: Filter by status (not-started, in-progress, review, completed)
- * - viewMode: Toggle between grid and list views
- * - Dialogs for approval and evidence viewing
+ * Navigates to /deliverables/[id] for detail view instead of using modal.
  *
  * Permissions:
  * - Can approve deliverables with status=REVIEW
@@ -21,16 +16,10 @@
  */
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { toast } from "sonner";
+import { useMemo, useState } from "react";
 
 import {
-  approveDeliverableAction,
-  requestChangesDeliverableAction,
-} from "@/actions/deliverables";
-import {
   DeliverableCard,
-  DeliverableDetails,
   DeliverablesFilters,
   DeliverablesSummaryCards,
 } from "@/components/shared/deliverables";
@@ -38,7 +27,8 @@ import type { Deliverable, Evidence, Phase } from "@/lib/types";
 import type { PhaseFilter, StatusFilter } from "@/lib/types/deliverables-types";
 import { getDeliverablesSummary } from "../../../hooks/get-deliverables-summary";
 import { getFilteredDeliverables } from "../../../hooks/get-filtered-deliverables";
-import { RequestChangesDialog } from "./request-changes-dialog";
+import { EmptyState } from "@/components/shared/empty-state";
+import { FolderX } from "lucide-react";
 
 /**
  * Props for the DeliverablesClient component
@@ -60,12 +50,6 @@ export function DeliverablesClient({
   const [phaseFilter, setPhaseFilter] = useState<PhaseFilter>("ALL");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [query, setQuery] = useState("");
-  const [requestChangesId, setRequestChangesId] = useState<string | null>(null);
-  const [requestComment, setRequestComment] = useState("");
-  const [selectedDeliverableId, setSelectedDeliverableId] = useState<
-    string | null
-  >(null);
-  const [isPending, startTransition] = useTransition();
 
   const phaseById = useMemo(
     () => Object.fromEntries(phases.map((phase) => [phase.id, phase] as const)),
@@ -88,44 +72,6 @@ export function DeliverablesClient({
     [deliverables, phaseFilter, query, statusFilter]
   );
 
-  const approve = (deliverableId: string) => {
-    startTransition(async () => {
-      const result = await approveDeliverableAction({ deliverableId });
-      if (result.success) {
-        toast.success("Deliverable approved");
-        return;
-      }
-      toast.error(result.error ?? "Failed to approve deliverable");
-    });
-  };
-
-  const openRequestChanges = (deliverableId: string) => {
-    setRequestChangesId(deliverableId);
-    setRequestComment("");
-  };
-
-  const submitRequestChanges = () => {
-    if (!requestChangesId) {
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await requestChangesDeliverableAction({
-        deliverableId: requestChangesId,
-        comment: requestComment,
-      });
-
-      if (result.success) {
-        toast.success("Requested changes");
-        setRequestChangesId(null);
-        setRequestComment("");
-        return;
-      }
-
-      toast.error(result.error ?? "Failed to request changes");
-    });
-  };
-
   return (
     <div className="space-y-8">
       <DeliverablesSummaryCards deliverables={deliverables} summary={summary} />
@@ -141,9 +87,11 @@ export function DeliverablesClient({
       />
 
       {filtered.length === 0 ? (
-        <div className="py-10 text-center text-muted-foreground text-sm">
-          No deliverables found.
-        </div>
+        <EmptyState
+          title="No Deliverables Found"
+          description="Try adjusting your filters or search query."
+          icon={FolderX}
+        />
       ) : (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((deliverable) => {
@@ -153,68 +101,13 @@ export function DeliverablesClient({
               <DeliverableCard
                 deliverable={deliverable}
                 evidenceCount={evidence.length}
-                isPending={isPending}
                 key={deliverable.id}
-                onApprove={() => approve(deliverable.id)}
-                onCardClick={() => setSelectedDeliverableId(deliverable.id)}
-                onRequestChanges={() => openRequestChanges(deliverable.id)}
-                onViewEvidence={() => setSelectedDeliverableId(deliverable.id)}
                 phase={phase}
               />
             );
           })}
         </section>
       )}
-
-      <RequestChangesDialog
-        comment={requestComment}
-        isPending={isPending}
-        onCommentChange={setRequestComment}
-        onOpenChange={(nextOpen) => {
-          if (!nextOpen) {
-            setRequestChangesId(null);
-            setRequestComment("");
-          }
-        }}
-        onSubmit={submitRequestChanges}
-        open={requestChangesId !== null}
-      />
-
-      {selectedDeliverableId ? (
-        <DeliverableDetails
-          deliverable={
-            deliverables.find(
-              (d) => d.id === selectedDeliverableId
-            ) as Deliverable
-          }
-          evidence={evidenceByDeliverableId[selectedDeliverableId] ?? []}
-          evidenceCount={
-            (evidenceByDeliverableId[selectedDeliverableId] ?? []).length
-          }
-          isPending={isPending}
-          key={selectedDeliverableId}
-          onApprove={() => approve(selectedDeliverableId)}
-          onOpenChange={(open) => {
-            if (!open) {
-              setSelectedDeliverableId(null);
-            }
-          }}
-          onRequestChanges={() => {
-            openRequestChanges(selectedDeliverableId);
-            setSelectedDeliverableId(null);
-          }}
-          onViewEvidence={() => {
-            // Handled by evidence display in sheet
-          }}
-          open={selectedDeliverableId !== null}
-          phase={
-            phaseById[
-              deliverables.find((d) => d.id === selectedDeliverableId)
-                ?.phaseId ?? ""
-            ]
-          }
-        />
-      ) : null}
     </div>
   );
 }

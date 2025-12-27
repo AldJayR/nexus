@@ -28,7 +28,8 @@ export function GenericTableHeader<T>({ table }: GenericTableHeaderProps<T>) {
               key={header.id}
               style={{ width: `${header.getSize()}px` }}
             >
-              {header.isPlaceholder ? null : header.column.getCanSort() ? (
+              {header.isPlaceholder ? null : (
+                header.column.getCanSort() ? (
                 <div
                   aria-sort={
                     header.column.getIsSorted() === "asc"
@@ -77,7 +78,7 @@ export function GenericTableHeader<T>({ table }: GenericTableHeaderProps<T>) {
                 </div>
               ) : (
                 flexRender(header.column.columnDef.header, header.getContext())
-              )}
+              ))}
             </TableHead>
           ))}
         </TableRow>

@@ -125,7 +125,7 @@ export async function requireResourceAssignment(
  * Used for conditional rendering guidance (not security enforcement)
  * @returns {boolean} Whether user can perform the action
  */
-export async function canUserPerformAction(action: string, role: AppRole) {
+export function canUserPerformAction(action: string, role: AppRole) {
   const rolePermissions: Record<string, AppRole[]> = {
     approve_deliverable: ["teamLead"],
     request_changes: ["teamLead"],

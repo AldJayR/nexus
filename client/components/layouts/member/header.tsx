@@ -27,6 +27,11 @@ function getPageTitle(pathname: string): string | undefined {
     return "Sprint Details";
   }
 
+  // Check for deliverable detail page pattern
+  if (pathname.startsWith("/deliverables/") && pathname !== "/deliverables") {
+    return "Deliverable Details";
+  }
+
   return;
 }
 
@@ -54,7 +59,7 @@ export function AppHeader({ project }: { project: Project | null }) {
         />
         <Separator aria-hidden="true" className="h-4" orientation="vertical" />
         {title ? (
-          <h1 className="font-semibold text-sm md:font-semibold md:text-lg">
+          <h1 className="text-muted-foreground font-medium text-sm md:text-lg">
             {title}
           </h1>
         ) : null}

@@ -1,6 +1,11 @@
+"use client";
+
 import { Calendar, FolderXIcon } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { Suspense } from "react";
+import { EditSprintDialog } from "@/components/team-lead/sprints/edit-sprint-dialog";
+import { SprintActionsMenu } from "@/components/team-lead/sprints/sprint-actions-menu";
 import { EmptyState } from "@/components/shared/empty-state";
 import {
   FrameDescription,
@@ -24,13 +29,12 @@ export function mapSprintStatusToTaskStatus(
       return "TODO";
     case "COMPLETED":
       return "DONE";
+    default:
+      return "TODO";
   }
 }
 
 type PhaseSectionProps = {
-  title: string;
-  subtitle?: string;
-  badgeText?: string;
   sprints: Sprint[];
   progressById: Record<string, SprintProgress | undefined>;
   now: Date;
@@ -41,6 +45,9 @@ export function PhaseSection({
   progressById,
   now,
 }: PhaseSectionProps) {
+  const [selectedSprint, setSelectedSprint] = useState<Sprint | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
   if (sprints.length === 0) {
     return (
       <EmptyState
@@ -52,58 +59,79 @@ export function PhaseSection({
   }
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {sprints.map((sprint) => {
-        const sprintStatus = getSprintStatus(sprint, now);
-        const progress = progressById[sprint.id];
-        const percent = progress?.percentage ?? 0;
+    <>
+      <section className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {sprints.map((sprint) => {
+          const sprintStatus = getSprintStatus(sprint, now);
+          const progress = progressById[sprint.id];
+          const percent = progress?.percentage ?? 0;
 
-        return (
-          <Suspense
-            fallback={<Skeleton className="h-80 w-full" />}
-            key={sprint.id}
-          >
-            <Link href={`/sprints/${sprint.id}`}>
-              <FramePanel className="space-y-2 bg-card">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-0">
-                    <FrameTitle className="w-full truncate font-semibold text-base">
-                      Sprint {sprint.number}
-                    </FrameTitle>
-                    <FrameDescription className="line-clamp-1">
-                      {sprint.goal || "No goal set"}
-                    </FrameDescription>
-                  </div>
-                  <StatusBadge
-                    status={mapSprintStatusToTaskStatus(sprintStatus)}
-                  />
-                </div>
+          return (
+            <Suspense
+              fallback={<Skeleton className="h-80 w-full" />}
+              key={sprint.id}
+            >
+              <div className="group relative">
+                <Link href={`/sprints/${sprint.id}`}>
+                  <FramePanel className="space-y-6 bg-card">
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <StatusBadge
+                            status={mapSprintStatusToTaskStatus(sprintStatus)}
+                          />
+                          <FrameTitle className="truncate font-semibold text-base">
+                            Sprint {sprint.number}
+                          </FrameTitle>
+                        </div>
+                        <SprintActionsMenu
+                          sprint={sprint}
+                          onEditClick={() => {
+                            setSelectedSprint(sprint);
+                            setIsEditDialogOpen(true);
+                          }}
+                        />
+                      </div>
+                      <FrameDescription className="line-clamp-1">
+                        {sprint.goal || "No goal set"}
+                      </FrameDescription>
+                    </div>
 
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Progress</span>
-                      <span className="font-medium">
-                        {progress
-                          ? `${progress.completedTasks}/${progress.totalTasks}`
-                          : "0/0"}
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Progress</span>
+                          <span className="font-medium">
+                            {progress
+                              ? `${progress.completedTasks}/${progress.totalTasks}`
+                              : "0/0"}
+                          </span>
+                        </div>
+                        <Progress className="h-2" value={percent} />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm [&_svg]:text-muted-foreground">
+                      <Calendar size={16} />
+                      <span>
+                        {formatDateRange(sprint.startDate, sprint.endDate)}
                       </span>
                     </div>
-                    <Progress className="h-2" value={percent} />
-                  </div>
+                  </FramePanel>
+                </Link>
+              </div>
+            </Suspense>
+          );
+        })}
+      </section>
 
-                  <div className="flex items-center gap-2 text-sm [&_svg]:text-muted-foreground">
-                    <Calendar size={16} />
-                    <span className="font-medium">
-                      {formatDateRange(sprint.startDate, sprint.endDate)}
-                    </span>
-                  </div>
-                </div>
-              </FramePanel>
-            </Link>
-          </Suspense>
-        );
-      })}
-    </section>
+      {selectedSprint ? (
+        <EditSprintDialog
+          sprint={selectedSprint}
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+        />
+      ): null}
+    </>
   );
 }

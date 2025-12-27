@@ -23,6 +23,7 @@ import type { Task, TaskStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MemberTaskCard } from "./member-task-card";
 import { MemberTaskDetailDialog } from "./member-task-detail-dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const COLUMN_DEFS = [
   {
@@ -85,11 +86,11 @@ export function MemberKanbanBoard({
       DONE: [],
     };
 
-    tasks.forEach((task) => {
+    for (const task of tasks) {
       if (organized[task.status]) {
         organized[task.status].push(task);
       }
-    });
+    }
 
     return organized;
   }, [tasks]);
@@ -192,7 +193,9 @@ export function MemberKanbanBoard({
         <Kanban
           getItemValue={(item: Task) => item.id}
           onMove={handleKanbanMove}
-          onValueChange={() => {}}
+          onValueChange={() => {
+            // Value change handled via onMove
+          }}
           value={columnValues}
         >
           <UiKanbanBoard className="grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
@@ -277,7 +280,7 @@ export function MemberKanbanBoard({
         />
 
         {/* Block Reason Dialog */}
-        {showBlockDialog && (
+        {showBlockDialog ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-lg">
               <h2 className="mb-4 font-semibold text-lg">Block Task</h2>
@@ -311,7 +314,7 @@ export function MemberKanbanBoard({
               </div>
             </div>
           </div>
-        )}
+        ): null}
       </>
     );
   }
@@ -380,18 +383,17 @@ export function MemberKanbanBoard({
       />
 
       {/* Block Reason Dialog */}
-      {showBlockDialog && (
+      {showBlockDialog ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-lg">
             <h2 className="mb-4 font-semibold text-lg">Block Task</h2>
             <p className="mb-4 text-muted-foreground text-sm">
               Please explain why this task is blocked
             </p>
-            <textarea
-              className="mb-4 w-full rounded-lg border border-border bg-background p-3 text-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            <Textarea
               onChange={(e) => setBlockReason(e.target.value)}
-              placeholder="e.g., Waiting for API endpoint from backend team..."
-              rows={4}
+              placeholder=""
+              rows={3}
               value={blockReason}
             />
             <div className="flex gap-2">
@@ -414,7 +416,7 @@ export function MemberKanbanBoard({
             </div>
           </div>
         </div>
-      )}
+      ): null}
     </>
   );
 }

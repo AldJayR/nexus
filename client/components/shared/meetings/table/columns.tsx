@@ -102,8 +102,11 @@ export function createMeetingColumns(context: ColumnsContext): {
     {
       id: "scope",
       size: 120,
-      accessorFn: (row) =>
-        row.sprintId ? "Sprint" : row.phaseId ? "Phase" : "Unassigned",
+      accessorFn: (row) => {
+        if (row.sprintId) return "Sprint";
+        if (row.phaseId) return "Phase";
+        return "Unassigned";
+      },
       filterFn: scopeFilterFn,
       header: "Scope",
       cell: ({ row }) => <div className="text-sm">{row.getValue("scope")}</div>,

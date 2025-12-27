@@ -17,11 +17,12 @@ function ProjectHealthNormal({
   completion: Awaited<ReturnType<typeof computeProjectCompletion>>;
 }) {
   const trend = completion.isOnTrack ? "up" : "down";
-  const statusText = completion.isOnTrack
-    ? "On Track"
-    : targetPercentage
-      ? "Behind Target"
-      : "In Progress";
+  let statusText = "In Progress";
+  if (completion.isOnTrack) {
+    statusText = "On Track";
+  } else if (targetPercentage) {
+    statusText = "Behind Target";
+  }
 
   const trackerData = [
     ...Array.from({ length: completion.completedDeliverables }, (_, i) => ({

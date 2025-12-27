@@ -8,19 +8,16 @@ import {
   type FilterKey,
 } from "@/components/team-lead/sprints/filter-chips";
 import { PhaseSection } from "@/components/team-lead/sprints/phase-section";
-import { getPhaseTypeForSprint, getSprintStatus } from "@/lib/helpers/sprint";
-import type { Phase, Sprint, SprintProgress } from "@/lib/types";
-import { PhaseType } from "@/lib/types";
+import { getSprintStatus } from "@/lib/helpers/sprint";
+import type { Sprint, SprintProgress } from "@/lib/types";
 
 type SprintsClientProps = {
   sprints: Sprint[];
-  phases: Phase[];
   progressById: Record<string, SprintProgress | undefined>;
 };
 
 export function SprintsClient({
   sprints,
-  phases,
   progressById,
 }: SprintsClientProps) {
   const [filter, setFilter] = useState<FilterKey>("all");
@@ -54,33 +51,6 @@ export function SprintsClient({
     [filtered]
   );
 
-  const byPhase = useMemo(() => {
-    const result: Record<PhaseType, Sprint[]> = {
-      [PhaseType.WATERFALL]: [],
-      [PhaseType.SCRUM]: [],
-      [PhaseType.FALL]: [],
-    };
-
-    for (const sprint of filtered) {
-      const phaseType = getPhaseTypeForSprint(sprint, phases, sortedByStartAsc);
-      result[phaseType].push(sprint);
-    }
-
-    return result;
-  }, [filtered, phases, sortedByStartAsc]);
-
-  const titleByPhase: Record<PhaseType, string> = {
-    [PhaseType.WATERFALL]: "Waterfall Phase",
-    [PhaseType.SCRUM]: "Scrum Phase",
-    [PhaseType.FALL]: "Fall Phase",
-  };
-
-  const subtitleByPhase: Record<PhaseType, string> = {
-    [PhaseType.WATERFALL]: "Planning and design work",
-    [PhaseType.SCRUM]: "Development and iteration",
-    [PhaseType.FALL]: "Testing, deployment, and closure",
-  };
-
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -89,12 +59,9 @@ export function SprintsClient({
       </div>
 
       <PhaseSection
-        badgeText="Development"
         now={now}
         progressById={progressById}
-        sprints={byPhase[PhaseType.SCRUM]}
-        subtitle={subtitleByPhase[PhaseType.SCRUM]}
-        title={titleByPhase[PhaseType.SCRUM]}
+        sprints={sortedByStartAsc}
       />
     </div>
   );

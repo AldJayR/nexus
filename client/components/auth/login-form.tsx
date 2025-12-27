@@ -67,14 +67,14 @@ export function LoginForm({
 
           // Show field-specific errors if any
           if (result.fieldErrors) {
-            Object.entries(result.fieldErrors).forEach(([field, errors]) => {
+            for (const [field, errors] of Object.entries(result.fieldErrors)) {
               if (errors && errors.length > 0) {
                 form.setError(field as keyof LoginValues, {
                   type: "manual",
                   message: errors[0],
                 });
               }
-            });
+            }
           }
         }
       } catch (error) {

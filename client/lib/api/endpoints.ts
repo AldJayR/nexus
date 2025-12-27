@@ -54,6 +54,7 @@ export const API_ENDPOINTS = {
   // Sprint Endpoints
   SPRINTS: {
     LIST: "/sprints",
+    LIST_MINE: "/sprints/mine",
     GET: (id: string) => `/sprints/${id}`,
     CREATE: "/sprints",
     UPDATE: (id: string) => `/sprints/${id}`,

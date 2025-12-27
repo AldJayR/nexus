@@ -128,13 +128,13 @@ const createTouchTexture = (): TouchTexture => {
       const f = point.force * speed * (1 - point.age / maxAge);
       point.x += point.vx * f;
       point.y += point.vy * f;
-      point.age++;
+      point.age += 1;
       if (point.age > maxAge) {
         trail.splice(i, 1);
       }
     }
-    for (let i = 0; i < trail.length; i++) {
-      drawPoint(trail[i]);
+    for (const point of trail) {
+      drawPoint(point);
     }
     texture.needsUpdate = true;
   };
@@ -143,11 +143,11 @@ const createTouchTexture = (): TouchTexture => {
     texture,
     addTouch,
     update,
-    set radiusScale(v: number) {
-      radius = 0.1 * size * v;
-    },
     get radiusScale() {
       return radius / (0.1 * size);
+    },
+    set radiusScale(v: number) {
+      radius = 0.1 * size * v;
     },
     size,
   };
@@ -447,7 +447,9 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       if (threeRef.current) {
         const t = threeRef.current;
         t.resizeObserver?.disconnect();
-        cancelAnimationFrame(t.raf!);
+        if (t.raf) {
+          cancelAnimationFrame(t.raf);
+        }
         t.quad?.geometry.dispose();
         t.material.dispose();
         t.composer?.dispose();
@@ -678,7 +680,8 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
         liquidEffect,
       };
     } else {
-      const t = threeRef.current!;
+      const t = threeRef.current;
+      if (!t) return;
       t.uniforms.uShapeType.value = SHAPE_MAP[variant] ?? 0;
       t.uniforms.uPixelSize.value = pixelSize * t.renderer.getPixelRatio();
       t.uniforms.uColor.value.set(color);
@@ -722,7 +725,9 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       }
       const t = threeRef.current;
       t.resizeObserver?.disconnect();
-      cancelAnimationFrame(t.raf!);
+      if (t.raf) {
+        cancelAnimationFrame(t.raf);
+      }
       t.quad?.geometry.dispose();
       t.material.dispose();
       t.composer?.dispose();

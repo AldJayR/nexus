@@ -26,7 +26,7 @@ export default function Loading() {
         </div>
         <div className="space-y-2 p-4">
           {Array.from({ length: 6 }).map((_, index) => (
-            <Skeleton className="h-6 w-full" key={index} />
+            <Skeleton className="h-6 w-full" key={`skeleton-${index}`} />
           ))}
         </div>
       </div>

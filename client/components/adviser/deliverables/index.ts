@@ -6,4 +6,5 @@
  */
 
 export type { AdviserDeliverablesClientProps } from "./client";
-export { AdviserDeliverablesClient } from "./client";
+import { AdviserDeliverablesClient as Client } from "./client";
+export { Client as AdviserDeliverablesClient };

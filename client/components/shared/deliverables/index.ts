@@ -12,7 +12,8 @@
  */
 
 export type { DeliverableCardProps } from "./deliverable-card";
-export { DeliverableCard } from "./deliverable-card";
+import { DeliverableCard as Card } from "./deliverable-card";
+export { Card as DeliverableCard };
 
 export { DeliverableDetails } from "./deliverable-details";
 export type { EvidenceDialogProps } from "./evidence-dialog";

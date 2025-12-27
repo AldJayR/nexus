@@ -8,7 +8,12 @@
  * - Missing: Count of sprints/phases without documented meetings
  */
 
-export { default as CoverageCard } from "./coverage-card";
-export { default as MissingMeetingsCard } from "./missing-meetings-card";
-export { default as OnTimeCard } from "./on-time-card";
-export { default as TotalMeetingsCard } from "./total-meetings-card";
+import CoverageCardDefault from "./coverage-card";
+import MissingMeetingsCardDefault from "./missing-meetings-card";
+import OnTimeCardDefault from "./on-time-card";
+import TotalMeetingsCardDefault from "./total-meetings-card";
+
+export { CoverageCardDefault as CoverageCard };
+export { MissingMeetingsCardDefault as MissingMeetingsCard };
+export { OnTimeCardDefault as OnTimeCard };
+export { TotalMeetingsCardDefault as TotalMeetingsCard };

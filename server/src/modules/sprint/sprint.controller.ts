@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import {
   getSprints,
+  getSprintsByUser,
   getSprintById,
   createSprint,
   updateSprint,
@@ -12,6 +13,11 @@ import { CreateSprintInput, UpdateSprintInput } from "./sprint.schema.js";
 
 export async function getSprintsHandler(request: FastifyRequest, reply: FastifyReply) {
   const sprints = await getSprints();
+  return reply.code(200).send(sprints);
+}
+
+export async function getSprintsByUserHandler(request: FastifyRequest, reply: FastifyReply) {
+  const sprints = await getSprintsByUser(request.user!.id);
   return reply.code(200).send(sprints);
 }
 

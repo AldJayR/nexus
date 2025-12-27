@@ -14,14 +14,14 @@ describe("User API", () => {
 
     it("should return array of users with all required fields", async () => {
       const users = await userApi.listUsers();
-      users.forEach((user) => {
+      for (const user of users) {
         expect(user).toHaveProperty("id");
         expect(user).toHaveProperty("email");
         expect(user).toHaveProperty("name");
         expect(user).toHaveProperty("role");
         expect(user).toHaveProperty("createdAt");
         expect(user).toHaveProperty("updatedAt");
-      });
+      };
     });
   });
 

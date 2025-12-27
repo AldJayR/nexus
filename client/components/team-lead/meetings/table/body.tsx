@@ -123,7 +123,7 @@ function MeetingsFilters({
           <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
             <ListFilterIcon aria-hidden="true" size={16} />
           </div>
-          {searchValue && (
+          {searchValue ? (
             <button
               aria-label="Clear search filter"
               className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 outline-none transition-[color,box-shadow] hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
@@ -135,7 +135,7 @@ function MeetingsFilters({
             >
               <CircleXIcon aria-hidden="true" size={16} />
             </button>
-          )}
+          ): null}
         </div>
 
         {/* Scope Filter Popover */}
@@ -148,11 +148,11 @@ function MeetingsFilters({
                 size={16}
               />
               Scope
-              {selectedScopes.length > 0 && (
+              {selectedScopes.length > 0 ? (
                 <span className="-me-1 inline-flex h-5 max-h-full items-center rounded border bg-background px-1 font-[inherit] font-medium text-[0.625rem] text-muted-foreground/70">
                   {selectedScopes.length}
                 </span>
-              )}
+              ): null}
             </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-auto min-w-36 p-3">
@@ -248,8 +248,8 @@ export function MeetingsTable({
     async (ids: string[], callback: () => Promise<void>) => {
       setDeletingIds((prev) => {
         const next = new Set(prev);
-        for (const id of ids) {
-          next.add(id);
+        for (const meetingId of ids) {
+          next.add(meetingId);
         }
         return next;
       });
@@ -258,8 +258,8 @@ export function MeetingsTable({
       } finally {
         setDeletingIds((prev) => {
           const next = new Set(prev);
-          for (const id of ids) {
-            next.delete(id);
+          for (const meetingId of ids) {
+            next.delete(meetingId);
           }
           return next;
         });

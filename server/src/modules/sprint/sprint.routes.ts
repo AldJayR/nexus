@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import {
   getSprintsHandler,
+  getSprintsByUserHandler,
   getSprintByIdHandler,
   createSprintHandler,
   updateSprintHandler,
@@ -34,6 +35,15 @@ export async function sprintRoutes(app: FastifyInstance) {
         },
       },
     }, getSprintsHandler);
+
+    // List sprints for current user (only sprints with their assigned tasks)
+    protectedServer.get("/mine", {
+      schema: {
+        response: {
+          200: z.array(sprintResponseSchema),
+        },
+      },
+    }, getSprintsByUserHandler);
 
     // Get sprint by ID
     protectedServer.get("/:id", {

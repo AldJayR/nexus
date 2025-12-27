@@ -108,7 +108,7 @@ Nexus is an internal project tracking system for student capstone teams followin
 4. **Team Members** update status (Todo → In Progress → Done)
 5. If blocked → **Team Member** marks as "Blocked" with reason
 6. **Team Lead** can unblock or help
-7. **Team Lead** uploads meeting minutes at end of sprint
+7. **Team Lead or Team Member** uploads meeting minutes at end of sprint
 
 ### Workflow 4: Monitoring Progress
 1. **Team Lead** views dashboard to see completion %
@@ -134,7 +134,7 @@ Nexus is an internal project tracking system for student capstone teams followin
 | `/deliverables`     | Upload & manage evidence          | Team Member (upload), Team Lead (approve), All (view) |
 | `/sprints`          | List all sprints                  | All                                                   |
 | `/sprints/[id]`     | Sprint board with tasks           | All (edit tasks if assigned)                          |
-| `/meetings`         | Upload & view meeting minutes     | Team Lead (upload), All (view)                        |
+| `/meetings`         | Upload & view meeting minutes     | Team Lead & Members (upload), All (view)              |
 | `/timeline`         | Gantt chart view                  | All                                                   |
 | `/settings/team`    | Invite & manage users             | Team Lead only                                        |
 | `/settings/project` | Project configuration             | Team Lead only                                        |
